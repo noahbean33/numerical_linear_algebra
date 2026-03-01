@@ -1,0 +1,89 @@
+
+Lecture 35: GMRES
+GMRES is simply the replacement of the problem "solve 
+ with "minimize 
+ over 
+". Its convergence depends strongly on (at least) the spectrum of 
+.
+
+This example is adapted from the text.
+
+
+using PyPlot
+
+m = 1200;
+A = 2*eye(m) + 0.5*randn(m,m)/sqrt(m);
+lam = eigvals(A);
+plot(real(lam),imag(lam),".");
+axis("equal");
+title("Eigenvalues of A");
+     
+
+We're going to do a lazy GMRES here. First we run Arnoldi, then successively solve the approximate least squares problems using brute force.
+
+
+include("Krylov.jl")
+b = ones(m,1);
+(Q,H) = arnoldi(A,b,15);
+resnorm = [];
+for n = 1:15
+    e1 = [1;zeros(n)];
+    yn = H[1:n+1,1:n] \ (norm(b)*e1);
+    resnorm = [resnorm; norm( H[1:n+1,1:n]*yn - norm(b)*e1 )];
+    xn = Q[:,1:n]*yn;
+end
+
+semilogy(resnorm,"o-");
+xlabel("n"), ylabel("norm of residual");
+title("Convergence of GMRES residual");
+     
+
+WARNING: Method definition arnoldi(Any, Any, Any) in module Main at /Users/driscoll/Dropbox/class/612/tbnotes/julia/Krylov.jl:3 overwritten at /Users/driscoll/Dropbox/class/612/tbnotes/julia/Krylov.jl:3.
+WARNING: Method definition lanczos(Any, Any, Any) in module Main at /Users/driscoll/Dropbox/class/612/tbnotes/julia/Krylov.jl:22 overwritten at /Users/driscoll/Dropbox/class/612/tbnotes/julia/Krylov.jl:22.
+The text explains why this might be very close to 
+.
+
+
+semilogy(resnorm,"o-");
+i = collect(1:15);
+semilogy(i,norm(b)*.25.^i,"r--");
+xlabel("n"), ylabel("norm of residual");
+title("Convergence of GMRES residual");
+     
+
+The rate is tied to how easy it is to make a polynomial small on the spectrum of 
+ while satisfying the normalization 
+. If the set gets close to or surrounds the origin, this becomes difficult.
+
+
+theta = linspace(0,pi,m);
+d = (-2+2*sin(theta)) + 1im*cos(theta);
+D = diagm(d);
+A = A + D;
+lam = eigvals(A);
+plot(real(lam),imag(lam),".");
+axis("equal") 
+title("Eigenvalues of A");
+     
+
+
+b = ones(m,1);
+(Q,H) = arnoldi(A,b,80);
+resnorm = [];
+for n = 1:80
+    e1 = [1;zeros(n)];
+    yn = H[1:n+1,1:n] \ (norm(b)*e1);
+    resnorm = [resnorm; norm( H[1:n+1,1:n]*yn - norm(b)*e1 )];
+    xn = Q[:,1:n]*yn;
+end
+
+semilogy(resnorm,"o-");
+xlabel("n"), ylabel("norm of residual");
+title("Convergence of GMRES residual");
+semilogy([0,80],norm(b)*.25.^([0,80]),"r--")
+
+     
+
+1-element Array{Any,1}:
+ PyObject <matplotlib.lines.Line2D object at 0x109e366d0>
+There is again a linear convergence rate (mainly because the matrix is close to normal and its spectrum uniformly covers the set), but a much slower one this time due to the shape of the spectrum.

@@ -1,0 +1,100 @@
+
+Lecture 33: Arnoldi iteration
+Suppose 
+ and 
+ are given. The 
+th Krylov subspace 
+ is the range of a certain 
+ matrix:
+
+
+A = randn(500,500);
+b = ones(500,1);
+K = b;
+n = 10;
+for j = 1:n-1
+    K = [K A*K[:,j]];
+end
+     
+One way to think of 
+ is as keeping a history of all the vectors found in the power iteration. For that reason, we suspect that it may be rich in content with the leading eigenvectors of 
+, much as with simultaneous iteration. However, it's a poorly conditioned basis as 
+ grows, since the columns all become parallel to the leading eigenvector.
+
+
+cond(K)
+     
+1.4672383709343213e12
+We'd like a (thin) QR factorization of 
+, of course, but once 
+ has been put into floating point, the information about successive dimensions could be drawn out only through subtractive cancellation. Instead, there is a clever way to arrange the Gram-Schmidt process for this particular matrix.
+
+Say 
+ is an ONB for 
+. By construction, 
+. Thus if 
+ extends the ONB to 
+, it must be that
+
+
+Furthermore, 
+. Written out for all 
+, this implies
+
+
+where 
+ collects 
+ and 
+ is an 
+ upper Hessenberg matrix. Adapting the modified Gram-Schmidt algorithm, where the "new column" of a matrix comes from 
+ times the most recent column, we get the Arnoldi iteration.
+
+
+m = size(A,1);  n = 50;
+Q = zeros(m,n+1);
+H = zeros(n+1,n);
+Q[:,1] = b/norm(b);
+for j = 1:n
+    v = A*Q[:,j];
+    for i = 1:j
+        H[i,j] = dot(Q[:,i],v);
+        v = v - H[i,j]*Q[:,i];
+    end
+    H[j+1,j] = norm(v);
+    Q[:,j+1] = v/H[j+1,j];
+end
+     
+
+using PyPlot
+spy(H);
+     
+
+It's not hard to show that we can project 
+ into 
+ (in the 
+-basis) by
+
+
+where 
+ is 
+ with the last row deleted. Eigenvalues of 
+ are eigenvalues of the action of 
+ as projected to 
+. As 
+, this begins to reveal some of the eigenvalues of 
+ itself.
+
+
+lam = eigvals(A);
+plot(real(lam),imag(lam),".")
+axis("square")
+axis("equal")
+for j = 5:n
+    lam = eigvals(H[1:j,1:j]);
+    plot(real(lam),imag(lam),"rx")
+end
+     
+
+We'll look more closely at the convergence in the next lecture. For now, the big idea is to replace a problem on a very high-dimensional space, 
+, with an analog on a low-dimensional space, 
+, using a ON basis as provided by the Arnoldi iteration.

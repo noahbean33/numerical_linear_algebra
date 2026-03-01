@@ -1,156 +1,77 @@
-# Linear Algebra: Theory and Implementation - Python Code
+# Numerical Linear Algebra in C++
 
-This repository contains Python implementations of linear algebra concepts from the course "Linear algebra: theory and implementation" by sincxpress.com.
+## The course that should exist but doesn't.
 
-## Repository Status
+Every numerical linear algebra course teaches you theorems in MATLAB. This one teaches you algorithms in C++. Every textbook assumes you already know why you should care. This one shows you.
 
-✅ **Refactored and Improved** (November 2024)
-- All Jupyter notebooks removed
-- Code refactored with best practices
-- Comprehensive documentation added
-- Bugs fixed and code quality improved
+You will learn numerical linear algebra the way it's actually used: implemented in C++, visualized in real time, and understood from the ground up through hand computation, geometric intuition, and working code.
 
-## Structure
+**$100. ~10 hours. No prerequisites beyond basic linear algebra and some C++.**
 
-The repository is organized by topic:
+---
 
-- **`eig/`** - Eigendecomposition (eigenvalues, eigenvectors, diagonalization)
-- **`intro/`** - Introduction to linear algebra concepts
-- **`introMatrices/`** - Basic matrix operations
-- **`inverse/`** - Matrix inverse operations
-- **`leastsquares/`** - Least squares regression
-- **`matrixDet/`** - Matrix determinants
-- **`matrixMults/`** - Matrix multiplication operations
-- **`projorth/`** - Projections and orthogonalization
-- **`quadformDefinite/`** - Quadratic forms
-- **`rank/`** - Matrix rank
-- **`spaces/`** - Vector spaces
-- **`svd/`** - Singular Value Decomposition
-- **`systems/`** - Systems of equations
-- **`vectors/`** - Vector operations
+## The Problem
 
-## Running the Code
+You took linear algebra in college. You can prove that Gram-Schmidt produces an orthonormal basis. You have no idea why you'd ever use it.
 
-Each Python file is a standalone script that can be run directly:
+You opened Trefethen and Bau. It's elegant, concise, and assumes you already have the intuition it was supposed to give you. No motivating examples. No numerical demonstrations. No connection to the code you'll actually write.
 
-```bash
-# Example: Run eigenvalue demonstrations
-python eig/LA_eig_eigenvalues.py
+You looked at the Eigen docs. They're reference material for people who already understand everything.
 
-# Example: Run vector dot product demonstrations
-python vectors/LA_vectors_dotProduct.py
+You watched the free lectures on YouTube. A professor improvises at a blackboard, skips steps, and says "clearly" before the one thing that isn't clear.
 
-# Example: Run SVD demonstrations
-python svd/LA_svd_TheSVD.py
-```
+There is no single resource that connects the math to the implementation to the hardware. You're expected to stitch together a theory textbook, an HPC manual, and library documentation on your own and hope the result is coherent.
 
-## Requirements
+This course fixes that.
 
-```bash
-pip install numpy matplotlib scipy
-```
+---
 
-Or create a virtual environment:
+## What You Get
 
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install numpy matplotlib scipy
-```
+Each topic follows the same structure:
 
-## Code Quality
+**Motivation.** Why does this algorithm exist? What problem does it solve? When do you reach for it instead of something else?
 
-All refactored scripts follow these best practices:
+**Hand calculation.** Work through a small concrete example on paper. If you can't do a 3×3 QR factorization by hand, you don't understand QR. This is where you see the mechanics, and where numerical instability stops being abstract.
 
-- ✅ **Proper functions** instead of script-style code
-- ✅ **Comprehensive docstrings** (NumPy style)
-- ✅ **Type hints** where appropriate
-- ✅ **Main guards** (`if __name__ == '__main__':`)
-- ✅ **Error handling** with try-except blocks
-- ✅ **Clear visualizations** with labeled plots
-- ✅ **Bug fixes** for common issues
+**Visual intuition.** Interactive real-time visualizations built with raylib. Watch SVD decompose a unit sphere into an ellipsoid. See what ill-conditioning looks like geometrically. Rotate, scale, and transform meshes with the matrices you just computed by hand.
 
-## Refactoring Status
+**C++ implementation.** Build it yourself, then see how Eigen does it. Understand expression templates, cache-aware blocking, and why loop order matters. Learn why your naive implementation is 10× slower and what the fix looks like.
 
-See `REFACTORING_SUMMARY.md` for detailed information about:
-- Bugs that were fixed
-- Best practices applied
-- Refactored files (11 examples completed)
-- Remaining files to refactor (29 files)
-- Refactoring template and guidelines
+**Quizzes.** Constant knowledge checks forcing active recall. Not "did you memorize the theorem" but "given this matrix, what happens and why."
 
-## Example: Refactored Code
+---
 
-### Before (Original)
-```python
-# matrix
-A = [ [1,5], [2,3] ]
+## Topics
 
-# extract the eigenvalues
-eigvals = np.linalg.eig(A)
+- Floating point arithmetic and why it breaks your math
+- Vector and matrix norms — what they measure and when each one matters
+- The SVD — geometrically, computationally, and practically
+- Least squares and why it's half of applied mathematics
+- QR factorization via Gram-Schmidt, Householder, and Givens — when to use which
+- LU and Cholesky — structure you can exploit
+- Conditioning and stability — why your answer is wrong and how wrong it is
+- Eigenvalue algorithms — QR iteration, what LAPACK actually does
+- Iterative methods — GMRES, conjugate gradient, when direct solvers stop scaling
+- Performance — cache lines, loop order, SIMD, blocking, and why MATLAB hides all of it from you
 
-print(eigvals[0])
-```
+---
 
-### After (Refactored)
-```python
-"""Linear Algebra: Finding Eigenvalues
+## Who This Is For
 
-This module demonstrates eigenvalue extraction and visualization.
-"""
+- Engineers who took linear algebra and still don't know when to use SVD vs QR
+- Programmers who can optimize memory access patterns but don't understand the math they're optimizing
+- Scientists who write numerical code in Python and want to understand what's happening underneath
+- Anyone who tried to learn from Trefethen and Bau and bounced off the wall of unmotivated abstraction
 
-import numpy as np
-import matplotlib.pyplot as plt
+## Who This Is Not For
 
+- Mathematicians who want proofs without applications
+- People looking for a credential or certificate
+- Anyone satisfied with MATLAB
 
-def extract_eigenvalues(matrix):
-    """Extract eigenvalues from a square matrix.
-    
-    Parameters
-    ----------
-    matrix : array_like
-        A square matrix.
-        
-    Returns
-    -------
-    ndarray
-        Array of eigenvalues.
-    """
-    eigenvalues, _ = np.linalg.eig(matrix)
-    return eigenvalues
+---
 
+## About
 
-def main():
-    """Main demonstration function."""
-    A = np.array([[1, 5], 
-                  [2, 3]])
-    
-    eigenvals = extract_eigenvalues(A)
-    print(f"Eigenvalues: {eigenvals}")
-
-
-if __name__ == '__main__':
-    main()
-```
-
-## Contributing
-
-When modifying code:
-1. Follow the refactoring template in `REFACTORING_SUMMARY.md`
-2. Add comprehensive docstrings
-3. Test your changes
-4. Ensure code follows PEP 8 style guidelines
-
-## Course Information
-
-- **Course**: Linear algebra: theory and implementation
-- **Instructor**: sincxpress.com
-- **Course URL**: https://www.udemy.com/course/linear-algebra-theory-and-implementation/
-
-## License
-
-Please refer to the course materials for licensing information.
-
-## Contact
-
-For questions about the refactoring work, refer to `REFACTORING_SUMMARY.md`.
+This course was built while learning the material, not after. Every missing explanation, every moment where the textbook assumed what it shouldn't, every "why didn't anyone just say that" — captured in real time and turned into the course that should have existed already.

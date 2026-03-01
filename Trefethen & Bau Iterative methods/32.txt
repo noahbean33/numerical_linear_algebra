@@ -1,0 +1,212 @@
+
+Lecture 32: Sparse matrices and iterative methods
+Sparse format
+Large matrices whose entries are mostly zeros are typically called sparse. They can be stored more efficiently than "dense" or full matrices, but must explicitly be constructed as a sparse type.
+
+
+A = sprandn(10000,10000,0.0004);
+whos()
+     
+                             A    706 KB     10000×10000 SparseMatrixCSC{Float…
+                          Base  34747 KB     Module
+                        Compat   4975 KB     Module
+                          Core  12753 KB     Module
+                        IJulia   5950 KB     Module
+                          JSON   5037 KB     Module
+                          Main  43071 KB     Module
+                        Nettle   4963 KB     Module
+                           ZMQ   4973 KB     Module
+The equivalent full (or "dense") matrix would require 800 MB of storage.
+
+Two common ways to inspect a sparse matrix are nnz, the number of nonzeros, and spy, which shows the locations of the nonzeros.
+
+
+using PyPlot
+spy(A)
+nnz(A)
+     
+
+40217
+Sparse matrices are not just more memory-efficient; they are able to ignore zeros when taking sums and products.
+
+
+v = rand(10000,1);
+tic() 
+for k = 1:100 
+    A*v; 
+end
+toc()
+     
+elapsed time: 0.069820412 seconds
+0.069820412
+
+F = full(A);
+tic()
+for k = 1:100
+    F*v; 
+end
+toc()
+     
+elapsed time: 11.732426896 seconds
+11.732426896
+One thing to watch out for, though: the way a sparse matrix is stored can make column operations a lot faster than row operations, so plan accordingly.
+
+
+B = A;
+tic()
+B[:,1000] = sum(B[:,1:10000],2); 
+toc()
+     
+elapsed time: 0.482169476 seconds
+0.482169476
+
+B = A;
+tic()
+B[1000,:] = sum(B[1:10000,:],1); 
+toc()
+     
+elapsed time: 0.326613577 seconds
+0.326613577
+Sparse backslash
+There are algorithms that attempt to exploit sparsity when solving linear systems of equations. They will be called automatically when backslash is used on a sparse matrix. The time required varies wildly, but these methods can be surprisingly effective, especially for well-known common problems such as the 5-point Laplacian approximation.
+
+
+n = 499;  
+@show m = n^2
+o = ones(m);
+A = spdiagm((-o[1:m-n],-o[1:m-1],4o,-o[1:m-1],-o[1:m-n]),[-n -1 0 1 n],m,m);
+b = ones(m);
+tic() 
+x = A\b; 
+toc()
+     
+m = n ^ 2 = 249001
+elapsed time: 1.240244023 seconds
+1.240244023
+As you can see, a 250,000 by 250,000 matrix might not be considered 'large' in every sense!
+
+Jacobi and Gauss-Seidel
+Sooner or later, though, one encounters 
+ problems of a type and size where the sparse direct algorithms take too long. At this point one turns to iterative methods, which can be halted before complete convergence.
+
+A classical iterative idea is to split the matrix additively: 
+, so that 
+. This is turned into a fixed-point iteration, 
+. If 
+ is the "diagonal part" of 
+, this is the Jacobi iteration, and if 
+ is the lower triangle of 
+, it's the Gauss--Seidel iteration.
+
+
+m = 20000;
+A = sprandn(m,m,0.001) + m/100*speye(m);
+b = ones(m);
+dA = diag(A);
+N = - triu(A,1) - tril(A,-1);
+x = 0*b;
+normres = [];
+for k = 1:50
+    x = (N*x + b)./dA;
+    normres = [normres;norm(b-A*x)];
+end
+semilogy(normres,".-");
+title("Convergence of Jacobi iteration")
+     
+
+PyObject <matplotlib.text.Text object at 0x31e530310>
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+in show at /Users/driscoll/.julia/v0.5/PyCall/src/PyCall.jl
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+in show at /Users/driscoll/.julia/v0.5/PyCall/src/PyCall.jl
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+in show at /Users/driscoll/.julia/v0.5/PyCall/src/PyCall.jl
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+in show at /Users/driscoll/.julia/v0.5/PyCall/src/PyCall.jl
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+in show at /Users/driscoll/.julia/v0.5/PyCall/src/PyCall.jl
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+in show at /Users/driscoll/.julia/v0.5/PyCall/src/PyCall.jl
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+in show at /Users/driscoll/.julia/v0.5/PyCall/src/PyCall.jl
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+in show at /Users/driscoll/.julia/v0.5/PyCall/src/PyCall.jl
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+in show at /Users/driscoll/.julia/v0.5/PyCall/src/PyCall.jl
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+in show at /Users/driscoll/.julia/v0.5/PyCall/src/PyCall.jl
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+in show at /Users/driscoll/.julia/v0.5/PyCall/src/PyCall.jl
+WARNING: Base.writemime is deprecated.
+  likely near /Users/driscoll/.julia/v0.5/IJulia/src/kernel.jl:31
+in show at /Users/driscoll/.julia/v0.5/PyCall/src/PyCall.jl
+Iterative methods come at a price: the convergence of the method depends very strongly on the matrix 
+, as well as the method chosen. Unlike LU factorization and the related direct methods, these methods are far from "plug-n-play."
+
+
+mu = sqrt(m);
+for i = 1:4
+    A = sprandn(m,m,0.001) + mu*speye(m);
+    dA = diag(A);
+    N = - triu(A,1) - tril(A,-1);
+    x = 0*b;
+    normres = [];
+    for k = 1:50
+        x = (N*x + b)./dA;
+        normres = [normres;norm(b-A*x)];
+    end
+    semilogy(normres,".-")
+    mu = mu/4;
+end
+title("Convergence of Jacobi iteration")
+     
+
+PyObject <matplotlib.text.Text object at 0x31e3e5410>
+Although Jacobi, Gauss-Seidel, and friends are helpful in some circumstances, they have been largely overtaken by Krylov subspace methods. They are more robust over a wider range of problems, they allow the incorporation of partial knowledge of the matrix or crude approximate solutions, and they can be used without even needing to know the matrix 
+! This last part sounds strange but is extremely important.
+
+Matrix-free iterations
+A matrix is the expression of a linear transformation on vectors. Krylov subspace methods require the matrix 
+ only in the form, "find 
+ given any vector 
+." That is, any representation of the linear transformation is just as good as having the matrix.
+
+For instance, consider the PageRank algorithm that made Google the king of the internet search. PageRank represents the web as an undirected graph, or equivalently as a weighted adjacency matrix, where adjacency means a link in one page to another. This is an enormous graph that is incredibly sparse. You don't need to worry about representing the adjacency matrix 
+. Instead, you just need the capability to perform the mapping "given the probability of being on every page, follow links randomly to calculate the probabilities of visiting every page next."
+
+In differential equations, we don't need a matrix representation of a discretized differentiation operator, which could be a headache on 2D or 3D regions. You just need the operation (for example), "find the values of the derivative of an interpolant to these values." This matrix-free viewpoint is often easier to code and faster to compute.

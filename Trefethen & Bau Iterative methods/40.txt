@@ -1,0 +1,89 @@
+
+Lecture 40: Preconditioning
+Preconditioning is a simple, general idea that can require a lot of explanation in practice. Since the convergence of a Krylov method depends (at least) on the spectral properties of the matrix, we can improve the convergence by transforming to an equivalent problem with a different matrix. Specifically, 
+ becomes 
+ for some matrix 
+. We don't typically plug in 
+; rather we have to solve a system 
+ whenever we would want 
+. In essence, 
+ should be an "easily inverted" approximation of 
+.
+
+We'll experiment with the 5-point difference representation of the Laplacian operator on a square.
+
+
+D2(n) = (n-1)^2*spdiagm( (-ones(n-3),2*ones(n-2),-ones(n-3)), (-1,0,1) );
+del2(n) = kron(speye(n-2),D2(n)) + kron(D2(n),speye(n-2));
+using Plots, LaTeXStrings; plotlyjs();
+full(del2(5))
+     
+Plotly javascript loaded.
+
+To load again call
+
+init_notebook(true)
+9×9 Array{Float64,2}:
+  64.0  -16.0    0.0  -16.0    0.0    0.0    0.0    0.0    0.0
+ -16.0   64.0  -16.0    0.0  -16.0    0.0    0.0    0.0    0.0
+   0.0  -16.0   64.0    0.0    0.0  -16.0    0.0    0.0    0.0
+ -16.0    0.0    0.0   64.0  -16.0    0.0  -16.0    0.0    0.0
+   0.0  -16.0    0.0  -16.0   64.0  -16.0    0.0  -16.0    0.0
+   0.0    0.0  -16.0    0.0  -16.0   64.0    0.0    0.0  -16.0
+   0.0    0.0    0.0  -16.0    0.0    0.0   64.0  -16.0    0.0
+   0.0    0.0    0.0    0.0  -16.0    0.0  -16.0   64.0  -16.0
+   0.0    0.0    0.0    0.0    0.0  -16.0    0.0  -16.0   64.0
+As is usually the case in PDEs, the conditioning of 
+ gets worse as the discretization gets better. (After all, the eigenvalues of the exact operator are unbounded.)
+
+
+plot(4:32,8*(4:32).^2,l=:dash,legend=false)
+for n = 4:4:32
+    lambda = eigvals( full(del2(n)) );
+    plot!(n*ones(lambda),lambda,m=:dot,l=nothing,xaxis=:log,yaxis=:log)
+end
+
+annotate!(log10(4),log10(130),L"O(n^2)")
+title!("Conditioning growth")
+xlabel!("n")
+ylabel!("eigenvalues")
+
+     
+Here's what we get applying CG to this matrix at 
+. (We're plotting the solution of the Poisson equation, 
+.)
+
+
+n = 160;
+A = del2(n);  b = ones(size(A,1));  
+using KrylovMethods
+(x,flag,rr,iter,rvec) = cg(A,b,tol=1e-8,maxIter=250);
+contour( reshape(x,n-2,n-2),fill=true,aspect_ratio=1 )
+title!("solution")
+     
+cg iterated maxIter (=250) times but reached only residual norm 1.31e-06 instead of tol=1.00e-08.
+
+plot(0:length(rvec)-1,rvec,yaxis=("residual norm",:log),legend=false)
+xlabel!("Krylov dimension")
+title!("CG convergence (n=160)")
+     
+A simple preconditioner might be to strip away the nonzeros of 
+ that are wider than the tridiagonal. This 
+ is easier to invert/solve than the original 
+.
+
+
+M = tril(triu(A,-1),1);
+LU = lufact(M);
+prec = x -> LU\x;
+(x,flag,rr,iter,rvecT) = cg(A,b,tol=1e-8,maxIter=250,M=prec);
+
+plot(0:length(rvec)-1,rvec,lab="no precond.",
+    xaxis=("Krylov dimension"),yaxis=("residual norm",:log))
+plot!(0:length(rvecT)-1,rvecT,lab="tridiag")
+title!("CG convergence (n=160)")
+     
+cg iterated maxIter (=250) times but reached only residual norm 2.50e-08 instead of tol=1.00e-08.
+The strategy helped a little, but note that the asymptotic slope is unchanged; this preconditioner does not slow the growth in the number of iterations with 
+. Good preconditioners can keep the growth much slower, even as low as 
+ for the famous multigrid method.
