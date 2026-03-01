@@ -1,0 +1,76 @@
+# Lecture 2: Solvability & Regularization
+
+This lecture transitions from standard $n \times n$ linear algebra to the practical challenges of data science, where matrices are rarely square. It explores how to handle systems with no solutions or infinite solutions using **regularization** and **optimization**.
+
+---
+
+## 1. Types of Linear Systems
+
+In traditional linear algebra, we often focus on square matrices ($n \times n$) solved via Gaussian elimination. However, modern applications typically involve rectangular matrices ($m \times n$).
+
+| Feature | Underdetermined ($m < n$) | Overdetermined ($m > n$) |
+|---|---|---|
+| **Shape** | Short and fat | Tall and skinny |
+| **Constraints** | Fewer constraints than unknowns | More constraints than unknowns |
+| **Solutions** | Infinite number of solutions | Generically no solution |
+| **Condition** | Ill-conditioned / Ill-posed | Ill-posed (cannot satisfy all rows) |
+
+---
+
+## 2. Regularization and Optimization
+
+Because rectangular systems are mathematically "ill-posed," we use **regularization** — imposing extra constraints to uniquely determine a solution.
+
+### Underdetermined Case ($m < n$)
+
+To pick one solution from the infinite possibilities, we formulate an optimization problem:
+
+$$\min \|x\|_2 \quad \text{subject to} \quad Ax = b$$
+
+By default, solvers typically return the solution with the **smallest $L_2$ norm**.
+
+### Overdetermined Case ($m > n$)
+
+Since we cannot satisfy $Ax = b$ exactly, we minimize the residual error, often adding a penalty term:
+
+$$\min \|Ax - b\|_2^2 + \lambda \|x\|_2^2$$
+
+- **$\lambda$ (Hyperparameter):** A tuning parameter that balances fitting the data versus keeping the solution norm small.
+- **$L_1$ Penalty:** Adding an $L_1$ term ($\lambda \|x\|_1$) promotes **sparsity**, meaning the solution $x$ will have many zeros.
+
+---
+
+## 3. Vector Norms and Geometry
+
+A norm is a metric used to measure the "length" or distance of a vector.
+
+- **$L_2$ Norm (Euclidean):** $\|x\|_2 = \sqrt{\sum x_i^2}$. Represents distance "as the crow flies". Unit ball is a **circle/sphere**.
+- **$L_1$ Norm (City Block):** $\|x\|_1 = \sum |x_i|$. Represents walking distance in a grid. Unit ball is a **diamond**.
+- **$L_p$ Norm:** $\|x\|_p = \left(\sum |x_i|^p\right)^{1/p}$.
+- **$L_\infty$ Norm:** The maximum absolute value of any component. Unit ball is a **square/box**.
+- **$L_0$ "Norm":** Counts non-zero elements. Optimizing this is **NP-hard** because it requires a combinatorial search.
+
+---
+
+## 4. The Fredholm Alternative & Solvability
+
+The Fredholm Alternative provides a deep condition for when $Ax = b$ is solvable.
+
+> **Theorem:** For $Ax = b$ to have a solution, the vector $b$ must be **orthogonal** to the null space of the adjoint operator $A^*$.
+
+### Key Concepts
+
+- **Adjoint ($A^*$):** The conjugate transpose of matrix $A$.
+- **Null Space/Kernel:** The set of vectors $y$ such that $A^*y = 0$.
+- **Zero Eigenvalues:** Every zero eigenvalue corresponds to an **invariance**. If a system has a null space, you can add any multiple of a null space vector to a solution and it remains valid ($x_{\text{new}} = x + \alpha x_0$).
+
+---
+
+## 5. Properties of Linear Operators
+
+Matrix $A$ acts as a linear operator on vector $x$. While it shares some properties with basic arithmetic, there is one critical exception.
+
+- **Commutative (Addition):** $A + B = B + A$.
+- **Associative:** $(A+B) + C = A + (B+C)$.
+- **Distributive:** $A(B + C) = AB + AC$.
+- **NON-Commutative (Multiplication):** $AB \neq BA$. The order of operations matters significantly.
