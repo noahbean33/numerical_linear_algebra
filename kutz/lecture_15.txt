@@ -1,0 +1,110 @@
+# Lecture Notes: Iterative Methods for $Ax = b$
+
+These notes cover the transition from reductive methods (like LU decomposition) to **iterative techniques** for solving linear systems, focusing on why some iterations succeed while others fail.
+
+---
+
+## 1. Introduction: Iteration vs. Reduction
+
+In previous discussions, we explored iterative techniques for eigenvalue problems and SVDs (e.g., bi-diagonalization). While methods like **LU Decomposition** or **Gaussian Elimination** are "rule-based" and reductive—meaning they reach a solution in a fixed number of operations ($O(n^3)$)—iterative methods start with a guess and converge toward the solution.
+
+### Why use Iteration for $Ax = b$?
+
+* 
+**Scalability:** Reductive methods become computationally expensive for very large systems.
+
+
+* 
+**Structure:** Many real-world problems (like physics-based differentiation matrices) produce sparse, tridiagonal matrices where iteration is more efficient.
+
+
+
+---
+
+## 2. The Jacobi Iteration Method
+
+The "trick" to starting an iteration is to solve each equation in a system for its diagonal variable.
+
+### Example System
+
+Consider the following $3 \times 3$ system:
+
+$$\begin{cases} 
+4x - y + z = 7 \\
+4x - 8y + z = -21 \\
+-2x + y + 5z = 15 
+\end{cases}$$
+
+By solving the first equation for $x$, the second for $y$, and the third for $z$, we create an **iteration scheme**:
+
+* 
+$x_{n+1} = \frac{7 + y_n - z_n}{4}$ 
+
+
+* 
+$y_{n+1} = \frac{21 + 4x_n + z_n}{8}$ 
+
+
+* 
+$z_{n+1} = \frac{15 + 2x_n - y_n}{5}$ 
+
+
+
+**The Result:** Starting with any guess (even $0, 0, 0$), this specific system converges to the solution $(2, 4, 3)$ within about 10 iterations.
+
+---
+
+## 3. Convergence and Diagonal Dominance
+
+Iteration is not "magic"; it depends entirely on the arrangement of the matrix $A$. If you swap the rows of the system above, the same equations can lead to a divergent solution that blows up to infinity ($10^{15}$).
+
+The determining factor is **Strict Diagonal Dominance**.
+
+> 
+> **Definition:** A matrix is strictly diagonally dominant if, for every row, the absolute value of the diagonal element is greater than the sum of the absolute values of all other elements in that row.
+> 
+> 
+> $$\left| a_{ii} \right| > \sum_{j \neq i} \left| a_{ij} \right|$$
+> 
+> 
+
+### Comparison of Two Formulations
+
+| System Status | Row 1 Analysis | Row 2 Analysis | Row 3 Analysis | Result |
+| --- | --- | --- | --- | --- |
+| **System 1 (Original)** | $ | 4 | > | -1 |
+| **System 2 (Swapped)** | $ | -2 | \ngtr | 1 |
+
+**Key Takeaway:** If a matrix is strictly diagonally dominant, convergence is **guaranteed** regardless of the initial guess.
+
+---
+
+## 4. Improving Performance: Gauss-Seidel
+
+The **Jacobi Method** uses old values ($x_n, y_n, z_n$) to calculate all new values. The **Gauss-Seidel Method** improves this by using updated values as soon as they are available.
+
+* **Jacobi:** Use $x_n$ and $y_n$ to find $z_{n+1}$.
+* 
+**Gauss-Seidel:** Use the newly calculated $x_{n+1}$ and $y_{n+1}$ to find $z_{n+1}$.
+
+
+
+**Efficiency:** In practice, Gauss-Seidel often converges **twice as fast** as Jacobi.
+
+---
+
+## 5. Real-World Application: Physics & Engineering
+
+Large-scale computations often involve differentiation matrices (e.g., second derivatives in physics). These matrices frequently take a **tridiagonal form**:
+
+* Diagonal elements: $-2$ 
+
+
+* Off-diagonal elements: $1$ 
+
+
+
+While these are on the "edge" of diagonal dominance ($|-2| = |1| + |1|$), iterative methods remain the state-of-the-art for solving such massive systems efficiently.
+
+**Next Steps:** We will move toward high-end iterative solvers: **Bi-Conjugate Gradient Descent** and **GMRES (Generalized Method of Residuals)**.
+

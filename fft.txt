@@ -1,0 +1,82 @@
+
+## The DFT is just a matrix-vector multiply
+
+The DFT of a length-N vector **x** is just **X** = **F**ₙ**x**, where **F**ₙ is the N×N DFT matrix with entries:
+
+$$F_{jk} = \omega_N^{jk}, \quad \omega_N = e^{-2\pi i/N}$$
+
+So row *j*, column *k* is just ωₙ raised to the *jk* power. This is a dense, symmetric, unitary (up to scaling) matrix. A direct matrix-vector multiply costs O(N²) — you're computing N inner products, each of length N.
+
+The entire point of the FFT is that **F**ₙ can be *factored* into a product of about log₂N sparse matrices, each with only O(N) nonzeros. So instead of one dense O(N²) multiply, you do log₂N sparse O(N) multiplies, giving you O(N log N) total.
+
+## The factorization for N = 2ᵐ (radix-2 Cooley-Tukey)
+
+The key identity is a *divide-and-conquer* block factorization. You can show that with an appropriate permutation matrix **P** (the bit-reversal or even/odd shuffle), the DFT matrix factors as:
+
+**F**ₙ = **A**ₘ **A**ₘ₋₁ ⋯ **A**₁ **P**
+
+where each **A**ₛ is a sparse matrix — specifically a block diagonal of 2×2 "butterfly" operations, scaled by twiddle factors.
+
+Let me make this concrete for **N = 4**. We have ω₄ = e^{-πi/2} = −i.
+
+The 4×4 DFT matrix is:
+
+```
+F₄ = [ 1   1    1    1  ]
+     [ 1  -i   -1    i  ]
+     [ 1  -1    1   -1  ]
+     [ 1   i   -1   -i  ]
+```
+
+This factors as:
+
+```
+F₄ = [ 1  0  1  0 ] [ 1  1  0  0 ]
+     [ 0  1  0 -i ] [ 1 -1  0  0 ] P
+     [ 1  0 -1  0 ] [ 0  0  1  1 ]
+     [ 0  1  0  i ] [ 0  0  1 -1 ]
+       ----A₂----     ----A₁----
+```
+
+where P is the even/odd permutation (indices 0,2,1,3 → bit-reversal for N=4).
+
+Look at the structure of each factor:
+
+**A₁** is block diagonal — two independent 2×2 DFT butterflies acting on pairs. It has 8 nonzeros out of 16 entries (but really only 4 unique multiplications because the 2×2 DFT just adds and subtracts).
+
+**A₂** is the "twiddle and combine" stage — it's also sparse, with a butterfly structure that mixes the results of the two half-size DFTs, weighted by powers of ω.
+
+## What the butterfly *is* in matrix language
+
+A single radix-2 butterfly computes:
+
+```
+[ y₀ ]   [ 1   W ] [ x₀ ]
+[ y₁ ] = [ 1  -W ] [ x₁ ]
+```
+
+where W is some twiddle factor (a power of ωₙ). That's a 2×2 matrix with 2 additions, 1 multiplication (since the 1s are free). At each stage of the FFT, you have N/2 of these butterflies operating in parallel on disjoint pairs of elements. In matrix form, that's a permuted block-diagonal matrix of N/2 independent 2×2 blocks — which is a sparse matrix with exactly 2N nonzeros.
+
+## Why this matters as linear algebra
+
+Here's the punchline. You have:
+
+**F**ₙ = **A**ₘ **A**ₘ₋₁ ⋯ **A**₁ **P**
+
+where m = log₂N, each **A**ₛ has O(N) nonzeros, and **P** is a permutation (free — just reindex). The total work is m stages × O(N) per stage = O(N log N). You've replaced one dense matrix-vector product with a sequence of sparse ones.
+
+This is *exactly* the same thing as a sparse matrix factorization in the numerical linear algebra sense. It's conceptually identical to how LU factorization turns one dense solve into two triangular (sparse-ish) solves, except here the factorization structure is much more rigid and the sparsity pattern comes from the group-theoretic structure of the roots of unity.
+
+## The deeper connections this opens up
+
+Once you see the FFT this way, several things click:
+
+**Structured matrices become fast.** A circulant matrix C can be diagonalized as C = **F**⁻¹ **D** **F** where **D** is diagonal. So circulant matrix-vector products cost O(N log N) — that's why convolution via FFT works. Toeplitz matrices can be embedded in circulant matrices of twice the size, so they're also O(N log N). This is the real reason half of signal processing is fast.
+
+**The FFT is not unique to Fourier.** The same factorization idea applies to any transform whose matrix has a recursive Kronecker product structure. The Walsh-Hadamard transform, number-theoretic transforms (used in post-quantum crypto and big-integer multiplication), and various wavelet-like transforms all admit analogous sparse factorizations. The "fast" in fast transform literally means "admits a sparse matrix factorization."
+
+**Butterfly networks are matrix factorizations.** If you've seen butterfly interconnection networks in computer architecture or switching theory, those are the *same* structure — the wiring pattern of a butterfly network is the sparsity pattern of the factor matrices. The FFT dataflow graph *is* the network topology.
+
+**It reframes algorithm design.** The question "can I compute this matrix-vector product faster than O(N²)?" becomes "does this matrix admit a factorization into fewer sparse factors?" That's a much more precise and generalizable question than "is there a trick for this particular transform." It's also connected to circuit complexity — the depth of the factorization corresponds to circuit depth, and the total nonzeros correspond to circuit size.
+
+The reason ECE students don't usually see this is that signals courses teach the FFT as a clever recursion (split into even and odd indices, recurse, combine with twiddle factors), which obscures the linear algebraic structure. The recursion and the matrix factorization encode exactly the same information, but the matrix view makes the computational complexity analysis trivial and connects it to the rest of numerical linear algebra.

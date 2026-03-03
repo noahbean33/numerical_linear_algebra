@@ -1,0 +1,76 @@
+# Lecture 17: GMRES and BiCGSTAB
+
+These notes cover iterative methods for solving large-scale linear systems, specifically focusing on the Generalized Minimum Residual (GMRES) and Bi-Conjugate Gradient Stabilized (BiCGSTAB) methods.
+
+---
+
+## 1. Motivation for Iterative Methods
+
+The primary goal of using iterative schemes is to bypass the computational "bottleneck" of direct solvers.
+
+- **The $O(n^3)$ Bottleneck:** Standard direct methods (like LU decomposition or Gaussian elimination) scale at $O(n^3)$, making them extremely slow for very large matrices.
+- **Large-Scale Systems:** For high-dimensional problems, iterative methods can find an approximate solution faster than a direct solver.
+- **Guaranteed Convergence:** In specific cases, such as strictly diagonally dominant matrices, methods like Jacobi or Gauss-Seidel are guaranteed to converge regardless of the initial guess.
+
+---
+
+## 2. Gradient Descent & Conjugate Gradient (CG)
+
+Conjugate Gradient methods treat the problem $Ax = b$ as a search for a solution in a specific direction.
+
+### The CG Algorithm
+
+1. **Initial Guess:** Start with $x_0 = 0$, an initial residual $r_0 = b$, and an initial search direction $p = r_0$.
+2. **Directional Search:** The algorithm picks a search direction by projecting onto the matrix $A$ using a Rayleigh quotient-like structure: $p_n^T A p_n$.
+3. **Update Step:** The solution is updated iteratively:
+
+$$x_n = x_{n-1} + \alpha_n p_n$$
+
+4. **Residual Tracking:** The residual $r_n$ is updated at each step, and the search direction $p_n$ is adjusted based on the improvement (calculated via a $\beta$ value).
+
+### Bi-Conjugate Gradient (BiCG)
+
+- **Broad Application:** Unlike standard CG, BiCG has fewer restrictions on matrix $A$ (e.g., $A$ can be complex).
+- **Dual Vector Spaces:** It uses two sets of vectors ($p, r$ and $q, s$) and incorporates left and right multiplies within the algorithm.
+- **Complex Conjugation:** The algorithm explicitly uses complex conjugation to search the solution space.
+
+---
+
+## 3. Implementation
+
+Modern scientific computing environments provide built-in functions for these iterative solvers.
+
+### Function Syntax
+
+- `gmres(A, b)`: Implements the Generalized Minimum Residual method.
+- `bicgstab(A, b)`: Implements the Bi-Conjugate Gradient Stabilized method.
+
+### Key Input Arguments
+
+| Argument | Description |
+|---|---|
+| `tol` | Error tolerance (default is $10^{-6}$). |
+| `maxit` | Maximum number of iterations (default for `gmres` is 10). |
+| `x0` | Initial guess vector; defaults to zeros. |
+| `M1, M2` | Preconditioning matrices used to make $A$ more amenable to iteration. |
+
+### Important Outputs
+
+- **`flag`:** Indicates if the method converged (0 = success, 1 = reached `maxit` without converging).
+- **`relres`:** The relative residual (error) after the algorithm stops.
+- **`resvec`:** A vector containing the residual at every iteration, useful for plotting convergence behavior.
+
+---
+
+## 4. Convergence and Matrix Structure
+
+The effectiveness of these methods depends heavily on the structure of matrix $A$.
+
+- **Iteration Counts:** The default maximum of 10 iterations is often insufficient for convergence unless the initial guess is already very close to the solution.
+- **Initial Guesses in PDEs:** In partial differential equation (PDE) solvers, $b$ often changes slightly between steps. Using the previous solution as $x_0$ allows the iteration to converge very quickly.
+- **GMRES vs. BiCGSTAB:**
+  - `gmres` is generally more robust for generic or random matrices.
+  - `bicgstab` can struggle or even "crash" (error increases) on random matrices.
+  - `bicgstab` performs exceptionally well on matrices with **diagonal dominance**.
+
+> **Pro-Tip:** If your iterative solver isn't converging, try increasing the maximum iterations (`maxit`) or checking if your matrix has a structure (like diagonal dominance) that suits the specific algorithm.

@@ -1,0 +1,142 @@
+These lecture notes cover the implementation of tensor decompositions as a generalization of Singular Value Decomposition (SVD), specifically focusing on how to manage data hypercubes without relying on vectorization.
+
+---
+
+## 1. Theoretical Foundation: SVD vs. Tensor Decomposition
+
+The core concept of a tensor decomposition is that it serves as a generalization of the **Singular Value Decomposition (SVD)**. While the SVD is the "go-to" method for identifying dominant correlated structures in data matrices, tensor decomposition applies this logic to **data hypercubes**.
+
+### Comparison of Methods
+
+| Feature | Singular Value Decomposition (SVD) | Tensor Decomposition |
+| --- | --- | --- |
+| **Data Structure** | 2D Matrices 
+
+ | <br>$N$-dimensional Hypercubes 
+
+ |
+| **Components** | Column space ($u$) and row space ($v$) 
+
+ | Spanning vectors for every dimension 
+
+ |
+| **Algorithm Maturity** | Decades of fast, stable algorithms 
+
+ | Less computationally mature 
+
+ |
+| **Logic** | Rank-1, Rank-2, Rank-3 decompositions 
+
+ | Multi-dimensional factor analysis 
+
+ |
+
+---
+
+## 2. Moving to Higher Dimensions
+
+In standard linear algebra, data is often flattened into a single vector (vectorization) to fit into a matrix. However, tensor decomposition allows researchers to keep different dimensions of data separate.
+
+* 
+**Multivariate Data**: You can represent a person as an $n$-dimensional object (height, weight, eye color, etc.).
+
+
+* 
+**Spatio-temporal Data**: You can maintain separate dimensions for pressure, temperature, and time without "flattening" them into a single list.
+
+
+* 
+**Factor Analysis**: This is often referred to as factor analysis, where you look for dominant "factors" or directions within each dimension of the data cube.
+
+
+
+---
+
+## 3. Implementation Example: The Oscillating Cube
+
+To demonstrate tensor decomposition, a 3D data cube ($x, y, t$) is constructed using two distinct rank-1 "modes" or features:
+
+### The Input Functions
+
+1. 
+**Feature 1 ($f_1$)**: A spatial Gaussian oscillating in time via a cosine function: 
+$$f_1(x, y, t) = e^{-(x^2 + 0.5y^2)} \cos(2t)$$
+
+
+.
+
+
+2. 
+**Feature 2 ($f_2$)**: A hyperbolic secant-tangent structure in $x$ and a Gaussian in $y$, oscillating via a sine function: 
+$$f_2(x, y, t) = (\text{sech } x \tanh x) e^{-0.2y^2} \sin(t)$$
+
+
+.
+
+
+
+The final data tensor $A$ is a mixture: **$A = f_1 + f_2$**.
+
+---
+
+## 4. MATLAB Implementation Logic
+
+The goal is to provide the tensor $A$ to an algorithm and see if it can recover the constitutive parts ($f_1$ and $f_2$) without being told what they are.
+
+### Native Tensor Decomposition
+
+Using the **N-way Array Tool** (specifically the `parafac` or Parallel Factorization algorithm by Erasmus Bro), we can decompose the tensor directly:
+
+* 
+**Rank Specification**: You must decide on the rank (e.g., a rank-2 model for this example).
+
+
+* 
+**Vector Extraction**: The algorithm produces vectors for each principal direction ($a_1, a_2, a_3$).
+
+
+* 
+**Recovery**: For a rank-2 system, you receive two vectors per dimension (equivalent to $u_1, u_2$ and $v_1, v_2$ in SVD).
+
+
+
+### The Vectorization Alternative
+
+If you choose not to use a tensor package, you must manually **flatten** and **reshape** the data:
+
+1. 
+**Flatten**: Reshape the $x$ and $y$ spatial slices into a long vector for every time step $t$.
+
+
+2. 
+**Process**: Apply standard SVD to the resulting matrix.
+
+
+3. 
+**Reshape**: Reconstruct the tensor by reshaping the columns back into their original spatial dimensions.
+
+
+
+---
+
+## 5. Summary of Results
+
+In the provided experiment, the tensor decomposition successfully recovered the original input factors:
+
+* 
+**Y-Direction**: Recovered two distinct Gaussians.
+
+
+* 
+**X-Direction**: Recovered the Gaussian and the Sech-Tanh structure.
+
+
+* 
+**Time-Direction**: Corrected identified the $\cos(2t)$ (fast) and $\sin(t)$ (slow) oscillations.
+
+
+
+> 
+> **Key Takeaway**: Tensor decomposition is a powerful generalization of linear algebra that removes the need to constrain data to two dimensions, preserving the unique characteristics of different data types.
+> 
+> 

@@ -1,0 +1,158 @@
+These lecture notes summarize the transition from direct solvers to iterative methods for computing eigenvalues and eigenvectors, specifically focusing on the **Rayleigh Quotient** and its algorithmic applications.
+
+---
+
+## 1. The Importance of Eigen-decompositions
+
+Eigen-decompositions characterize the fundamental properties of a matrix and show up across all sciences and engineering.
+
+* The core problem is defined by the equation $Ax = \lambda x$.
+
+
+* In this context, the matrix $A$ acting on vector $x$ results in the same vector $x$, simply stretched or compressed by the scalar $\lambda$.
+
+
+* The set of all eigenvalues for a matrix is known as the **spectrum**, which often carries deep meaning regarding the physical problem the matrix represents.
+
+
+* While small matrices (e.g., $2 \times 2$ or $3 \times 3$) can be solved by hand, modern applications involve massive matrices (e.g., $1,000,000 \times 1,000,000$), necessitating a shift toward **iterative computation** rather than direct solves.
+
+
+
+---
+
+## 2. Matrix Constraints and Properties
+
+For the scope of these algorithms, we focus on a specific class of matrices:
+
+* The matrix $A$ must be **real, square, and Hermitian**.
+
+
+* Because the matrices are assumed to be real, "Hermitian" effectively means the matrix is **symmetric**, where $A^T = A$.
+
+
+* Hermitian matrices possess $m$ distinct, **real eigenvalues**.
+
+
+* The corresponding eigenvectors $q_1, q_2, \dots, q_m$ form an **orthonormal basis**.
+
+
+
+---
+
+## 3. The Rayleigh Quotient
+
+The Rayleigh Quotient is a quadratic form used to estimate eigenvalues.
+
+* It is defined as:
+
+
+$$r(x) = \frac{x^T Ax}{x^T x}$$
+
+
+
+
+
+* The denominator $x^T x$ acts as a normalization factor for the length of the vector.
+
+
+* 
+**Key Property:** If you input an eigenvector $q_j$ into the Rayleigh Quotient, the output is exactly the corresponding eigenvalue $\lambda_j$.
+
+
+* 
+**Optimization:** Finding eigenvalues can be viewed as an optimization problem where we attempt to minimize the residual $\|Ax - \alpha x\|_2$.
+
+
+* The gradient of the Rayleigh Quotient is zero only at the eigenvectors and eigenvalues, allowing us to "walk downhill" toward a solution in a convex, parabolic space.
+
+
+
+---
+
+## 4. Iterative Algorithms
+
+The following methods move from a generic guess toward a specific eigenvalue/vector pair.
+
+### A. Power Iterations
+
+This is a classical method used to find the **largest** eigenvalue.
+
+* 
+**Initialization:** Start with an initial guess $v_0$ of unit length.
+
+
+* **The Loop:**
+1. Multiply the matrix by the current vector: $w = Av_{k-1}$.
+
+
+2. Normalize the result: $v_k = \frac{w}{\|w\|}$.
+
+
+3. Compute the eigenvalue estimate via the Rayleigh Quotient: $\lambda_k = v_k^T A v_k$.
+
+
+
+
+* 
+**Convergence:** Because any initial guess is a linear combination of eigenvectors, repeated multiplication by $A$ causes the largest eigenvalue component ($\lambda_1$) to dominate while others drop toward zero.
+
+
+
+### B. Inverse Iteration
+
+If we want to find an eigenvalue other than the largest one, we use a shift $\mu$.
+
+* By shifting the matrix $(A - \mu I)$, the eigenvectors remain the same, but we can target specific parts of the spectrum.
+
+
+* The iteration involves solving $(A - \mu I)w = v_{k-1}$.
+
+
+* The algorithm will converge to the eigenvalue closest to the shift value $\mu$.
+
+
+
+### C. Rayleigh Quotient Iteration (RQI)
+
+This combines the previous two ideas into a highly efficient algorithm.
+
+* Instead of a fixed shift $\mu$, the algorithm updates the shift at every step using the latest eigenvalue estimate $\lambda_{k-1}$.
+
+
+* 
+**Convergence Speed:** RQI features **cubic convergence**, meaning the distance to the true solution decreases incredibly fast (the error is cubed at each step).
+
+
+* 
+**Stopping Criteria:** The iteration stops once the change in $\lambda_k$ falls below a specified tolerance (e.g., $10^{-6}$).
+
+
+
+---
+
+### Summary Table: Comparison of Iterative Methods
+
+| Method | Goal | Shift Type | Convergence Speed |
+| --- | --- | --- | --- |
+| **Power Iteration** | Find largest $\lambda$ 
+
+ | None 
+
+ | Relatively Slow 
+
+ |
+| **Inverse Iteration** | Find $\lambda$ near $\mu$ 
+
+ | Fixed $\mu$ 
+
+ | Varies by $\mu$ 
+
+ |
+| **RQI** | Find any $\lambda$ rapidly 
+
+ | Variable $\lambda_k$ 
+
+ | <br>**Cubic** 
+
+ |
