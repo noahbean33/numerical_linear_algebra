@@ -1,0 +1,150 @@
+# Lecture Notes: Applied Linear Algebra — Eigen Decompositions
+
+This lecture introduces **eigen decompositions**, a powerful strategy for breaking down square matrices to reveal their underlying structure and simplify complex computations.
+
+---
+
+## 1. The Core Concept: Eigenvalues and Eigenvectors
+
+Most matrix multiplications $Ax$ result in a vector that is both **rotated** and **stretched**. However, there is a set of special vectors known as **eigenvectors** where the matrix operation is significantly simpler.
+
+* 
+**Eigenvector ($x$):** A special vector that, when multiplied by matrix $A$, does not rotate but only stretches or compresses.
+
+
+* 
+**Eigenvalue ($\lambda$):** The scalar factor by which the eigenvector is stretched ($\lambda > 1$) or compressed ($\lambda < 1$).
+
+
+* **The Characteristic Equation:** This relationship is expressed as:
+
+
+$$Ax = \lambda x$$
+
+
+
+
+
+* 
+**The Spectrum:** The collection of all eigenvalues associated with a matrix is called its **spectrum**. This spectrum provides a unique characterization of a linear operator, often carrying physical meaning related to the specific problem being solved.
+
+
+
+---
+
+## 2. Matrix Diagonalization
+
+For an $m \times m$ matrix, there can be up to $m$ different eigenvalues and eigenvectors. We can represent all of these simultaneously using matrix notation.
+
+### The Decomposition Formula
+
+If we collect all eigenvectors as columns in a matrix $X$ and place all eigenvalues on the diagonal of a matrix $\Lambda$, we get:
+
+
+$$A = X \Lambda X^{-1}$$
+
+
+
+> 
+> **Note:** This decomposition is only possible if the eigenvector matrix $X$ is **non-singular** (invertible).
+> 
+> 
+
+### Eigen Decomposition vs. SVD
+
+While both methods decompose a matrix into three parts with a diagonal middle, they have key differences:
+
+* 
+**Basis:** Eigen decomposition uses a **single basis** ($X$), whereas Singular Value Decomposition (SVD) uses **dual bases** ($U$ and $V$).
+
+
+* 
+**Guarantee:** SVD is guaranteed to exist for **any** matrix, while eigen decomposition is not.
+
+
+* 
+**Flexibility:** SVD’s use of two bases provides more flexibility, making it a more broadly applicable tool.
+
+
+
+---
+
+## 3. The Power of Diagonalization: Solving $Ax = b$
+
+The primary advantage of eigen decomposition is that it allows us to move into a **diagonal coordinate system** where components are decoupled.
+
+* 
+**Decoupling:** In the new coordinate system, every component of the vector is independent of the others.
+
+
+* 
+**Efficiency:** Solving a system in diagonal form is "trivial," requiring only **order $m$** operations, compared to order $m^2$ for back-substitution or $m^3$ for Gaussian elimination.
+
+
+* 
+**Transformation:** We transform the problem, solve it quickly in the diagonal framework, and then transform the solution back to the original coordinate system.
+
+
+
+---
+
+## 4. Theory: Finding Eigenvalues
+
+To find the eigenvalues computationally or theoretically, we rearrange the characteristic equation:
+
+
+$$(A - \lambda I)x = 0$$
+
+
+
+* **Non-trivial Solutions:** We seek a non-zero $x$. This only occurs if the matrix $(A - \lambda I)$ is **singular**.
+
+
+* **Characteristic Polynomial:** We set the determinant to zero:
+
+
+$$\det(A - \lambda I) = 0$$
+
+
+
+
+
+* 
+**Roots:** The roots of the resulting $n^{th}$ degree polynomial are the eigenvalues of the matrix. These roots can be real or complex.
+
+
+
+---
+
+## 5. Multiplicity and Defective Matrices
+
+When solving the characteristic polynomial, roots may repeat, leading to the concept of **multiplicity**.
+
+### Algebraic vs. Geometric Multiplicity
+
+* 
+**Algebraic Multiplicity:** The number of times a specific eigenvalue appears as a root of the characteristic polynomial.
+
+
+* 
+**Geometric Multiplicity:** The number of linearly independent eigenvector directions associated with that eigenvalue.
+
+
+
+### Defective Matrices
+
+A matrix is considered **defective** if its geometric multiplicity is less than its algebraic multiplicity.
+
+* **Example 1 (Non-defective):** A $3 \times 3$ identity-like matrix with 2s on the diagonal has a triple root ($\lambda = 2$) and three independent eigenvector directions. (Algebraic = 3, Geometric = 3) .
+
+
+* **Example 2 (Defective):** Adding 1s to the upper diagonal of the previous matrix keeps the triple root ($\lambda = 2$) but reduces the available eigenvectors to just one direction. (Algebraic = 3, Geometric = 1) .
+
+
+
+> 
+> **Theorem:** An $m \times m$ matrix $A$ is **non-defective** if and only if it has an eigenvalue decomposition $A = X \Lambda X^{-1}$.
+> 
+> 
+
+---

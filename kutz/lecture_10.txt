@@ -1,0 +1,109 @@
+# Applied Linear Algebra: Gaussian Elimination & LU Decomposition
+
+Solving the system $Ax = b$ is the fundamental core of nearly all computational problems. Because of this, it is essential to build algorithms that are both stable and well-conditioned. While Matlab’s "backslash" solver is highly sophisticated, its underlying mechanism for square matrices often begins with **LU decomposition**.
+
+---
+
+## 1. Fundamentals of LU Decomposition
+
+The goal of LU decomposition is to factorize a square $m \times m$ matrix $A$ into the product of two specific triangular matrices:
+
+* 
+**$L$ (Lower Triangular):** A matrix where all entries above the main diagonal are zero. By convention in this algorithm, the diagonal elements are restricted to **1**.
+
+
+* 
+**$U$ (Upper Triangular):** A matrix where all entries below the main diagonal are zero.
+
+
+
+### The Connection to Gaussian Elimination
+
+Gaussian elimination is essentially the process used to produce the upper triangular matrix $U$. While we typically perform elimination to solve a system, LU decomposition "keeps track" of those operations within matrix $L$ so they can be reused.
+
+---
+
+## 2. Solving $Ax = b$ Using LU
+
+Once $A$ is decomposed into $LU$, solving for $x$ becomes a two-step process using substitution:
+
+1. 
+**Define an intermediate vector $y$:** Let $Ux = y$.
+
+
+2. 
+**Solve for $y$ (Forward Substitution):** Solve the system $Ly = b$. Because $L$ is lower triangular, this is computationally efficient.
+
+
+3. 
+**Solve for $x$ (Backward Substitution):** Once $y$ is known, solve $Ux = y$. Since $U$ is upper triangular, you can solve for $x$ starting from the bottom.
+
+
+
+> **Note:** Software like Matlab is "smart enough" to recognize triangular structures. When you use the backslash operator on a triangular matrix, it automatically exploits these structures to perform substitution instead of a full elimination.
+> 
+> 
+
+---
+
+## 3. Algorithmic Construction
+
+To transform $A$ into $U$, we apply a sequence of **elementary elimination matrices** ($L_k$).
+
+### The Elimination Process
+
+For a $4 \times 4$ matrix, the process looks like this:
+
+* 
+**Step 1:** Multiply $A$ by $L_1$ to zero out everything below the first diagonal element.
+
+
+* 
+**Step 2:** Multiply by $L_2$ to zero out everything below the second diagonal element.
+
+
+* 
+**Step 3:** Multiply by $L_3$ to zero out the remaining element below the third diagonal.
+
+
+* 
+**Result:** The final product $(L_3 L_2 L_1)A = U$.
+
+
+
+### Constructing $L_k$
+
+Each elimination matrix $L_k$ is an identity matrix with specific values (multipliers) in the $k$-th column below the diagonal:
+
+* The multiplier $l_{jk}$ is the ratio of the term you want to eliminate to the diagonal pivot term ($x_{jk} / x_{kk}$).
+
+
+* This represents the exact operation performed in Gaussian elimination: subtracting a multiple of one row from another to create a zero.
+
+
+
+### The "Sign Flip" Shortcut
+
+Mathematically, $A = LU$ implies that $L$ is the inverse of the product of elimination matrices: $L = (L_{n-1} \dots L_1)^{-1}$.
+A "stroke of luck" in the math is that the inverse of an elimination matrix $L_k$ is simply the same matrix with the signs of the off-diagonal multipliers flipped. Consequently, the final $L$ matrix is easily constructed by placing those multipliers into their respective positions below the diagonal.
+
+---
+
+## 4. Computational Complexity
+
+Understanding the "cost" of these operations is vital for scaling:
+
+| Operation | Complexity | Note |
+| --- | --- | --- |
+| **Gaussian Elimination / LU** | $O(n^3)$ | If the matrix size doubles, the cost increases eightfold.
+
+ |
+| **Substitution** | $O(n^2)$ | Significantly faster than elimination for large $n$.
+
+ |
+
+### Why use LU?
+
+If you are solving $Ax = b$ for many different $b$ vectors but the same $A$ matrix, you only need to perform the expensive $O(n^3)$ decomposition **once**. Every subsequent solution only costs $O(n^2)$ using substitution, which is a massive computational saving.
+
+---

@@ -1,0 +1,67 @@
+# Lecture 11: Stabilizing LU Decomposition
+
+This lecture focuses on addressing the **numerical stability** issues inherent in standard Gaussian elimination and $LU$ decomposition. While the basic algorithm works in theory, computational implementation requires a more robust approach to handle "near-zero" values that cause significant errors.
+
+---
+
+## 1. The Core Problem: Numerical Instability
+
+In standard $LU$ decomposition, we decompose a matrix $A$ into lower ($L$) and upper ($U$) triangular forms through a series of operations:
+
+- **The Goal:** $A = LU$.
+- **The Mechanism:** We use matrices $L_k$ to recursively zero out elements below the diagonal.
+- **The Formula:** The coefficients for elimination are calculated as:
+
+$$\ell_{jk} = \frac{x_{jk}}{x_{kk}}$$
+
+where $x_{kk}$ is the diagonal element (the pivot).
+
+> **The "Small Number" Trap:** If the pivot $x_{kk}$ is exactly zero, the algorithm breaks. However, in computation, a pivot might be a very small number (e.g., $10^{-15}$ or $10^{-10}$). Dividing by such a tiny value creates massive coefficients that cause errors to cascade through subsequent matrix operations, leading to an unstable and ill-conditioned algorithm.
+
+---
+
+## 2. The Solution: Partial Pivoting
+
+To stabilize the process, we use **pivoting** — a technique used to avoid dividing by zero or excessively small numbers by switching rows.
+
+### How It Works
+
+1. **Search:** At each step $k$, look at the diagonal element and all elements below it in the current column.
+2. **Select:** Identify the element with the largest absolute value.
+3. **Permute:** Switch the current row with the row containing that maximum value.
+4. **Eliminate:** Proceed with the standard elimination step using this new, "sturdier" pivot.
+
+---
+
+## 3. The Permutation Matrix ($P$)
+
+Algorithmically, row switching is handled by a **Permutation Matrix**, denoted as $P_k$.
+
+- **Construction:** A permutation matrix $P_k$ is an identity matrix where the rows you wish to swap have been switched.
+- **Operation:** Multiplying $P_k$ by a vector or matrix simply shuffles its rows accordingly.
+- **The Combined Step:** Instead of just applying $L_k$, each step of the stabilized algorithm becomes $L_k P_k$ — first you permute, then you zero out.
+
+---
+
+## 4. Solving $Ax = b$ with Pivoting
+
+When we include pivoting, the factorization is no longer $A = LU$. Instead, we track all shuffles in a "grand master" permutation matrix $P$.
+
+- **Modified Factorization:** $PA = LU$.
+- **Solving the System:** To solve for $x$, we must apply the same row shuffles to the right-hand side vector $b$.
+
+1. Start with $Ax = b$.
+2. Apply $P$ to both sides: $PAx = Pb$.
+3. Substitute $LU$ for $PA$: $LUx = Pb$.
+4. Solve via forward and backward substitution as usual, using the shuffled vector $\hat{b} = Pb$.
+
+---
+
+## Summary: Standard vs. Stabilized LU
+
+| Feature | Standard LU | Stabilized LU (with Pivoting) |
+|---|---|---|
+| **Pivot Selection** | Always the current diagonal element. | Largest available value in the column. |
+| **Stability** | Unstable; breaks/fails if pivot is near zero. | Highly stable; minimizes division errors. |
+| **Computational Cost** | Faster (no searching/shuffling). | Slightly slower (requires search and swap). |
+| **Final Form** | $A = LU$ | $PA = LU$ |
