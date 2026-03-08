@@ -1,0 +1,94 @@
+Lecture 11: Linear least squares
+Fitting data by polynomials
+Here are 5-year averages of the worldwide temperature anomaly as compared to the 1951-1980 average (source: NASA).
+
+year = (1955:5:2000)';
+anomaly = [ -0.0480; -0.0180; -0.0360; -0.0120; -0.0040; 0.1180; 0.2100; 0.3320; 0.3340; 0.4560 ];
+plot(year,anomaly,'o')
+
+The numbers work better if we measure time in years since 1955. (We can quantify that statement later in the course.)
+
+t = year-1955;
+m = length(t)
+m =
+
+    10
+A polynomial through all of these points has to have degree at least 9 in general (i.e., unless the points are special). We can solve for the coefficients of this polynomial by solving a  10×10
+  Vandermonde system.
+
+A = t.^0;
+for j = 1:m-1
+    A = [A,t.^j];
+end
+b = anomaly;
+
+c = A\b;   % coefficients, from degree 0 to m-1
+
+p = @(x) polyval(c(end:-1:1),x-1955);  % interpolating polynomial
+plot(year,anomaly,'o')
+hold on
+fplot(p,[1955 2000])
+title('World temperature anomaly')
+xlabel('year'), ylabel('anomaly (deg C)')
+
+[Warning: Matrix is close to singular or badly scaled. Results may be
+inaccurate. RCOND =  8.677742e-17.] 
+[  In pymat_eval (line 31)
+  In matlabserver (line 24)]
+As intended, the polynomial interpolates the data, but it obviously gives a lot of unphysical nonsense. This phenomenon, which is common with interpolating polynomials over equally spaced times, is an example of overfitting.
+
+We actually get a better approximation by reducing the degree to 3.
+
+A = A(:,1:4);
+size(A)
+ans =
+
+    10     4
+We now have an overdetermined system of linear equations. The easiest way to define a solution is to minimize the 2-norm of the residual--i.e., least squares. In MATLAB we use the same backslash operator as for square systems, even though the algorithms are very different.
+
+c = A\b;   % coefficients, from degree 0 to 3
+
+p = @(x) polyval(c(end:-1:1),x-1955);  % fitting polynomial
+plot(year,anomaly,'o')
+hold on
+fplot(p,[1955 2000])
+title('World temperature anomaly')
+xlabel('year'), ylabel('anomaly (deg C)')
+
+This polynomial certainly describes the data better.
+
+Three least squares algortithms
+There are three distinct ways to solve the general dense linear least squares problem. First, we can pose and solve the normal equations.
+
+B = A'*A;  z = A'*b;
+size(B)
+ans =
+
+     4     4
+format short e, format compact
+[c B\z]
+ans =
+  -2.6157e-02  -2.6157e-02
+  -9.0823e-03  -9.0823e-03
+   7.8573e-04   7.8573e-04
+  -7.7483e-06  -7.7483e-06
+Second, we can use a thin QR factorization to express the range of  A
+  orthonormally, and reduce to a triangular square system.
+
+[Q,R] = qr(A,0);  z = Q'*b;
+[c R\z]
+ans =
+  -2.6157e-02  -2.6157e-02
+  -9.0823e-03  -9.0823e-03
+   7.8573e-04   7.8573e-04
+  -7.7483e-06  -7.7483e-06
+And third, we can use the SVD to orthgonalize both the range and the domain, ultimately getting a diagonal square system.
+
+[U,S,V] = svd(A,0);  z = U'*b;
+[c V*(z./diag(S))]
+ans =
+  -2.6157e-02  -2.6157e-02
+  -9.0823e-03  -9.0823e-03
+   7.8573e-04   7.8573e-04
+  -7.7483e-06  -7.7483e-06
+In the coming chapters we will take a deep look at why mathematically equivalent algorithms difffer when implemented numerically. It turns out that each of the three algorithms above has a set of problems on which it might be considered the 'best'.

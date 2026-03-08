@@ -1,0 +1,213 @@
+Lectures 25-26: Eigenvalues and algorithmic considerations
+Eigenvalue decomposition¶
+When it exists, the eigenvalue decomposition (EVD) expresses a square matrix  A
+  as a change of basis away from a diagonal matrix:  A=XDX−1
+ . There are two major syntaxes. If only the eigenvalues are desired, call eig with one or zero output arguments.
+
+A = magic(4)
+lam = eig(A)
+A =
+
+    16     2     3    13
+     5    11    10     8
+     9     7     6    12
+     4    14    15     1
+
+
+lam =
+
+   34.0000
+    8.9443
+   -8.9443
+    0.0000
+If you want the full decomposition, call with two output arguments.
+
+[X,D] = eig(A)
+X =
+
+   -0.5000   -0.8236    0.3764   -0.2236
+   -0.5000    0.4236    0.0236   -0.6708
+   -0.5000    0.0236    0.4236    0.6708
+   -0.5000    0.3764   -0.8236    0.2236
+
+
+D =
+
+   34.0000         0         0         0
+         0    8.9443         0         0
+         0         0   -8.9443         0
+         0         0         0    0.0000
+Technically, the output is guaranteed only to satisfy  AX=XD
+ , which holds for defective as well as diagonalizable matrices. (But defectiveness is a "probability zero" event and is not robust to floating point perturbations.)
+
+A = eye(4) + diag([1 1 1],1)   % Jordan block
+[X,D] = eig(A);
+rank_X = rank(X)
+residual = norm(A*X-X*D)
+A =
+
+     1     1     0     0
+     0     1     1     0
+     0     0     1     1
+     0     0     0     1
+
+
+rank_X =
+
+     1
+
+
+residual =
+
+   3.8459e-16
+You can use poly to get the characteristic polynomial of a matrix. However, as pointed out in Lecture 15, using it to compute eigenvalues is an unstable algorithm.
+
+A = eye(2) + 1e-10*[0 0;0 1]
+norm( eig(A) - diag(A) )
+A =
+
+    1.0000         0
+         0    1.0000
+
+
+ans =
+
+     0
+norm( roots(poly(A)) - diag(A) )
+ans =
+
+   2.1003e-08
+(As an interesting note, the connection is actually in the other direction: eigenvalue computations are used to find polymomial roots!)
+
+Schur factorization
+The EVD has some serious drawbacks as a target for numerical computation. First, it does not exist for every square matrix. And second, if it exists but the condition number of the eigenvalue matrix is large, it will be very sensitive to roundoff. A better alternative is the Schur factorization  A=QTQ∗
+ , in which  Q
+  is unitary and  T
+  is upper triangular.
+
+A = magic(5)
+[Q,T] = schur(A);
+norm( Q'*Q-eye(5) )
+T
+A =
+
+    17    24     1     8    15
+    23     5     7    14    16
+     4     6    13    20    22
+    10    12    19    21     3
+    11    18    25     2     9
+
+
+ans =
+
+   1.4593e-15
+
+
+T =
+
+   65.0000    0.0000    0.0000   -0.0000   -0.0000
+         0  -21.2768   -2.5888    2.1871   -3.4893
+         0         0  -13.1263   -3.3845   -2.8239
+         0         0         0   21.2768    2.6287
+         0         0         0         0   13.1263
+The Schur form always exists, it still reveals the eigenvalues of  A
+ , and it involves only stable unitary transformations. There is one quirk with it. If  A
+  is real but has complex eigenvalues, there is an alternate form in which  T
+  is "quasitriangular". Each real eigenvalue appears along the diagonal of  T
+ , but complex conjugate pairs are represented as  2×2
+  real blocks along the diagonal. This allows the entire factorizaton to be done in real arithmetic, which can improve speed.
+
+A = rot90(A);
+lam = eig(A)
+lam =
+
+  65.0000 + 0.0000i
+  -0.0000 +21.2768i
+  -0.0000 -21.2768i
+  -0.0000 +13.1263i
+  -0.0000 -13.1263i
+[Q,T] = schur(A);
+T
+T =
+
+   65.0000   -0.0000    0.0000    0.0000    0.0000
+         0   -0.0000   20.9795    6.8026   -0.0000
+         0  -21.5782   -0.0000   -0.0000   -1.7035
+         0         0         0   -0.0000   13.4714
+         0         0         0  -12.7900   -0.0000
+eig(T(2:3,2:3))
+eig(T(4:5,4:5))
+ans =
+
+  -0.0000 +21.2768i
+  -0.0000 -21.2768i
+
+
+ans =
+
+  -0.0000 +13.1263i
+  -0.0000 -13.1263i
+Hessenbergification
+Eigenvalue algorithms are iterative. The iterative steps can be performed a lot faster if the matrix has structural zeros. Hence before iteration begins, an orthogonal similarity transformation is used to get an upper Hessenberg matrix with the same eigenvalues.
+
+A
+A =
+
+    15    16    22     3     9
+     8    14    20    21     2
+     1     7    13    19    25
+    24     5     6    12    18
+    17    23     4    10    11
+x = A(2:5,1);  v = norm(x)*eye(4,1)-x; F = eye(4)-2*(v*v')/(v'*v);
+[A(1,:);F*A(2:5,:)]
+ans =
+
+   15.0000   16.0000   22.0000    3.0000    9.0000
+   30.4959   20.6585   12.6246   21.1504   21.6423
+    0.0000    6.7040   13.3279   18.9933   24.1269
+    0.0000   -2.1037   13.8685   11.8396   -2.9556
+    0.0000   17.9682    9.5735    9.8864   -3.8435
+F*A*F'
+ans =
+
+   47.6840   19.8270   20.3170    2.9859   11.1263
+   10.5916    5.4920   19.8473    0.3196  -13.5488
+   26.8129   -4.8040   11.6383  -15.8066    0.2328
+   -8.5366   -3.5377    7.6651    0.9182    7.4499
+   -1.2898   14.9480    4.9289   -3.8630   -0.7325
+
+
+
+
+H = hess(A)
+H =
+
+   15.0000  -12.2967  -25.7440    3.8568    1.0776
+  -30.4959   34.5430   16.0572   -7.0391   -1.1312
+         0   33.2719   17.3227    3.9749   -2.2465
+         0         0  -10.6355   -0.0167  -17.4078
+         0         0         0   13.8061   -1.8490
+eig(H)
+ans =
+
+  65.0000 + 0.0000i
+  -0.0000 +21.2768i
+  -0.0000 -21.2768i
+  -0.0000 +13.1263i
+  -0.0000 -13.1263i
+Note that  A=QHQ∗
+  is "nearly" a Schur factorization. All that remains to be done is to make the subdiagonal zero.
+
+If  A
+  is hermitian, then since the transformation preserves symmetry the resulting  H
+  is actually hermitian and tridiagonal. This leads to even greater speedup in eigenvalue computations; for this and other reasons, one might even consider the hermitian and nonhermitian problems to be of distinct species.
+
+A = A+A';
+hess(A)
+ans =
+
+    0.1631    3.2854         0         0         0
+    3.2854    4.8747    1.5240         0         0
+         0    1.5240    0.4987   -7.5820         0
+         0         0   -7.5820  102.4634  -54.0925
+         0         0         0  -54.0925   22.0000

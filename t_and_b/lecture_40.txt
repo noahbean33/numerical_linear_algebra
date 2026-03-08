@@ -1,0 +1,91 @@
+Lecture 40: Preconditioning
+Preconditioning is a simple, general idea that can require a lot of explanation in practice. Since the convergence of a Krylov method depends (at least) on the spectral properties of the matrix, we can improve the convergence by transforming to an equivalent problem with a different matrix. Specifically,  Ax=b
+  becomes  M−1Ax=M−1b
+  for some matrix  M
+ . We don't typically plug in  M−1
+ ; rather we have to solve a system  Mv=u
+  whenever we would want  M−1u
+ . In essence,  M
+  should be an "easily inverted" approximation of  A
+ .
+
+We'll experiment with the 5-point difference representation of the Laplacian operator on a square.
+
+del2 = @(n) n^2*delsq( numgrid('S',n) );
+spy(del2(10));
+
+As is usually the case in PDEs, the conditioning of  A
+  gets worse as the discretization gets better. (After all, the eigenvalues of the exact operator are unbounded.)
+
+for n = 4:4:32
+  lambda = eig( full(del2(n)) );
+  loglog(n,lambda,'bx'),  hold on
+end
+plot(4:32,8*(4:32).^2,'r--')
+text(4,130,'O(n^2)','color','red','horiz','r')
+title('Conditioning growth')
+xlabel('n')
+ylabel('eigenvalues')
+axis tight
+
+Here's what we get applying CG to this matrix at  n=160
+ . (We're plotting the solution of the Poisson equation,  Δu=−1
+ .)
+
+n = 160;
+A = del2(n);  b = ones(length(A),1);  
+[x,flag,rr,iter,rvec] = pcg(A,b,1e-8,250);
+surf( reshape(x,n-2,n-2) )
+title('solution')
+shading flat
+
+semilogy(0:length(rvec)-1,rvec)
+xlabel('Krylov dimension'), ylabel('residual norm')
+title('CG convergence (n=160)')
+
+A simple preconditioner might be to strip away the nonzeros of  A
+  that are wider than the tridiagonal strip. This  M
+  is easier to invert/solve than the original  A
+ .
+
+M = spdiags( spdiags(A,-1:1), -1:1, length(A), length(A));
+[x,flag,rr,iter,rvecT] = pcg(A,b,1e-8,250,M);
+
+semilogy(0:length(rvec)-1,rvec,'k')
+hold on
+semilogy(0:length(rvecT)-1,rvecT)
+legend('no precond','tridiag')
+xlabel('Krylov dimension'), ylabel('residual norm')
+title('CG convergence (n=160)')
+
+A more sophisticated strategy is the incomplete Cholesky factorization. There are various forms; here, we compute a Cholesky factor but zero out any elements that are zero in the same location in  A
+ .
+
+R = ichol(A);
+fprintf(' %i nonzeros in A; %i nonzeros in M\n\n',nnz(A),nnz(R))
+124188 nonzeros in A; 74576 nonzeros in M
+[x,flag,rr,iter,rvecI] = pcg(A,b,1e-8,250,R',R);
+semilogy(0:length(rvec)-1,rvec,'k')
+hold on
+semilogy(0:length(rvecT)-1,rvecT)
+semilogy(0:length(rvecI)-1,rvecI)
+legend('no precond','tridiag','cholinc')
+xlabel('Krylov dimension'), ylabel('residual norm')
+title('CG convergence (n=160)')
+
+In a sense this looks successful, but in fact the number of iterations would still grow as a function of  n
+ .
+
+for n = 100:50:300
+    A = del2(n);  b = ones(length(A),1);
+    R = ichol(A);
+    [x,flag,rr,iter,rvec] = pcg(A,b,1e-8,250,R',R);
+    semilogy(0:length(rvec)-1,rvec)
+    hold on
+end
+xlabel('Krylov dimension'), ylabel('residual norm')
+title('CG/IC for linearly increasing n')
+ylim([1e-6 1e4])
+
+In scientific computation a good preconditioner would keep the number of iterations well under 50 for large  n
+ . This usually requires detailed understanding and exploitation of the underlying problem, unlike the purely algebraic approach taken here.

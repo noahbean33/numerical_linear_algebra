@@ -1,0 +1,151 @@
+Lecture 19: Stability of least squares algorithms¶
+We're going to explore several alternatives for least squares by means of a fitting problem:
+
+m = 100; n = 15;
+t = (0:m-1)'/(m-1);
+A = t.^0;
+for j = 2:15, A(:,j)=t.^(j-1); end
+b = exp(sin(4*t));
+x = A\b;
+plot(t,b-A*x)
+title('Residual of least squares fit')
+
+You can see that the fit is quite good. As in the text, we will renormalize the vector  b
+  to make the last coefficient of the solution equal to 1. (See the section below for more on this constant.)
+
+b = b/2006.787453104851834;
+x = A\b;  y = A*x;
+As in the text, we compute all the numbers associated with the conditioning of the least squares problem, as described by Theorem 18.1. Since the residual is small, the conditioning of  x
+  will be close to  κ(A)
+ .
+
+format compact, format short e
+kappa = cond(A)
+theta = asin(norm(y-b)/norm(b))
+eta = norm(A)*norm(x)/norm(y)
+kappa =
+   2.2718e+10
+theta =
+   3.7461e-06
+eta =
+   2.1036e+05
+K(1,1) = sec(theta);  K(2,1) = kappa*K(1,1);
+K(1,2) = K(2,1)/eta;  K(2,2) = kappa + kappa^2*tan(theta)/eta
+K =
+   1.0000e+00   1.0800e+05
+   2.2718e+10   3.1909e+10
+Backslash
+The internal backslash does Householder QR, but includes column swapping to improve accuracy. Here's how it does.
+
+x = A\b;
+fprintf('x(15) = %.15f\n',x(15))
+errBS = abs(x(15)-1)
+x(15) = 0.999999588983230
+errBS =
+   4.1102e-07
+We've lost about 9 digits of accuracy, which is in line with the conditioning of  x
+  with respect to  A
+  (the (2,2) element of  K
+  above).
+
+Householder QR solution
+In this case, QR without column pivoting happens to do a little better.
+
+[Q,R] = qr(A,0);
+x = R\(Q'*b);
+fprintf('x(15) = %.15f\n',x(15))
+errHH = abs(x(15)-1)
+x(15) = 0.999999919426074
+errHH =
+   8.0574e-08
+Modified GS QR solution
+Classical Gram-Schmidt is too unstable even to bother with. The modified form is better, but problems remain:
+
+[Q,R] = mgs(A);
+x = R\(Q'*b);
+fprintf('x(15) = %.15f\n',x(15))
+err = abs(x(15)-1)
+x(15) = 0.939892735084297
+err =
+   6.0107e-02
+Crikey! That's much worse than is accounted for by the problem conditioning. The culprit is our nonorthogonal  Q
+ .
+
+norm(Q'*Q-eye(15))
+ans =
+   3.5947e-07
+However, we can imitate Gaussian elimination and use an augmented matrix in order to get an "implicit Q" result.
+
+[Q,R] = mgs([A b]);
+x = R(1:15,1:15) \ R(1:15,16);
+fprintf('x(15) = %.15f\n',x(15))
+errMGS = abs(x(15)-1)
+x(15) = 1.000000091910366
+errMGS =
+   9.1910e-08
+Normal equations
+This problem is a perfect storm for the normal equations: a very good fit (small residual) and a badly conditioned matrix. Squaring that condition number is catastrophic.
+
+x = (A'*A)\(A'*b);
+fprintf('x(15) = %.15f\n',x(15))
+[> In pymat_eval (line 31)
+  In matlabserver (line 24)] 
+[Warning: Matrix is close to singular or badly scaled. Results may be
+inaccurate. RCOND =  4.833016e-19.] 
+x(15) = -0.094071919024642
+SVD
+The SVD provides the gold standard of stability in least squares. It is preferred to QR when the matrix is nearly or numerically rank deficient.
+
+[U,S,V] = svd(A,0);
+x = V*(S\(U'*b));
+fprintf('x(15) = %.15f\n',x(15))
+errSVD = abs(x(15)-1)
+x(15) = 0.999999919426927
+errSVD =
+   8.0573e-08
+Extended precision
+If you compare my results to those in the text, you will find that they are different in some respects. For one thing, I use a different normalization constant for  b
+ . This constant is supposed to come from a higher-precision computation of the problem.
+
+There's some ambiguity here. Should all computations be evaluated in extended precision from the start of the fitting problem, or only once the data  A
+  and  b
+  have been formed in double precision? Here's the second interpretation.
+
+b = vpa( exp(sin(4*t)), 64 );
+A = vpa(A,64);
+[Q,R] = qr(A,0);
+x1 = R\ (Q'*b);
+[Q,R] = mgs([A b]);
+x2 = R(1:15,1:15) \ R(1:15,16);
+x3 = (A'*A)\(A'*b);
+[U,S,V] = svd(A,0);
+x4 = V*(S\(U'*b));
+
+[x1(end);x2(end);x3(end);x4(end)]
+ans =
+ 2006.7875278311014035999679357743
+ 2006.7875278311014035999679357742
+ 2006.7875278311014035969129213443
+ 2006.7875278311014035999679357743
+Notice how the results not from the normal equations agree up to the last digit. The disadvantage of this interpretation is that it could be dependent on the precise double precision values found for the data, before extended precision is used. By putting extended precision in from the start, we get results that will hopefully be machine- and language-independent.
+
+t = vpa(0:m-1,64)'/vpa(m-1,64);
+A = t.^0;
+for j = 1:14, A=[A,t.*A(:,j)]; end
+b = exp(sin(4*t));
+
+[Q,R] = qr(A,0);
+x1 = R\ (Q'*b);
+[Q,R] = mgs([A b]);
+x2 = R(1:15,1:15) \ R(1:15,16);
+x3 = (A'*A)\(A'*b);
+[U,S,V] = svd(A,0);
+x4 = V*(S\(U'*b));
+
+[x1(end);x2(end);x3(end);x4(end)]
+ans =
+ 2006.7874531048518338761038143559
+ 2006.7874531048518338761038143553
+ 2006.7874531048518338766907539159
+ 2006.7874531048518338761038143555
+Unfortunately, neither of my results matches the T&B number of 2006.787453080206, which I can't explain.

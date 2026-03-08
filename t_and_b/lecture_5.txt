@@ -1,0 +1,45 @@
+Lecture 5: More SVD
+One of the most far-reaching ideas from this section is the use of the SVD for dimension reduction. We're all swimming in data, and the SVD provides a way to reduce large data sets to its most essential components.
+
+Here we load data about all the votes made in the U.S. House of Representatives during the 111th Congress.
+
+load hou111kh
+imagesc(A), colorbar
+
+The rows represent voters, the columns represent bills or other vote items, and the color shows the vote: yellow is 'yea', blue is 'nay', and green is 'no vote'. Each row is the fingerprint of a particular representative. As you can easily see, there is a great deal of dependence among those rows, indicating party affiliation.
+
+Extracting meaning from the data is a bit cleaner if we use the difference of each vote from the voter's average vote.
+
+mu = mean(A,2);  
+A = bsxfun(@minus,A,mu);  % subtract each voter's average from all votes
+imagesc(A)
+
+We're going to use the SVD to find principal directions in the data. First we transpose the matrix so that it's got a tall, thin shape like we're used to.
+
+B = A';
+[U,S,V] = svd(B,0);
+sigma = diag(S);
+plot(sigma,'o','markersize',3)
+
+Clearly there's a lot more information in the first two singular directions than in all of the others. We project each voter's record into those two directions.
+
+x1 = U(:,1)'*B;   x2 = U(:,2)'*B;
+subplot(211), histogram(x1,32)
+xlabel('first coefficient'), ylabel('frequency')
+subplot(212), histogram(x2,32)
+xlabel('second coefficient'), ylabel('frequency')
+
+The first coefficient shows clear polarity, with most voters having a large-magnitude coefficient. Political scientists call this quantity partisanship. The second is a little less obvious, but it is commonly called bipartisanship. It shows how willing a voter is to go against his or her party. The 21st century has seen some of the least bipartisan Congresses in history.
+
+We can now represent each voter by these two coordinates. A scatter plot dramatically illustrates the nature of the voting. We also use the known party affiliation to color each voter.
+
+c = zeros(size(A,1),3);  
+c(party==1,3) = 1;  % blue   
+c(party==2,1) = 1;  % red
+scatter(x1,x2,20,c)
+xlabel('partisanship'), ylabel('bipartisanship')
+title('111th U.S. Congress, House voting')
+
+It's clear as day that this Congress was very politcally polarized. Note that those with the higher (more positive) bipartisanship scores are the ones willing to meet in the middle.
+
+

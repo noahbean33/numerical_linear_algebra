@@ -1,0 +1,93 @@
+Lecture 10: Householder triangularization
+The stable way to get a QR factorization is to operate orthogonally (unitarily) in order to produce a triangular  R
+ . It's a lot like Gaussian elimination, proceeding one column at a time. Instead of elementary triangular row operations, though, we can choose from reflections or rotations. This lecture describes the reflection approach.
+
+The key step is to find, given  x
+ , a unitary  F
+  such that  Fx=αe1
+  for a scalar  α
+ . Since  F
+  preserves the 2-norm,  α=±∥x∥2
+ . One can simply exhibit the solution. Define  v=αe1−x
+  and set
+F=I−2vv∗v∗v.
+ 
+
+x = randn(5,1);  alpha = norm(x);
+v = alpha*eye(5,1) - x;
+F = eye(5) - 2*(v*v')/(v'*v);
+norm(F'*F-eye(5))
+ans =
+
+   4.9032e-16
+F*x
+ans =
+
+    3.0983
+    0.0000
+   -0.0000
+    0.0000
+    0.0000
+In context,  x
+  is drawn from rows  j
+  to  m
+  of column  j
+ , so that  F
+  (applied to the lower rows) puts zeros below the diagonal as desired. For example,
+
+A = randn(6,3);  
+x = A(:,1);  
+v = [x(1)+sign(x(1))*norm(x);x(2:end)]; 
+v = v/norm(v);
+F = eye(6) - 2*(v*v');
+F*A
+ans =
+
+    4.9308   -0.4355   -0.8077
+   -0.0000    0.4842    1.2494
+    0.0000    0.1275    1.5434
+    0.0000    2.7054    1.9893
+         0    1.3357   -0.1876
+   -0.0000   -0.8751    0.2201
+Once  j
+  sweeps from 1 to  n
+ , the matrix will be transformed into the  R
+  we seek. If we accumulate the actions of these reflectors, we end up with the  Q
+  as well (the full one or the thin one, as we choose).
+
+Writing codes for the algorithm is part of the exercises, so I won't reproduce them here. There is an some important shortcut to know. In applications we rarely want the actual  Q
+  or even the thin  Q^
+ ; instead we want the capability of applying  Q
+  or  Q∗
+  to a given vector. It's more efficient to store the  v
+  vectors of the reflectors and apply them on demand, using
+
+Fz=z−2v∗zv∗vv.
+ 
+One form of the qr command will actually return those  v
+ -vectors for you:
+
+QR = qr(A)
+QR =
+
+    4.9308   -0.4355   -0.8077
+    0.0695   -3.1811   -1.8046
+   -0.0549    0.0348   -2.1743
+   -0.5736    0.7381   -0.0733
+   -0.4439    0.3644   -0.3601
+    0.2164   -0.2387    0.2628
+The upper triangle of the result is  R
+ . Each reflector is built from the  v
+  constructed having  v1=1
+  and the remaining elements from the lower triangle in the appropriate column.
+
+HH = @(v) eye(length(v)) - 2*(v*v')/(v'*v);
+v1 = [1;QR(2:6,1)];  F1 = HH(v1);
+v2 = [1;QR(3:6,2)];  F2 = HH(v2);
+v3 = [1;QR(4:6,3)];  F3 = HH(v3);
+Q = F1*blkdiag(1,F2)*blkdiag(eye(2),F3);
+R = triu(QR);
+norm(Q*R-A)
+ans =
+
+   1.5456e-15

@@ -1,0 +1,61 @@
+Lecture 36: Lanczos (and MINRES)
+When  A∗=A
+ , a number of things about iterative methods get better and faster. The most notable development is that the Hessenberg matrix  Hn
+  is also hermitian and thus tridiagonal. Consequently the Arnoldi iteration's loop to fill in  H
+  becomes a fixed length process, greatly speeding up the computation as the dimension of  Kn
+  increases. The result is known as the Lanczos iteration.
+
+We can fully demonstrate the properties of Lanczos using only diagonal matrices.
+
+m = 400;
+kappa = 10;
+N = 60;
+lam = linspace(1,kappa,m)';
+A = diag(lam);
+b = randn(m,1);
+b = b/norm(b);
+[Q,T] = lanczos(A,b,N);
+T(1:5,1:5)
+ans =
+
+    5.0978    2.7363         0         0         0
+    2.7363    5.3926    2.2944         0         0
+         0    2.2944    5.4278    2.3514         0
+         0         0    2.3514    5.6650    2.1131
+         0         0         0    2.1131    5.5528
+Here is the convergence of the Ritz values to eigenvalues of  A
+ .
+
+clf
+plot(N+3,lam,'r.')
+hold on
+for n = 4:N
+    theta = eig(T(1:n,1:n));
+    plot(n,theta,'k.')
+end
+xlabel('n'), ylabel('eigenvalues')
+title('Convergence of Ritz values in Lanczos iteration')
+
+The analog of GMRES in the hermitian case is MINRES, which solves the same least-squares problem on top of the Lanczos iteration. In the case (as here) of a positive definite  A
+ , there is a convenient theoretical bound on the convergence:
+
+∥rn∥∥r0∥≤2(κ−−√−1κ−−√+1)n,
+ 
+where  κ=κ2(A)
+  equals the ratio of max to min eigenvalues.
+
+resnorm = [];
+for n = 2:N
+    yn = T(1:n+1,1:n)\eye(n+1,1);
+    xn = Q(:,1:n)*yn;
+    resnorm(n) = norm(b-A*xn);
+end
+clf
+semilogy(resnorm,'.-')
+hold on
+bound = 2*( (sqrt(kappa)-1)/(sqrt(kappa)+1) ).^(0:N);
+plot(0:N,bound,'k--')
+ylim([1e-16 1])
+xlabel('n'), ylabel('||r_n||')
+title('Convergence of MINRES, and an upper bound')
+

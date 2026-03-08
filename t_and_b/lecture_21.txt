@@ -1,0 +1,313 @@
+Lecture 21: Pivoting
+If we apply LU factorization as presented so far, the result is unstable.
+
+format compact, format short e
+A = [ 1e-20 1;1 0 ]
+L = [1 0; 1e20 1]
+U = [1e-20 1; 0 -1e20]
+AminusLU = A - L*U
+A =
+   1.0000e-20   1.0000e+00
+   1.0000e+00            0
+L =
+   1.0000e+00            0
+   1.0000e+20   1.0000e+00
+U =
+   1.0000e-20   1.0000e+00
+            0  -1.0000e+20
+AminusLU =
+     0     0
+     0     0
+Even though the factorization above is correct, the  L
+  and  U
+  matrices have condition numbers exceeding  1020
+ , creating catastrophic instability in their product and in solving linear systems with them. Yet  A
+  itself is practically perfectly conditioned.
+
+In order to illustrate the cure for this problem, we return to the matrix of the last lecture.
+
+format short
+A = magic(4) + eye(4)
+A =
+    17     2     3    13
+     5    12    10     8
+     9     7     7    12
+     4    14    15     2
+Observe that when we compute the row multipliers to put into the lower triangle of  L
+ , they will all be less than one in magnitude:
+
+L1 = eye(4);  L1(2:4,1) = -A(2:4,1)/A(1,1)
+A1 = L1*A
+L1 =
+    1.0000         0         0         0
+   -0.2941    1.0000         0         0
+   -0.5294         0    1.0000         0
+   -0.2353         0         0    1.0000
+A1 =
+   17.0000    2.0000    3.0000   13.0000
+         0   11.4118    9.1176    4.1765
+         0    5.9412    5.4118    5.1176
+         0   13.5294   14.2941   -1.0588
+In the next step, however, we would have a multiplier of size 13.5/11.4 > 1. We can avoid this by swapping rows 2 and 4, using a permutation matrix.
+
+P2 = eye(4);  P2([2 4],:) = P2([4 2],:)
+A1 = P2*A1;
+L2 = eye(4);  L2(3:4,2) = -A1(3:4,2)/A1(2,2)
+A2 = L2*A1
+P2 =
+     1     0     0     0
+     0     0     0     1
+     0     0     1     0
+     0     1     0     0
+L2 =
+    1.0000         0         0         0
+         0    1.0000         0         0
+         0   -0.4391    1.0000         0
+         0   -0.8435         0    1.0000
+A2 =
+   17.0000    2.0000    3.0000   13.0000
+         0   13.5294   14.2941   -1.0588
+         0         0   -0.8652    5.5826
+         0         0   -2.9391    5.0696
+Now we must swap rows 3 and 4 to keep the multipliers less than one.
+
+P3 = eye(4);  P3([3 4],:) = P3([4 3],:)
+A2 = P3*A2;
+L3 = eye(4);  L3(4:4,3) = -A2(4:4,3)/A2(3,3)
+A3 = L3*A2
+P3 =
+     1     0     0     0
+     0     1     0     0
+     0     0     0     1
+     0     0     1     0
+L3 =
+    1.0000         0         0         0
+         0    1.0000         0         0
+         0         0    1.0000         0
+         0         0   -0.2944    1.0000
+A3 =
+   17.0000    2.0000    3.0000   13.0000
+         0   13.5294   14.2941   -1.0588
+         0         0   -2.9391    5.0696
+         0         0         0    4.0902
+Here is the product that makes the matrix upper triangular.
+
+U = L3*P3*L2*P2*L1*A
+U =
+   17.0000    2.0000    3.0000   13.0000
+         0   13.5294   14.2941   -1.0588
+         0         0   -2.9391    5.0696
+    0.0000         0   -0.0000    4.0902
+(We no longer get exact zeros in the lower triangle because the product is evaluated from left to right, creating a different sequence of steps.) Of course this product isn't changed if we introduce some extra factors of  I
+ ...
+
+U = L3 * P3*L2/P3 * P3*P2*L1/P2/P3 * P3*P2 * A
+U =
+   17.0000    2.0000    3.0000   13.0000
+         0   13.5294   14.2941   -1.0588
+         0         0   -2.9391    5.0696
+    0.0000         0   -0.0000    4.0902
+This might look like a mess, but we can simplify a lot. First of all, each of these permutations happens to be its own inverse:
+
+U = L3 * P3*L2*P3 * P3*P2*L1*P2*P3 * P3*P2 * A
+U =
+   17.0000    2.0000    3.0000   13.0000
+         0   13.5294   14.2941   -1.0588
+         0         0   -2.9391    5.0696
+    0.0000         0   -0.0000    4.0902
+Next, each permutation  Pk
+  swaps row  k
+  with row  i≥k
+ . This reshuffles the nontrivial multipliers in column  j
+  of  Lj
+ .
+
+P3L2 = P3*L2
+P3P2L1 = P3*P2*L1
+P3L2 =
+    1.0000         0         0         0
+         0    1.0000         0         0
+         0   -0.8435         0    1.0000
+         0   -0.4391    1.0000         0
+P3P2L1 =
+    1.0000         0         0         0
+   -0.2353         0         0    1.0000
+   -0.2941    1.0000         0         0
+   -0.5294         0    1.0000         0
+Finally, the right-multiplications by the  Pk
+  undo the swap effects in the columns of  Lj
+  beyond column  j
+ .
+
+LL2 = P3*L2*P3
+LL1 = P3*P2*L1*P2*P3
+LL2 =
+    1.0000         0         0         0
+         0    1.0000         0         0
+         0   -0.8435    1.0000         0
+         0   -0.4391         0    1.0000
+LL1 =
+    1.0000         0         0         0
+   -0.2353    1.0000         0         0
+   -0.2941         0    1.0000         0
+   -0.5294         0         0    1.0000
+We put all of this together, with one more definition, and find
+
+P = P3*P2;
+U = L3*LL2*LL1*P*A
+U =
+   17.0000    2.0000    3.0000   13.0000
+         0   13.5294   14.2941   -1.0588
+         0         0   -2.9391    5.0696
+    0.0000         0   -0.0000    4.0902
+Thus, let
+
+L = eye(4)/LL1/LL2/L3
+L =
+    1.0000         0         0         0
+    0.2353    1.0000         0         0
+    0.2941    0.8435    1.0000         0
+    0.5294    0.4391    0.2944    1.0000
+We have arrived at  PA=LU
+ .
+
+norm(P*A-L*U)
+ans =
+   1.7764e-15
+Note that we did nothing to control the size of the entries in  U
+ . We could have also swapped columns, too, introducing a permutation on the right. However, in practice there is very rarely stability improved by doing so, and the number of comparisons/memory accesses would go from  O(m2)
+  to a more concerning  O(m3)
+ .
+
+Solving systems
+We can transform  Ax=b
+  into  Pb=PAx=LUx
+ . Hence the entries of  b
+  are permuted the same way as the rows of  A
+ , then there are two triangular solves as usual.
+
+[L,U,P] = lu(A)
+L =
+    1.0000         0         0         0
+    0.2353    1.0000         0         0
+    0.2941    0.8435    1.0000         0
+    0.5294    0.4391    0.2944    1.0000
+U =
+   17.0000    2.0000    3.0000   13.0000
+         0   13.5294   14.2941   -1.0588
+         0         0   -2.9391    5.0696
+         0         0         0    4.0902
+P =
+     1     0     0     0
+     0     0     0     1
+     0     1     0     0
+     0     0     1     0
+b = (1:4)';  x = U\(L\(P*b))
+x =
+   -0.2640
+   -0.7830
+    1.0271
+    0.3056
+norm(b-A*x)
+ans =
+   1.6012e-15
+It's more common to use a vector of indices to keep track of the permutation and implement multiplication by  P
+  as reordering of the indices.
+
+[L,U,p] = lu(A,'vector')
+L =
+    1.0000         0         0         0
+    0.2353    1.0000         0         0
+    0.2941    0.8435    1.0000         0
+    0.5294    0.4391    0.2944    1.0000
+U =
+   17.0000    2.0000    3.0000   13.0000
+         0   13.5294   14.2941   -1.0588
+         0         0   -2.9391    5.0696
+         0         0         0    4.0902
+p =
+     1     4     2     3
+x = U\ (L\ (b(p)) )
+x =
+   -0.2640
+   -0.7830
+    1.0271
+    0.3056
+Psychologically lower triangular matrices
+If you use the built in lu with two outputs, you get not  L
+  but  P−1L
+ .
+
+[PL,U] = lu(A)
+PL =
+    1.0000         0         0         0
+    0.2941    0.8435    1.0000         0
+    0.5294    0.4391    0.2944    1.0000
+    0.2353    1.0000         0         0
+U =
+   17.0000    2.0000    3.0000   13.0000
+         0   13.5294   14.2941   -1.0588
+         0         0   -2.9391    5.0696
+         0         0         0    4.0902
+The backslash is smart enough to recognize a 'psychologically lower triangular' matrix like this and do permuted triangular substitution with it. So the correct usage of the factors is just
+
+x = U\(PL\b)
+x =
+   -0.2640
+   -0.7830
+    1.0271
+    0.3056
+The (in)stability of pivoted LU factorization
+(This is a bit of the material in Lecture 22.) By the text's technical definitions, LU factorization with row pivoting is backward stable. However, the  O(ϵmachine)
+  hides a so-called growth factor  ρ
+  that can be as large as  2m−1
+  in the  m×m
+  case. While this bound is uniform with respect to the data, it's so large that it can easily overwhelm the machine precision.
+
+m = 6;
+A = tril(-ones(m,m),-1) + eye(m);
+A(:,m) = 1
+A =
+     1     0     0     0     0     1
+    -1     1     0     0     0     1
+    -1    -1     1     0     0     1
+    -1    -1    -1     1     0     1
+    -1    -1    -1    -1     1     1
+    -1    -1    -1    -1    -1     1
+The row pivoting strategy makes no swaps during elimination. The problem lies with the  U
+  matrix.
+
+[L,U] = lu(A);
+U
+U =
+     1     0     0     0     0     1
+     0     1     0     0     0     2
+     0     0     1     0     0     4
+     0     0     0     1     0     8
+     0     0     0     0     1    16
+     0     0     0     0     0    32
+There is the factor  2m−1
+ . Since machine epsilon is  2−52
+ , we are going to have trouble solving this system for  m>50
+ .
+
+m = 53;
+A = tril(-ones(m,m),-1) + eye(m);
+A(:,m) = 1;
+x = (1:m)'/m;
+b = A*x;
+norm(x - A\b) / norm(x)
+ans =
+    0.0169
+That's 1% error in 16 digit arithmetic! And the matrix is very well conditioned:
+
+cond(A)
+ans =
+   23.6549
+Indeed, the QR factorization has no trouble at all with this problem.
+
+[Q,R] = qr(A);
+norm(x - R\(Q'*b)) / norm(x)
+ans =
+   4.7754e-15
+It's surprising that an unstable algorithm (PLU) is chosen by default for linear systems when a fully reliable alternative (QR) is available. It appears (but is not fully known) that matrices that cause this instability all more or less look like this example, and they are astronomically rare---both in the sense of probability and in lived experience with applications. Since QR takes twice as many flops as LU, it's hardly ever used for square systems.

@@ -1,0 +1,71 @@
+Lecture 8: Gram-Schmidt orthogonalization
+Modified Gram-Schmidt
+The classical Gram-Schmidt process is numerically unstable, as will be seen in the next lecture. A mathematically equivalent formulation, which we call MGS, turns out to be a lot better.
+
+In classical GS the key step is to project a new column of  A
+  onto the orthogonal complement of the span of all the previous  qj
+ s. We express this projection as  Pj=I−QjQ∗j
+ , where  Qj=[q1q2⋯qj]
+ . For example:
+
+[Qj,~] = qr(rand(6,3),0);   % get a random Q with 3 ON columns
+Pj = eye(6) - Qj*Qj';
+svd(Pj)       % all 1 or 0, as required for an orthogonal projector
+ans =
+
+    1.0000
+    1.0000
+    1.0000
+    0.0000
+    0.0000
+    0.0000
+It's intuitively clear that we get the same result by subtracting off projections onto each column, one at a time.
+
+Mj = eye(6) - Qj(:,1)*Qj(:,1)' - Qj(:,2)*Qj(:,2)' - Qj(:,3)*Qj(:,3)';
+norm(Pj-Mj)
+ans =
+
+   1.2505e-16
+We can also factor this into a product of orthogonal projectors:
+
+Gj = eye(6);
+for k = 1:3
+    Gj = Gj*(eye(6)-Qj(:,k)*Qj(:,k)');
+end
+norm(Gj-Pj)
+ans =
+
+   2.3849e-16
+This works because the "cross-terms" you get in the products have inner products between different  qk
+  and thus are zero. In MGS, we apply each of these factors, as soon at it is found, to \emph{all} the columns of  A
+  at once. By the time we are ready to choose a new column from  A
+ , it is already orthgonalized against the entire ON basis set found so far.
+
+Operation counts
+It's standard in numerical analysis to compare the performance of algorithms by counting the number of floating point operations, or flops, that are performed as a function of the input size. By either form of QR factorization, the number of flops is  ∼2mn2
+  in asymptotic notation. Let's see if we observe the implicit proportionality with respect to  n2
+ .
+
+n_ = 50:50:500;
+time_ = [];
+for k = 1:length(n_)
+    n = n_(k);
+    A = rand(1200,n);
+    Q = zeros(1200,n);  R = zeros(600,600); 
+    
+    tic
+    R(1,1) = norm(A(:,1));
+    Q(:,1) = A(:,1)/R(1,1);
+    for j = 2:n
+        R(1:j-1,j) = Q(:,1:j-1)'*A(:,j);
+        v = A(:,j) - Q(:,1:j-1)*R(1:j-1,j);
+        R(j,j) = norm(v);
+        Q(:,j) = v/R(j,j);
+    end
+    time_(k) = toc;
+end
+loglog(n_,time_,'-o',n_,(n_/500).^2,'--')
+axis tight, xlabel('n'), ylabel('elapsed time')
+
+Flops aren't everything. On massively parallel computers, for example, the time needed for memory access and communication often competes with or dwarfs the floating point arithmetic.
+

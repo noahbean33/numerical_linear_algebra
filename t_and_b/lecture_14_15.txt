@@ -1,0 +1,71 @@
+Lectures 14-15: Stability¶
+Broadly speaking, stability refers to the sensitivity of an algorithm to perturbations. Since our algorithms are performed in double precision arithmetic, they are constantly undergoing small perturbations. If the result is more strongly affected by these than the conditioning of the underlying problem suggests, then we call the algorithm unstable.
+
+Quadratic formula
+Consider a polynomial whose roots are widely separated in scales.
+
+format long e, format compact
+p = poly( [1e6 1e-6] )
+p =
+     1.000000000000000e+00    -1.000000000001000e+06     1.000000000000000e+00
+The roots of this polynomial are well conditioned with respect to perturbations in its coefficients.
+
+delta = [];
+for j = 1:2000
+    r = roots(p.*(1+1e-11*randn(1,3)));
+    delta = [ delta; norm( (sort(r)-[1e-6;1e6])./[1e-6;1e6], inf ) ];
+end
+histogram(delta,24)
+xlabel('relative change to roots'), ylabel('number of cases')
+
+Let's return to middle school and apply the quadratic formula to find the roots. First is the discriminant.
+
+a = p(1);  b = p(2);  c = p(3);
+d = sqrt(b^2-4*a*c)
+d =
+     9.999999999990000e+05
+And now, the roots.
+
+r1 = (-b+d)/(2*a),  r2 = (-b-d)/(2*a)
+r1 =
+     1000000
+r2 =
+     1.000007614493370e-06
+WTF? The number of accurate digits in r2 is just 5.
+
+-log10(abs(r2-1e-6)/1e-6)
+ans =
+     5.118358987126217e+00
+While multiplication and division are perfectly conditioned operations, addition/subtraction are not when cancellation is involved; the condition number in the infinity norm is inversely related to the absolute value of the result.
+
+s = -b-d, kappa = 2*norm([-b,d],inf)/abs(s)
+s =
+     2.000015228986740e-06
+kappa =
+     9.999923855656100e+11
+This explains the loss of accuracy. On the other hand, we can use the identity
+
+r1r2=ca
+ 
+and compute the smaller root accurately.
+
+c/(a*r1)
+ans =
+     1.000000000000000e-06
+Three levels of performance
+Ultimately we would like accuracy, that is, as small an error as the machine allows. For poorly conditioned problems, this is not a realistic expectation. Instead, we can hope for a small backward error, which is the distance between the original data and the data that produces the result we actually computed. An algorithm that can guarantee a small backward error is backward stable. The accuracy of a backward stable algorithm is proportional jointly to the condition number of its problem and the machine precision.
+
+Finally, even backward stability is not always realistic. For example, if a result is supposed to have a particular structure, like symmetry or orthogonality, we cannot hope that the perturbations of floating point representation will preserve that structure. Hence no data could have produced it exactly. Instead we have to look for nearby data that would produce a nearby result having the required structure. Algorithms that can guarantee such situations are called stable. In some computations that is all we can assert.
+
+It's worth emphasizing using backward stable algorithms is no guarantee of accuracy. Consider the quadratic formula example above. Floating point addition is backward stable. However, it introduced its own condition number, which is vastly larger than that of the original problem of finding roots, into the chain of computations. Once that step is executed, accuracy is lost forever. As a rule of thumb, any operation that ends with results much smaller in magnitude than either the data or some intermediate values has to be scrutinized for the possibility of subtractive cancellation---or more generally, large intermediate condition numbers.
+
+It's instructive to check the backward error of our bad root calculation. In this case, the polynomial whose exact roots were found that is closest to the original is:
+
+pp = poly([r1 r2]);
+alpha = pp'\p';   % multiple with closest approximation to p
+(p-alpha*pp)./p
+ans =
+     1.110223024625157e-16     1.164153218268184e-16    -7.614493369834108e-06
+This is not a small change to the original polynomial---i.e., the backward error is large.
+
+This is a nice moment to reflect on a quote of T. W. Körner: "At its highest level, numerical analysis is a mixture of science, art, and barroom brawl."

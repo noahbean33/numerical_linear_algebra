@@ -1,0 +1,175 @@
+Lecture 34: Arnoldi for eigenvalues
+The convergence of the Ritz values (eigenvalues of  Hn
+ ) to the eigenvalues of  A
+  is very complicated in general. As a rule, though, the iteration tends to find outlying or extreme eigenvalues first, only gradually resolving the interior ones.
+
+Here is a matrix with random eigenvalues of magnitude about 15 or less, plus two prescribed eigenvalues lying a little outside that disk.
+
+m = 200;
+rng(231)
+A = [ randn(m-2,m-2), zeros(m-2,2); zeros(2,m-2), diag([23,20i]) ];
+b = randn(m,1);  b = b/norm(b);
+plot(eig(A),'.')
+axis([-22 22 -22 22]), axis equal
+
+Here we compute the Arnolid iteration. Every so often we plot the eigenvalues of  Hn
+ , plus the "Arnoldi lemniscate" defined as
+
+{z∈C:∣∣pn(z)∣∣=∥pn(A)b∥∥b∥},
+ 
+where  pn(A)
+  is the characteristic polynomial of  Hn
+  (and the solution to a minimization problem for  A
+  as described in the text). The interior of this curve is more or less what the iteration perceives as the spectrum of  A
+ .
+
+[Q,H] = arnoldi(A,b,24);
+
+[X,Y] = meshgrid(linspace(-25,25,100));
+Z = X + 1i*Y;
+
+plt = 1;
+for n = 5:8
+    subplot(2,2,plt)
+    plot(eig(A),'.')
+    axis([-25 25 -25 25]), axis equal
+    hold on
+
+    Hn = H(1:n,1:n);
+    plot(eig(Hn),'r.')
+    pn = poly(Hn);
+    c = norm(polyvalm(pn,A)*b);
+    W = polyval(pn,Z);
+    contour(X,Y,abs(W),c*[1 1])
+    title(sprintf('n = %i',n))
+    axis off
+    plt = plt+1;
+end
+
+You can see how the lemniscate bulges out to include the most extreme eigenvalue, then pinches off once it is located. The next to be found is the upper outlier.
+
+plt = 1;
+for n = 11:14
+    subplot(2,2,plt)
+    plot(eig(A),'.')
+    axis([-20 20 -20 20]), axis equal
+    hold on
+
+    Hn = H(1:n,1:n);
+    plot(eig(Hn),'r.')
+    pn = poly(Hn);
+    c = norm(polyvalm(pn,A)*b);
+    W = polyval(pn,Z);
+    contour(X,Y,abs(W),c*[1 1])
+    title(sprintf('n = %i',n))
+    axis off
+    plt = plt+1;
+end
+
+The convergence to each outlier eigenvalue is roughly linear once they have been located.
+
+for n = 1:24
+    Hn = H(1:n,1:n);
+    theta = eig(Hn);
+    err(n,1) = min(abs(theta-23));
+    err(n,2) = min(abs(theta-20i));
+end
+semilogy(err,'.-')
+
+eigs
+MATLAB has a built-in function eigs to compute eigenvalues by the Arnoldi iteration. It should be used for matrices whose size is larger than a few thousand. We demonstrate it here for a discretized Laplacian.
+
+G = numgrid('S',100);
+A = delsq(G);
+m = length(A)
+m =
+
+        9604
+[V,D] = eigs(A,8);
+whos D V
+Name         Size             Bytes  Class     Attributes
+
+  D            8x8                512  double              
+  V         9604x8             614656  double
+The resulting output should satisfy  AV=VD
+ , even though  V
+  is not square.
+
+By default the outlying eigenvalues are found first.
+
+diag(D)
+ans =
+
+    7.9980
+    7.9950
+    7.9950
+    7.9919
+    7.9899
+    7.9899
+    7.9869
+    7.9869
+However, the algorithm will use shift-and-invert to find eigenvalues closest to any complex number we specify.
+
+[V,D] = eigs(A,8,0);  % closest to zero
+diag(D)
+ans =
+
+    0.0131
+    0.0131
+    0.0101
+    0.0101
+    0.0081
+    0.0050
+    0.0050
+    0.0020
+Nonnormality
+For most purposes, a normal matrix can be idealized as a collection of scalars in an orthogonal basis. A nonnormal matrix is qualitatively more complicated. They may have very badly conditioned eigenvalues and complicate the estimation of eigenvalues by power and Arnoldi iterations.
+
+For instance, matrices with normal random entries tend to be close to normal. However, triangular random matrices are not.
+
+A = randn(50,50);   % close to normal
+mu = max(abs(eig(A)));
+A = A / (1.03*mu);  % ensure spectral radius < 1
+[V,D] = eig(A);
+cond(V)
+
+B = triu(A);
+mu = max(abs(diag(B)));
+B = B / (1.03*mu);  % ensure spectral radius < 1
+[V,D] = eig(B);
+cond(V)
+ans =
+
+   62.9529
+
+
+ans =
+
+   5.7082e+19
+The sensitivity of eigenvalues to perturbations is dramatically different in the two cases.
+
+clf
+M = {A,B};
+for k = 1:2
+    subplot(1,2,k);
+    lam = eig(M{k});
+    plot(real(lam),imag(lam),'x')
+    hold on, axis equal
+    for i = 1:40
+        plot(eig(M{k}+0.01*randn(50)),'k.')
+    end
+end
+
+There are many other consequences to nonnormality. For example, the norms of powers of a matrix are asymptotically governed by the spectral radius (largest absolute value of the spectrum). In the normal case, the relationship holds for all time, but in the nonnormal case there can be an arbitrarily long transient behavior that is totally different.
+
+clf
+nrm = [];
+for k = 1:2
+    for n = 1:100
+      nrm(n,k) = norm(M{k}^n);
+    end
+end
+
+semilogy(nrm,'-o')
+
+For much more about these matters, look at Spectra and Pseudospectra by Trefethen and Embree.

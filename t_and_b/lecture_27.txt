@@ -1,0 +1,172 @@
+Lecture 27: Power/inverse iteration¶
+Rayleigh quotient
+Suppose  A
+  is  m×m
+ . We can define a function called the Rayleigh quotient,
+
+r(v)=v∗Avv∗v,
+ 
+for all  v∈Cm
+ . As shown in the text, the stationary points of  r
+  are the eigenvectors of  A
+ . More specifically, if  v
+  is close to an eigenvector  x
+  with eigenvalue  λ
+ , then
+
+|r(v)−λ|=O(∥v−x∥2)
+ 
+in general, and
+
+|r(v)−λ|=O(∥v−x∥22)
+ 
+if  A
+  is hermitian. Thus we can turn an eigenvector estimate into an eigenvalue estimate.
+
+For example, let
+
+A = [2 1 1; 1 3 1; 1 1 4]
+[V,D] = eig(A);
+A =
+
+     2     1     1
+     1     3     1
+     1     1     4
+We'll color the unit sphere according to the value of the Rayleigh quotient at each point on it.
+
+[X,Y,Z] = sphere(100);
+v = [X(:) Y(:) Z(:)]';
+Av = A*v;
+Ray = sum( conj(v).*Av, 1 );
+surf(X,Y,Z,reshape(Ray,size(X)))
+hold on
+plot3(V(1,:),V(2,:),V(3,:),'k*')
+
+title('Rayleigh quotient values on the unit sphere')
+shading interp, axis square
+view(107,20)
+xlabel('x'), ylabel('y'), zlabel('z')
+
+The eigenvectors (their projections onto the sphere) are shown with black markers. The max of  r(v)
+  is in the middle of the yellow spot. It's the third eigenvector of  A
+  as computed above, and close to  (0.4,0.5,0.75)
+ .
+
+x = V(:,3);  
+v = [0.4;0.5;0.75];
+evec_err = norm(x-v)
+evec_err =
+
+    0.0216
+eval_est = v'*A*v/(v'*v)
+eval_err = norm(eval_est-D(3,3))
+eval_est =
+
+    5.2134
+
+
+eval_err =
+
+   9.5213e-04
+Power iteration
+Now that we can turn an eigenvector estimate into an (even better, in the hermitian case) eigenvalue estimate, we turn to finding such eigenvectors. Clearly, if  A=XDX−1
+  and  k
+  is a positive integer, then  Ak=XDkX−1
+ . That is,  A
+  and  Ak
+  share the same eigenvectors, but the eigenvalues of  Ak
+  are raised to the  k
+ th power. Note that if there is an eigenvalue  λ1
+  such that  |λ1|>|λj|
+  for all  j>1
+ , the ratio  |λ1/λj|k→0
+  as  k→∞
+ , and in that case  Akv
+  is dominated by the eigenvector  x1
+  that belongs with  λ1
+ , for practically any vector  v
+ . This leads us to the power iteration.
+
+v = rand(3,1);
+for k = 1:20
+    v = v/norm(v);
+    evec_err(k) = min(norm(v-x),norm(v+x));
+    v = A*v;
+end
+semilogy(evec_err)
+
+Since  A
+  is symmetric, we should expect around 12 accurate digits in an eigenvalue estimate derived from a Rayleigh quotient with our final  v
+ .
+
+abs( v'*A*v/(v'*v) - D(3,3) )
+ans =
+
+   1.9007e-13
+diag(D)
+ans =
+
+    1.3249
+    2.4608
+    5.2143
+(5-5.2)/(5-2.46)
+ans =
+
+   -0.0787
+
+Now how much would you pay? But wait--there's more!
+
+Inverse iteration
+If  λJ
+  is an eigenvalue of  A
+ , then  (λJ−μ)−1
+  is an eigenvalue of  (A−μI)−1
+ , with the same eigenvector. If  μ
+  is closer to  λJ
+  than to any other  λj
+ , a power iteration on  (A−μI)−1
+  should converge very quickly. This amounts to repeatedly solving a linear system with the matrix  (A−μI)
+ .
+
+for mu = [4 4.5 5.1]
+    [L,U] = lu(A-mu*eye(3));
+    v = rand(3,1);
+    for k = 1:20
+        v = v/norm(v);
+        evec_err(k) = min(norm(v-x),norm(v+x));
+        v = U\(L\v);
+    end
+    semilogy(evec_err)
+    hold on
+end
+
+Rayleigh quotient iteration
+The coup de grâce: a better shift means a better eigenvector estimate, which means a better eigenvalue estimate, which is an even better shift, etc. This feedback loop causes cubic convergence in the hermitian case, which is rare--and fast! It's so fast that we pretty well need extended precision to see it.
+
+digits(60)
+A = vpa(A);
+lambda = eig(A)
+lambda =
+ 
+ 5.21431974337753518741549770084858048890791963721949943433138
+ 2.46081112718911088347412409730147999190011289045787329828077
+ 1.32486912943335392911037820184993951919196747232262726738785
+v = vpa(ones(3,1));
+for k = 1:5
+    v = v/norm(v);
+    mu = v'*A*v; 
+    fprintf('error in eigenvalue = %.50f\n',double(min(mu-lambda)))
+    v = (A-mu*eye(3))\v;    
+end
+error in eigenvalue = -0.21431974337753517678706316473835613578557968139648
+error in eigenvalue = -0.00120498927917453164254668607213716313708573579788
+error in eigenvalue = -0.00000000019350335636704886234483316195391670519466
+error in eigenvalue = -0.00000000000000000000000000000086272041087647542775
+error in eigenvalue = 0.00000000000000000000000000000000000000000000000000
+[Warning: The system is inconsistent. Solution does not exist.] 
+[> In symengine (line 57)
+  In sym/privBinaryOp (line 903)
+  In \ (line 309)
+  In pymat_eval (line 31)
+  In matlabserver (line 24)]
+Count 'em: The number of leading zeros at least triples with each iteration, and in 5 iterations we get 60 digits of accuracy. 😎

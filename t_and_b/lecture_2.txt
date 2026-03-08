@@ -1,0 +1,136 @@
+Lecture 2: Orthogonal vectors and matrices¶
+With real vectors and matrices, the transpose operation is simple and familiar. It also happens to correspond to what we call the adjoint mathematically. In the complex case, one also has to conjugate the entries to keep the mathematical structure intact. We call this operator the hermitian of a matrix and use a star superscript for it.
+
+format compact
+A = rand(2,4) + 1i*rand(2,4)
+A =
+  Columns 1 through 2
+   8.1472e-01 + 9.5751e-01i   1.2699e-01 + 1.5761e-01i
+   9.0579e-01 + 9.6489e-01i   9.1338e-01 + 9.7059e-01i
+  Columns 3 through 4
+   6.3236e-01 + 9.5717e-01i   2.7850e-01 + 8.0028e-01i
+   9.7540e-02 + 4.8538e-01i   5.4688e-01 + 1.4189e-01i
+Aadjoint = A'
+Aadjoint =
+   8.1472e-01 - 9.5751e-01i   9.0579e-01 - 9.6489e-01i
+   1.2699e-01 - 1.5761e-01i   9.1338e-01 - 9.7059e-01i
+   6.3236e-01 - 9.5717e-01i   9.7540e-02 - 4.8538e-01i
+   2.7850e-01 - 8.0028e-01i   5.4688e-01 - 1.4189e-01i
+To get plain transpose, use a .^ operator.
+
+Atrans = A.'
+Atrans =
+   8.1472e-01 + 9.5751e-01i   9.0579e-01 + 9.6489e-01i
+   1.2699e-01 + 1.5761e-01i   9.1338e-01 + 9.7059e-01i
+   6.3236e-01 + 9.5717e-01i   9.7540e-02 + 4.8538e-01i
+   2.7850e-01 + 8.0028e-01i   5.4688e-01 + 1.4189e-01i
+Inner products
+If u and v are column vectors of the same length, then their inner product is  u∗v
+ . The result is a scalar.
+
+u = [ 4; -1; 2+2i ],  v = [ -1; 1i; 1 ], 
+innerprod = u'*v
+The inner product has geometric significance. It is used to define length through the 2-norm,
+
+length_u_squared = u'*u
+sum( abs(u).^2 )
+norm_u = norm(u)
+It also defines the angle between two vectors as a generalization of the familiar dot product.
+
+cos_theta = (u'*v) / ( norm(u)*norm(v) )
+The angle may be complex when the vectors are complex!
+
+theta = acos(cos_theta)
+The operations of inverse and hermitian commute.
+
+A = rand(4,4)+1i*rand(4,4);  (inv(A))'
+inv(A')
+So we just write  A−∗
+  for either case.
+
+Orthogonality
+Orthogonality, which is the multidimensional extension of perpendicularity, means that  cosθ=0
+ , i.e., that the inner product between vectors is zero. A collection of vectors is orthogonal if they are all pairwise orthogonal.
+
+Don't worry about how we are creating the vectors here for now.
+
+[Q,~] = qr(rand(5,3),0)
+Q =
+
+  -4.9269e-01  -4.8065e-01   1.7797e-01
+  -5.4776e-01  -3.5835e-01  -5.7775e-01
+  -7.6793e-02   4.7542e-01  -6.3431e-01
+  -5.5235e-01   3.3908e-01   4.8084e-01
+  -3.8241e-01   5.4733e-01   3.1118e-02
+Since  Q∗Q
+  is a matrix of all inner products between columns of  Q
+ , those columns are orthogonal if and only if that matrix is diagonal.
+
+QhQ = Q'*Q
+QhQ =
+
+   1.0000e+00   1.6133e-16   5.3630e-18
+   1.6133e-16   1.0000e+00  -1.2726e-16
+   5.3630e-18  -1.2726e-16   1.0000e+00
+In fact we have a stronger condition here: the columns are orthonormal, meaning that they are orthogonal and each has 2-norm equal to 1.
+
+Given any other vector of length 5, we can compute its inner product with each of the columns of  Q
+ .
+
+u = rand(5,1);  c = Q'*u
+c =
+
+  -1.1757e+00
+   1.0098e+00
+  -3.8850e-01
+We can then use these coefficients to find a vector in the column space of  Q
+ .
+
+v = Q*c
+v =
+
+   2.4774e-02
+   5.0662e-01
+   8.1680e-01
+   8.0501e-01
+   9.9021e-01
+As explained in the text,  r=u−v
+  is orthogonal to all of the columns of  Q
+ .
+
+r = u-v;  Q'*r
+ans =
+
+  -3.9899e-17
+   2.9837e-16
+   1.3878e-16
+Consequently, we have decomposed  u=v+r
+  into the sum of two orthogonal parts, one lying in the range of  Q
+ .
+
+v'*r
+ans =
+
+   2.9143e-16
+Unitary matrices
+We just saw that a matrix whose columns are orthonormal is pretty special. It becomes even more special if the matrix is also square, in which case we call it unitary. (In the real case, such matrices are confusingly called orthogonal. Ugh.) Say  Q
+  is unitary and  m×m
+ . Then  Q∗Q
+  is an  m×m
+  identity matrix---that is,  Q∗=Q−1
+ ! It can't get much easier in terms of finding the inverse of a matrix.
+
+[Q,~] = qr(rand(5,5)+1i*rand(5,5));
+abs( inv(Q) - Q' )
+The rank of  Q
+  is  m
+ , so continuing the discussion above, the original vector  u
+  lies in its column space. Hence the remainder  r=0
+ .
+
+c = Q'*u; 
+v = Q*c;
+r = u - v
+This is another way to arrive at a fact we already knew: Multiplication by  Q∗=Q−1
+  changes the basis to the columns of  Q
+ .

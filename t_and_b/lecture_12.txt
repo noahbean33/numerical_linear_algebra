@@ -1,0 +1,110 @@
+Lecture 12: Condition numbers¶
+In numerical computing, as we will soon see, we constantly make small errors in representing real numbers and the operations on them. Consequently we need to know whether the problems we want to solve are very sensitive to perturbations. The condition number measures this senstivity.
+
+Polynomial roots
+The roots of a polynomial become sensitive to the values of the coefficients in the monomial basis when roots are relatively close to one another. Consider, for example,
+
+p = poly([1,1,1,0.4,2.2]);      % polynomial with these as roots
+ q = p + 1e-9*randn(size(p));    % small changes to its coefficients
+ format long, roots(q)
+ans =
+
+  2.199999983865907 + 0.000000000000000i
+  1.000139183421948 + 0.000225276870781i
+  1.000139183421948 - 0.000225276870781i
+  0.999721641527813 + 0.000000000000000i
+  0.400000002917564 + 0.000000000000000i
+Observe that the triple root at 1 changed a lot more than the size of the perturbation would suggest, while the other two roots changed by an amount close to  10−9
+ . The effect can be more dramatically shown using the Wilkinson polynomial.
+
+p = poly(1:20);
+plot(1:20,0,'ko'), hold on
+for k = 1:500
+   q = p.*(1+1e-9*randn(size(p)));  % relative perturbations
+   r = roots(q);
+   plot(real(r),imag(r),'.')
+end
+
+Clearly, having roots close together is not the only way to get sensitivity in the roots. In fact we can't accurately compute the roots even without perturbation to the data:
+
+roots(p)
+ans =
+
+  20.000025067150030
+  18.999711616114300
+  18.001325588115538
+  16.996775933863130
+  16.004118811901026
+  14.998789417426167
+  13.994662465567782
+  13.011037500812872
+  11.987895363460201
+  11.008916691876841
+   9.995371923454529
+   9.001777036204514
+   7.999506222071467
+   7.000098926981961
+   5.999986252392936
+   5.000001246518829
+   3.999999934630949
+   3.000000001450744
+   2.000000000006418
+   0.999999999999694
+Matrix condition number
+We have particular interest in the condition number of the problem "given square matrix  A
+  and vector  b
+ , find vector  x
+  such that  Ax=b
+ ." More simply: "map  b
+  to  A−1b
+ ." The relative condition number of this problem is bounded above by the matrix condition number  κ(A)=∥A∥∥A−1∥
+ . Furthermore, in any particular case there exist perturbations to the data such that the upper bound is achieved.
+
+format short e
+A = hilb(5);  kappa = cond(A)
+kappa =
+
+   4.7661e+05
+The importance of relative condition numbers is that they explain accuracy in dimensionless terms, i.e. significant digits. This condition number says we could "lose" up to 5 or so digits in the passage from data to result. So we make relative perturbations to  b
+  and see the relative effect on the result.
+
+perturb = @(z,ep) z.*(1 + ep*(2*rand(size(z))-1));
+x = 0.3+(1:5)';  b = A*x;
+bound = 1e-10*kappa
+for k = 1:8
+    bb = perturb(b,1e-10);
+    fprintf(' relative error = %.2e\n', norm( A\bb - x ) / norm( x ) )
+end
+bound =
+
+   4.7661e-05
+
+ relative error = 6.83e-07
+ relative error = 7.47e-08
+ relative error = 6.05e-06
+ relative error = 8.56e-06
+ relative error = 1.31e-06
+ relative error = 4.15e-06
+ relative error = 1.23e-07
+ relative error = 4.04e-06
+The same holds for perturbations to  A
+ , though the error has higher-order terms that vanish only in the limit of infinitesimal perturbations.
+
+x = 0.3+(1:5)';  b = A*x;
+bound = 1e-10*kappa
+for k = 1:8
+    AA = perturb(A,1e-10);
+    fprintf(' relative error = %.2e\n', norm( AA\b - x ) / norm( x ) )
+end
+bound =
+
+   4.7661e-05
+
+ relative error = 5.39e-07
+ relative error = 1.03e-06
+ relative error = 2.32e-06
+ relative error = 1.99e-07
+ relative error = 5.80e-06
+ relative error = 2.40e-08
+ relative error = 7.13e-07
+ relative error = 6.53e-07

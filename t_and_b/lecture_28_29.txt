@@ -1,0 +1,116 @@
+Lectures 28 and 29: The Francis QR algorithm
+Simultaneous iteration¶
+If we perform power iteration simultaneously on independent vectors, and  A
+  has eigenvalues of distinct magnitudes, then the content of each vector is dominated by the eigenvectors sorted in order. QR factorization thus reveals these eigenvectors in order, and we can approximately diagonalize  A
+  as the iteration continues.
+
+A = magic(6)
+A =
+
+    35     1     6    26    19    24
+     3    32     7    21    23    25
+    31     9     2    22    27    20
+     8    28    33    17    10    15
+    30     5    34    12    14    16
+     4    36    29    13    18    11
+We symmetrize the matrix and find a similar tridiagonal substitute.
+
+A = hess(A+A');
+lambda = eig(A);
+[~,idx] = sort(abs(lambda));
+lambda = lambda(idx)
+lambda =
+
+    5.8213
+    8.8418
+  -21.0276
+  -69.2592
+   75.6237
+  222.0000
+We'll track progress by means of the sizes of the subdiagonal elements.
+
+Q = eye(6);
+subdiag = [];
+for k = 1:30
+    Z = A*Q;
+    [Q,R] = qr(Z);  % Q converges to eigenvectors
+    D = Q'*A*Q;     % D converges to diagonal
+    subdiag = [subdiag; diag(D,-1)'];
+end
+semilogy(abs(subdiag),'-o')
+axis tight
+title('Subdiagonal terms in SI')
+xlabel('k'), ylabel('|a^{(k)}_{j+1,j}|')
+
+The graph confirms that we are converging to all the eigenvalues linearly.
+
+Unshifted QR iteration
+The unshifted QR iteration is algebraically equivalent to SI.
+
+D = A;
+subdiag = [];
+for k = 1:30
+    [Q,R] = qr(D);
+    D = R*Q;
+    subdiag = [subdiag; diag(D,-1)'];
+end
+semilogy(abs(subdiag),'-o')
+axis tight
+title('Subdiagonal terms in QR')
+xlabel('k'), ylabel('|a^{(k)}_{j+1,j}|')
+
+Shifted QR iteration
+As stated above, the SI/QR iteration finds eigenvalues in order sorted by magnitude.
+
+D
+D =
+
+  222.0000   -0.0000    0.0000    0.0000    0.0000    0.0000
+   -0.0000   74.8884  -10.2952   -0.0000    0.0000    0.0000
+         0  -10.2952  -68.5239    0.0000   -0.0000    0.0000
+         0         0    0.0000  -21.0276   -0.0000    0.0000
+         0         0         0   -0.0000    8.8418   -0.0000
+         0         0         0         0   -0.0000    5.8213
+This fact is exploited by using the lower right element in a shift-and-invert strategy.
+
+D = A;  m = length(A);
+subdiag = [];
+for k = 1:8
+    mu = D(m,m);
+    [Q,R] = qr(D - mu*eye(m));
+    D = R*Q + mu*eye(m);
+    subdiag = [subdiag; diag(D,-1)'];
+end
+semilogy(abs(subdiag),'-o')
+axis tight
+title('Subdiagonal terms in shifted QR')
+xlabel('k'), ylabel('|a^{(k)}_{j+1,j}|')
+
+We're seeing cubic convergence for one eigenvalue. (The values are impossibly small because we haven't maintained true symmetry, thereby dodging the effects of roundoff.)
+
+format short e
+D
+D =
+
+   2.2192e+02   4.7716e+00   4.1744e-14  -3.6054e-14  -1.9004e-14   2.2813e-14
+   4.7716e+00  -6.0339e+01   3.4682e+01   7.6050e-15  -5.0902e-15  -1.7010e-14
+            0   3.4682e+01   6.6786e+01  -3.0881e-01   7.1400e-15   2.4087e-14
+            0            0  -3.0881e-01  -2.1027e+01   8.1187e-05   1.4624e-14
+            0            0            0   8.1187e-05   5.8213e+00   1.2373e-15
+            0            0            0            0  -9.5164e-88   8.8418e+00
+As discussed in the text, the simple corner shift isn't quite general enough. Instead one uses a Wilkinson shift as described there.
+
+Deflation
+Once an eigenvalue is found in the lower right corner, the eigenvalue problem for the upper left submatrix can be decoupled, leading to the recursive technique of deflation. Note that the subdiagonal is already substantially reduced, so the remaining eigenvalues tend to be found quickly.
+
+D = D(1:m-1,1:m-1);  m = m-1;
+mu = D(m,m);
+[Q,R] = qr(D - mu*eye(m));
+D = R*Q + mu*eye(m)
+D =
+
+   2.2199e+02  -1.6508e+00   1.1573e-15  -3.5874e-14   1.9111e-14
+  -1.6508e+00  -6.1546e+01  -3.2509e+01   5.4401e-15   7.4483e-15
+            0  -3.2509e+01   6.7920e+01   1.1829e-01  -4.1038e-15
+            0            0   1.1829e-01  -2.1027e+01  -1.2008e-14
+            0            0            0   7.4234e-16   5.8213e+00

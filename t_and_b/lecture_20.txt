@@ -1,0 +1,147 @@
+Lecture 20: Gaussian elimination
+To solve the system  Ax=b
+ , you are taught a method of "triangular triangularization." For example...
+
+A = magic(4) + eye(4)
+x = (4:-1:1)';   % exact answer
+b = A*x;
+A =
+
+    17     2     3    13
+     5    12    10     8
+     9     7     7    12
+     4    14    15     2
+Start by introducing zeros below the diagonal in the first column, using row operations.
+
+format rat
+AA = [A b];
+AA(2,:) = AA(2,:) - (5/17)*AA(1,:);
+AA(3,:) = AA(3,:) - (9/17)*AA(1,:);
+AA(4,:) = AA(4,:) - (4/17)*AA(1,:)
+AA =
+
+      17              2              3             13             93       
+       0            194/17         155/17          71/17         963/17    
+       0            101/17          92/17          87/17         574/17    
+       0            230/17         243/17         -18/17        1158/17
+Let's pause to express these operations using matrix algebra. Each row operation is realized by performing the same operation to an identity matrix, resulting in
+
+Li1=I+μieie∗1,
+ 
+where  μi
+  is a multiplier and  ej
+  is the  j
+ th column of  I
+ .
+
+I = eye(4);
+L21 = I + (-5/17)*I(:,2)*I(:,1)';
+L31 = I + (-9/17)*I(:,3)*I(:,1)';
+L41 = I + (-4/17)*I(:,4)*I(:,1)';
+
+L41*(L31*(L21*[A b]))
+ans =
+
+      17              2              3             13             93       
+       0            194/17         155/17          71/17         963/17    
+       0            101/17          92/17          87/17         574/17    
+       0            230/17         243/17         -18/17        1158/17
+But it's clear from a little algebra that the product of the  L
+  factors is very simple:
+
+L1 = L41*L31*L21
+L1 =
+
+       1              0              0              0       
+      -5/17           1              0              0       
+      -9/17           0              1              0       
+      -4/17           0              0              1
+In words, we just accumulate all the mulitpliers for column 1 into a single matrix.
+
+Let's rewind to the start. This time, we'll ignore the  b
+  vector, because we can always apply the  L
+  factors to it later and get the same effect.
+
+A1 = L1*A
+A1 =
+
+      17              2              3             13       
+       0            194/17         155/17          71/17    
+       0            101/17          92/17          87/17    
+       0            230/17         243/17         -18/17
+Next we eliminate in the second column, below the diagonal.
+
+L2 = I;
+L2(3,2) = (-101/194);
+L2(4,2) = (-230/194);
+A2 = L2*A1
+A2 =
+
+      17              2              3             13       
+       0            194/17         155/17          71/17    
+       0              0            129/194        571/194   
+       0              0            338/97        -583/97
+Finally, we have one last operation in column 3. (I've also reached the end of my patience with the rational format.)
+
+format
+L3 = I;
+L3(4,3) = -A2(4,3)/A2(3,3);
+A3 = L3*A2
+A3 =
+
+   17.0000    2.0000    3.0000   13.0000
+         0   11.4118    9.1176    4.1765
+         0         0    0.6649    2.9433
+         0         0         0  -21.4341
+In fact, we should have called this matrix  U
+ , for upper triangular. In summary:
+
+U = L3*(L2*(L1*A))
+U =
+
+   17.0000    2.0000    3.0000   13.0000
+         0   11.4118    9.1176    4.1765
+         0         0    0.6649    2.9433
+         0         0         0  -21.4341
+We resort to our favorite maneuver: reassociate matrix terms.
+
+M = L3*L2*L1
+M =
+
+    1.0000         0         0         0
+   -0.2941    1.0000         0         0
+   -0.3763   -0.5206    1.0000         0
+    2.0853    1.5426   -5.2403    1.0000
+This is a unit lower triangular matrix, with ones on the diagonal. Those terms below the diagonal are not the same individual row multipliers from before:
+
+[ L1(:,1) L2(:,2) L3(:,3) ]
+ans =
+
+    1.0000         0         0
+   -0.2941    1.0000         0
+   -0.5294   -0.5206    1.0000
+   -0.2353   -1.1856   -5.2403
+However, something amazing happens if we take the inverse of the  M
+  matrix above.
+
+L = inv(M)
+L =
+
+    1.0000         0         0         0
+    0.2941    1.0000   -0.0000   -0.0000
+    0.5294    0.5206    1.0000   -0.0000
+    0.2353    1.1856    5.2403    1.0000
+The multipliers are back! So instead of having  U=MA
+ , we'll write  A=LU
+  for a unit lower triangular  L
+  whose elements are the negatives of the row multipliers.
+
+A - L*U
+ans =
+
+   1.0e-14 *
+
+         0         0         0         0
+         0         0         0         0
+   -0.1776   -0.1776   -0.1776   -0.1776
+   -0.2665   -0.3553   -0.5329   -0.3553

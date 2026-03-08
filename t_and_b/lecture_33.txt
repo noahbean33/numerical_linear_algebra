@@ -1,0 +1,94 @@
+Lecture 33: Arnoldi iteration¶
+Suppose  A∈Cm×m
+  and  b∈Cm
+  are given. The  n
+ th Krylov subspace  Kn
+  is the range of a certain  m×n
+  matrix:
+
+A = randn(500,500);
+b = ones(500,1);
+K = b;
+n = 10;
+for j = 1:n-1
+    K = [K A*K(:,j)];
+end
+One way to think of  K
+  is as keeping a history of all the vectors found in the power iteration. For that reason, we suspect that it may be rich in content with the leading eigenvectors of  A
+ , much as with simultaneous iteration. However, it's a poorly conditioned basis as  n
+  grows, since the columns all become parallel to the leading eigenvector.
+
+cond(K)
+ans =
+
+   1.3490e+12
+We'd like a (thin) QR factorization of  K
+ , of course, but once  K
+  has been put into floating point, the information about successive dimensions could be drawn out only through subtractive cancellation. Instead, there is a clever way to arrange the Gram-Schmidt process for this particular matrix.
+
+Say  q1,…,qj
+  is an ONB for  Kj
+ . By construction,  Aqj∈Kj+1
+ . Thus if  qj+1
+  extends the ONB to  Kj+1
+ , it must be that
+
+Aqj=h1jq1+⋯+hnjqn+hj+1,jqj+1.
+ 
+Furthermore,  hij=q∗iAqj
+ . Written out for all  j=1,…,n
+ , this implies
+
+AQn=Qn+1H~n,
+ 
+where  Qj
+  collects  q1,…,qj
+  and  H~n
+  is an  (n+1)×n
+  upper Hessenberg matrix. Adapting the modified Gram-Schmidt algorithm, where the "new column" of a matrix comes from  A
+  times the most recent column, we get the Arnoldi iteration.
+
+m = size(A,1);  n = 50;
+Q= zeros(m,n+1);
+H = zeros(n+1,n);
+Q(:,1) = b/norm(b);
+for j = 1:n
+    v = A*Q(:,j);
+    for i = 1:j
+        H(i,j) = dot(Q(:,i),v);
+        v = v - H(i,j)*Q(:,i);
+    end
+    H(j+1,j) = norm(v);
+    Q(:,j+1) = v/H(j+1,j);
+end
+spy(H);
+
+It's not hard to show that we can project  A
+  into  Kn
+  (in the  Qn
+ -basis) by
+
+Q∗nAQn=Q∗nQn+1H~n=Hn,
+ 
+where  Hn
+  is  H~n
+  with the last row deleted. Eigenvalues of  Hn
+  are eigenvalues of the action of  A
+  as projected to  Kn
+ . As  n→∞
+ , this begins to reveal some of the eigenvalues of  A
+  itself.
+
+lam = eig(A);
+plot(real(lam),imag(lam),'.')
+axis square
+axis equal
+hold on
+for j = 5:n
+    lam = eig(H(1:j,1:j));
+    plot(real(lam),imag(lam),'rx')
+end
+
+We'll look more closely at the convergence in the next lecture. For now, the big idea is to replace a problem on a very high-dimensional space,  Cm
+ , with an analog on a low-dimensional space,  Kn
+ , using a ON basis as provided by the Arnoldi iteration.

@@ -1,0 +1,225 @@
+Lecture 23: Cholesky factorization¶
+Symmetric elimination
+Suppose we have a symmetric (or hermitian) matrix  A
+ . Let's proceed with Gaussian elimination a little differently.
+
+A = magic(4);
+A = A + A' + eye(4)
+A =
+
+    33     7    12    17
+     7    23    17    22
+    12    17    13    27
+    17    22    27     3
+We start as before, with a unit lower triangular  L1
+  that puts zeros in the first column.
+
+L1 = eye(4);  L1(2:4,1) = -A(2:4,1)/A(1,1);
+A1 = L1*A
+A1 =
+
+   33.0000    7.0000   12.0000   17.0000
+         0   21.5152   14.4545   18.3939
+         0   14.4545    8.6364   20.8182
+         0   18.3939   20.8182   -5.7576
+That didn't change the first row of  A
+  at all. If we were to transpose  A1
+  and apply  L1
+  on the left again, it would have the same zeroing effect.
+
+L1*A1'
+ans =
+
+   33.0000         0         0         0
+         0   21.5152   14.4545   18.3939
+         0   14.4545    8.6364   20.8182
+         0   18.3939   20.8182   -5.7576
+This result is symmetric, which is no accident. In fact we can get here simply by
+
+A1 = L1*A*L1'
+A1 =
+
+   33.0000         0         0         0
+         0   21.5152   14.4545   18.3939
+         0   14.4545    8.6364   20.8182
+         0   18.3939   20.8182   -5.7576
+As long as we apply elimination symmetrically on the left and right, we preserve the symmetry of  A
+  as the elimination proceeds.
+
+L2 = eye(4);  L2(3:4,2) = -A1(3:4,2)/A1(2,2);
+A2 = L2*A1*L2'
+A2 =
+
+   33.0000         0         0         0
+         0   21.5152         0         0
+         0         0   -1.0746    8.4606
+         0         0    8.4606  -21.4831
+L3 = eye(4);  L3(4,3) = -A2(4,3)/A2(3,3);
+A3 = L3*A2*L3'
+A3 =
+
+   33.0000         0         0         0
+         0   21.5152         0         0
+         0         0   -1.0746   -0.0000
+         0         0         0   45.1258
+This matrix is (up to roundoff) symmetric and upper triangular, hence diagonal. In summary, we have a symmetric factorization of  A
+ :
+
+L = inv(L1)*inv(L2)*inv(L3);  D = diag(diag(A3));
+norm( A - L*D*L' )
+ans =
+
+   2.8422e-14
+Like unpivoted LU factorization, the  A=LDL∗
+  factorization is unstable. It can be pivoted into stability, but the details are a bit more complex. We're after something more specific, anyhow.
+
+HPD matrices and the Cholesky factorization
+If in addition to symmetry/hermitianness we also know that the quadratic form  x∗Ax
+  is positive for all nonzero  x
+ , then  A
+  is said to be positive definite (often written SPD or HPD). By taking  x=ek
+ , we can see that  akk>0
+ ; i.e., all diagonal entries are positive.
+
+Let's rerun the symmetric factorization, with a matrix guaranteed to be HPD.
+
+B = A'*A/100
+B =
+
+   15.7100    9.7000   11.3000   10.9000
+    9.7000   13.5100   12.9000   11.5000
+   11.3000   12.9000   13.3100   10.1000
+   10.9000   11.5000   10.1000   15.1100
+Our usual move here is to apply a unit lower triangular matrix. This leaves us with a diagonal term that ended up in the  D
+  matrix above. But instead we could distribute that term between the symmetric factors: because  b11>0
+ , we can define
+
+c = sqrt(B(1,1));
+L1 = eye(4);  
+L1(1,1) = 1/c;
+L1(2:4,1) = -B(2:4,1)/c^2
+L1 =
+
+    0.2523         0         0         0
+   -0.6174    1.0000         0         0
+   -0.7193         0    1.0000         0
+   -0.6938         0         0    1.0000
+Now the row elimination step still makes the zeros we want...
+
+L1*B
+ans =
+
+    3.9636    2.4473    2.8510    2.7500
+         0    7.5208    5.9229    4.7699
+    0.0000    5.9229    5.1821    2.2598
+         0    4.7699    2.2598    7.5473
+...and the symmetric elimination introduces the zeros and the 1 on the diagonal.
+
+B1 = L1*B*L1'
+B1 =
+
+    1.0000         0    0.0000         0
+         0    7.5208    5.9229    4.7699
+    0.0000    5.9229    5.1821    2.2598
+         0    4.7699    2.2598    7.5473
+A few details are between us and an algorithm. First of all, can we continue? The algorithm proceeds recursively (or iteratively, depending on your point of view) if  B1
+  is HPD, so that we have a positive number in the (2,2) pivot spot. This is automatic: if  Z
+  is any nonsingular matrix, then
+
+x∗(ZBZ∗)x=(Z∗x)∗B(Z∗x)≥0,
+ 
+and it can be zero only if  Z∗x=0
+ , which implies  x=0
+ .
+
+c = sqrt(B1(2,2));
+L2 = eye(4);  L2(2,2) = 1/c;
+L2(3:4,2) = -B1(3:4,2)/c^2;
+B2 = L2*B1*L2'
+B2 =
+
+    1.0000         0    0.0000         0
+         0    1.0000   -0.0000   -0.0000
+    0.0000   -0.0000    0.5175   -1.4967
+         0         0   -1.4967    4.5221
+c = sqrt(B2(3,3));
+L3 = eye(4);  L3(3,3) = 1/c;
+L3(4:4,3) = -B2(4:4,3)/c^2;
+B3 = L3*B2*L3'
+L4 = eye(4);  L4(4,4) = 1/sqrt(B3(4,4));
+B4 = L4*B3*L4'
+B3 =
+
+    1.0000         0    0.0000    0.0000
+         0    1.0000   -0.0000   -0.0000
+    0.0000   -0.0000    1.0000    0.0000
+    0.0000   -0.0000    0.0000    0.1939
+
+
+B4 =
+
+    1.0000         0    0.0000    0.0000
+         0    1.0000   -0.0000   -0.0000
+    0.0000   -0.0000    1.0000    0.0000
+    0.0000   -0.0000    0.0000    1.0000
+Another important aspect of the LU factorization is that the terms in  L
+  are found easily, because the inverses and products of the row operation matrices are trivial. Now if we write
+
+L1=[c−1c−2v0I],
+ 
+then you can quickly check that
+
+L−11=[c−c−1v0I].
+ 
+inv(L1)
+ans =
+
+    3.9636         0   -0.0000   -0.0000
+    2.4473    1.0000   -0.0000   -0.0000
+    2.8510         0    1.0000   -0.0000
+    2.7500         0   -0.0000    1.0000
+[c; B(2:4,1)/c]
+ans =
+
+    0.7194
+   13.4833
+   15.7073
+   15.1513
+Moreover, thanks to the ordering of the matrices, the nonunit term on the diagonal of one factor only multiplies an identity row to its right. Constructing the complete triangular matrix can therefore be done one column at a time, as before.
+
+inv(L1)
+inv(L2)
+inv(L3)
+ans =
+
+    3.9636         0   -0.0000   -0.0000
+    2.4473    1.0000   -0.0000   -0.0000
+    2.8510         0    1.0000   -0.0000
+    2.7500         0   -0.0000    1.0000
+
+
+ans =
+
+    1.0000         0         0         0
+         0    2.7424    0.0000    0.0000
+         0    2.1597    1.0000    0.0000
+         0    1.7393   -0.0000    1.0000
+
+
+ans =
+
+    1.0000         0         0         0
+         0    1.0000         0         0
+         0         0    0.7194   -0.0000
+         0         0   -2.0804    1.0000
+inv(L1)*inv(L2)*inv(L3)*inv(L4)
+ans =
+
+    3.9636   -0.0000    0.0000   -0.0000
+    2.4473    2.7424    0.0000   -0.0000
+    2.8510    2.1597    0.7194    0.0000
+    2.7500    1.7393   -2.0804    0.4403
+The resulting Cholesky factorization takes the form  A=R∗R
+  for an upper triangular  R
+  with positive diagonal entries. Of course we don't need to compute both an upper and a lower triangle, and as a result it takes asympototically half as many flops as standard  LU
+  factorization. Furthermore, the factorization is backward stable without pivoting.

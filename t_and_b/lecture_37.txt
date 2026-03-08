@@ -1,0 +1,84 @@
+Lecture 37: Conjugate gradients
+When  A
+  is hermitian and positive definite, a famous method is available: conjugate gradients. There is a lot to say about CG overall, but to us it is a Krylov subspace method that minimizes a quantity other than the residual over  Kn
+ . This quantity is  ∥ϵn∥A
+ , where  ϵn=A−1b−xn
+  is the error and the norm is defined by  ∥u∥2A=u∗Au
+ .
+
+We won't use the iteration formulas here, just MATLAB's implementation of pcg.
+
+m = 500;
+kappa = 10;
+lam = linspace(1,kappa,m)';
+A = sparse(diag(lam));
+b = randn(m,1);
+b = b/norm(b);
+[xCG,~,~,~,resnorm] = pcg(A,b,1e-14,100);
+semilogy(resnorm,'.-')
+hold on
+ylim([1e-16 1])
+xlabel('n')
+title('Convergence of CG')
+legend('||r_n||_2')
+
+In this simple problem, we can calculate the true solution and therefore the error as well.
+
+x = b./diag(A);
+Anorm = @(x) sqrt(x'*A*x);
+Aerr = Anorm(x);
+for n = 1:100
+    [xCG,~] = pcg(A,b,1e-14,n);
+    Aerr(n+1) = Anorm(x-xCG);
+end
+semilogy(resnorm,'.-')
+hold on
+semilogy(Aerr,'.-')
+ylim([1e-16 1])
+xlabel('n')
+title('Convergence of CG')
+legend('||r_n||_2','||\epsilon_n||_A')
+
+Effect of condition number
+We already know that a large  κ(A)
+  creates error in the solution of  Ax=b
+ . But it carries another penalty in Krylov methods: slower convergence. We have essentially the same result for CG as for MINRES, but using the  A
+ -norm of the errors:
+
+∥ϵn∥∥ϵ0∥≤2(κ−−√−1κ−−√+1)n,
+ 
+where  κ=κ2(A)
+  equals the ratio of max to min eigenvalues.
+
+for kappa = [10 100 1000 1e4]
+    bound = 2*( (sqrt(kappa)-1)/(sqrt(kappa)+1) ).^(0:100);
+    semilogy(0:100,bound*Aerr(1))
+    hold on
+end
+ylim([1e-16 1])
+text(60,1e-15,'\kappa=10')
+text(95,1e-8,'\kappa=10^2')
+text(95,1e-3,'\kappa=10^3')
+text(95,1e-1,'\kappa=10^4')
+title('Effect of conditioning on convergence')
+xlabel('n')
+
+The effect is the same for MINRES and CG, but measured in different terms. In particular, CG does not guarantee a nonincreasing residual norm.
+
+kappa = 1e4;
+lam = linspace(1,kappa,m)';
+A = sparse(diag(lam));
+b = randn(m,1);
+b = b/norm(b);
+[xCG,~,~,~,resnorm] = pcg(A,b,1e-14,100);
+semilogy(resnorm,'.-')
+hold on
+text(60,0.3,'CG')
+[xMR,~,~,~,resnorm] = gmres(A,b,[],1e-14,100);
+semilogy(resnorm,'.-')
+text(40,.0075,'MINRES')
+ylim([1e-4 1])
+xlabel('n')
+title('Convergence for \kappa=10^4 ')
+
+CG and MINRES are often not much different, practically speaking. MINRES also works for indefinite problems, while CG has considerably more (or at least better-known) theory behind it.

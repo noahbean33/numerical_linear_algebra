@@ -1,0 +1,67 @@
+Lecture 9: MATLAB/GS stability
+Comparing classical to modified Gram-Schmidt
+We're going to experiment to uncover the differences between classical GS and MGS in a numerical implementation. We'll start by constructing a matrix with particular singular values.
+
+[U,S,V] = svd(randn(80));
+s = 2.^(-1:-1:-80);
+A = U*diag(s)*V';
+reset(0)  % default graphical preferences
+The text explains why we should expect the diagonal entries of the  R
+  in a QR factorization of  A
+  to be close to the singular values of  A
+ .
+
+semilogy(s,'.')
+[Qc,Rc] = gs(A);  % classical
+hold on, semilogy(diag(Rc),'o')
+[Qm,Rm] = mgs(A); % modified
+hold on, semilogy(diag(Rm),'s')
+legend('singular values','classical r_{jj}','MGS r_{jj}')
+title('Gram-Schmidt in double precision'), xlabel('j')
+
+The modified version stays close to the line until around  10−16
+ . This is the limit of machine precision. In the classical case the departure is closer to  10−8
+ . We can get a little more information by recasting the problem into "single precision," which has a limit of about  10−8
+  relative precision.
+
+semilogy(s,'.')
+[Qc,Rc] = gs(single(A));  % classical
+hold on, semilogy(diag(Rc),'o')
+[Qm,Rm] = mgs(single(A)); % modified
+hold on, semilogy(diag(Rm),'s')
+legend('singular values','classical r_{jj}','MGS r_{jj}')
+title('Gram-Schmidt in single precision'), xlabel('j')
+
+A reasonable hypothesis (based on two data points) is that roundoff at precision  ϵ
+  affects MGS at the level  O(ϵ)
+ , but classical GS at  O(ϵ√)
+ .
+
+Loss of orthogonality
+A different sort of instability remains in the MGS algorithm. It can be seen in a  2×2
+  toy example. Mine is different from the text's, but constructed using the same principle: the columns of  A
+  are nearly parallel.
+
+A = [pi, sqrt(2); 355/113, sqrt(2)]
+A =
+
+    3.1416    1.4142
+    3.1416    1.4142
+When we subtract off the projection of the second column onto the first, the remainder is quite small (relative to the original components).
+
+Q = A(:,1)/norm(A(:,1));
+v = A(:,2) - Q(:,1)*(Q(:,1)'*A(:,2))
+v =
+
+   1.0e-07 *
+
+    0.6004
+   -0.6004
+Of the original 16 significant digits, about 7 have been canceled out in subtraction, never to return.
+
+Q(:,2) = v/norm(v);
+norm(Q'*Q - eye(2))
+ans =
+
+   3.7693e-09
+Much later, when we start doing iterative methods, we'll be coming back to the MGS algorithm. This loss of orthogonality is so important that practical implementations take measures to re-orthogonalize their results regularly.
