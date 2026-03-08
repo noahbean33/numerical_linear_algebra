@@ -1,0 +1,242 @@
+# tactiq.io free youtube transcript
+# MATH426: Floating point arithmetic
+# https://www.youtube.com/watch/HOOthwc6fCk
+
+00:00:01.120 let's suppose you have two floating
+00:00:03.040 Point numbers X and
+00:00:05.279 Y and we want to add them together well
+00:00:08.360 we're going to assume that when you do
+00:00:10.920 that operation right you have to get
+00:00:13.000 another floating Point number and that
+00:00:15.320 floating Point result of adding X and Y
+00:00:18.480 is again relatively close to the True
+00:00:22.480 Result so what this means remember is a
+00:00:25.439 relative
+00:00:27.519 error of size Epsilon
+00:00:30.880 in the result x +
+00:00:35.600 y and that Epsilon has to be less than
+00:00:39.079 or equal to machine Epsilon so this is
+00:00:41.920 you know except for some very fine grain
+00:00:43.800 details this is uh provably true for
+00:00:46.160 every modern processor so it's really
+00:00:48.480 not a bad assumption to make at all what
+00:00:51.000 this means is that everything that we do
+00:00:53.039 with a floating Point number including
+00:00:54.760 representing real numbers and then
+00:00:57.039 adding real numbers the same goes for
+00:00:58.920 subtraction
+00:01:00.480 multiplication division we can more or
+00:01:03.239 less assume the same kind of thing about
+00:01:04.839 square roots and all the elementary
+00:01:06.320 functions if you like um they all
+00:01:09.400 introduce some relative error which is
+00:01:11.240 bounded by Machine Epsilon so for
+00:01:14.520 example suppose X and Y were real
+00:01:19.600 numbers well first we have to represent
+00:01:21.880 them as floating points so floating
+00:01:23.680 point x is some small
+00:01:27.560 perturbation of x
+00:01:30.640 and the floating point value of y is
+00:01:32.960 some other small perturbation of Y I
+00:01:36.479 can't assume that Epsilon one and
+00:01:38.000 Epsilon 2 are the same it's different
+00:01:40.240 for every value but I do know
+00:01:43.880 that Epsilon one and Epsilon 2 are both
+00:01:47.680 less than or equal to machine
+00:01:50.600 Epsilon now if I want to add those two
+00:01:53.240 values
+00:01:54.600 together right the result of
+00:01:58.840 adding the floating points values
+00:02:02.680 together by our assumption above is
+00:02:06.320 equal to some other yet a third small
+00:02:10.959 perturbation
+00:02:14.239 of the True Result for the floating
+00:02:16.879 Point
+00:02:18.000 values so now we have to substitute
+00:02:20.400 those in we get 1 + Epsilon
+00:02:24.480 3
+00:02:26.959 Time 1 + Epsilon 1 X
+00:02:31.000 x + 1 + Epsilon 2
+00:02:38.319 y now we have to start doing some
+00:02:42.239 rearranging there is an X+ Y in there
+00:02:44.959 somewhere there's an Epsilon 1x +
+00:02:48.599 Epsilon 2 Y and then there's all of that
+00:02:52.040 again time Epsilon
+00:02:58.760 3
+00:03:01.319 okay let me create a little bit more
+00:03:02.760 space
+00:03:08.159 here
+00:03:12.560 oops okay so continuing let's X+ Y is
+00:03:16.680 the thing that we were trying to find
+00:03:18.519 remember ideally and then the um
+00:03:22.560 perturbation to that result I'll gather
+00:03:24.959 everything that multiplies X so I have
+00:03:27.440 an Epsilon 1 plus Epsilon
+00:03:31.280 3 plus Epsilon 1 * Epsilon
+00:03:37.799 3 and then times y we have Epsilon
+00:03:42.640 2 plus Epsilon 3 + Epsilon 2 Epsilon 3 *
+00:03:56.920 y okay so now um if we wanted to get
+00:04:00.920 into the details in the mathematics well
+00:04:03.680 Epsilon 1 and Epsilon 2 and Epsilon
+00:04:07.040 3 I forgot to State up here that Epsilon
+00:04:10.040 3 is also required to be less than
+00:04:12.159 Epsilon
+00:04:13.319 machine so those are all really small
+00:04:15.640 numbers and their product is really
+00:04:17.798 really small sort of doubly small so we
+00:04:20.759 would just sort of neglect those right
+00:04:23.479 and we could show more or less that um
+00:04:26.720 these two values are bounded by 2 *
+00:04:30.759 Epsilon M and these two values are
+00:04:32.720 bounded by 2 * Epsilon M and so the
+00:04:35.639 whole thing is close to x + y times a
+00:04:38.880 small multiple of machine
+00:04:42.440 Epsilon uh times the X and the Y
+00:04:46.080 themselves okay so as you can see even
+00:04:48.560 for a really minor calculation this is a
+00:04:50.880 big pain and this kind of analysis
+00:04:53.720 actually isn't done very often um we
+00:04:56.520 could simulate it experimentally which
+00:04:58.720 is often useful
+00:05:00.199 so here's an example of how we might go
+00:05:01.919 about that so in mat lab I would set up
+00:05:05.280 U I'm going to set things up so that I
+00:05:06.880 can see all the digits and I'm going to
+00:05:09.320 create a polinomial so this command poly
+00:05:12.280 creates a polinomial whose roots are the
+00:05:15.160 given value so x -
+00:05:18.440 2.5 * x +
+00:05:23.039 1.25 that's going to Define our P of X
+00:05:27.000 so quadratic polinomial with known root
+00:05:32.240 well if you multiply all that out right
+00:05:34.160 the coefficient of x^2 is 1 the
+00:05:37.360 coefficient of x is minus 1.25 right so
+00:05:41.400 this multiplies X2 this multiplies X and
+00:05:45.000 then this number multiplies the one in
+00:05:47.280 the polinomial this is how mat lab
+00:05:49.160 always represents pols as a vector of
+00:05:52.319 coefficients from the highest degree
+00:05:54.840 down to the
+00:05:56.880 lowest all right now if we're going to
+00:05:59.560 simulate this in the machine we're going
+00:06:01.360 to have to use a larger value of machine
+00:06:03.800 Epsilon than the native one and so what
+00:06:06.800 we're going to do here is
+00:06:11.199 simulate six significant
+00:06:17.639 digits okay and how we do that is then
+00:06:20.800 we introduce a relative
+00:06:23.440 perturbation okay in each coefficient so
+00:06:26.479 here's the size of our perturbation so
+00:06:28.680 Rand is a built-in function which
+00:06:31.039 returns a random number between zero and
+00:06:33.280 one okay so I have three random numbers
+00:06:36.680 one for each coefficient of
+00:06:39.280 P those random numbers I then subtract
+00:06:42.440 1/2 so that they lie between minus a
+00:06:44.720 half and
+00:06:46.039 1/2 and then I multiply by two so alt
+00:06:49.400 together right this
+00:06:52.800 part gives me a random
+00:06:56.879 value in the interval minus 1
+00:07:01.199 1 and then I just scale those by Machine
+00:07:03.919 Epsilon so I have three values of
+00:07:06.080 Epsilon that are less than 10us
+00:07:11.120 6 so I take each coefficient of p and I
+00:07:14.160 want to perturb it by or multiply it by
+00:07:17.840 1 plus Epsilon 1 plus its own private
+00:07:21.319 value of Epsilon remember the dot
+00:07:25.039 star does element wise
+00:07:28.319 multiplication
+00:07:33.560 okay so in other words we get p of 1 * 1
+00:07:37.240 + Epsilon
+00:07:39.599 1 and then we get p of 2 * 1 + Epsilon 2
+00:07:43.960 and so
+00:07:47.360 on so here are my perturbed coefficients
+00:07:50.120 you see that they're perturbed past six
+00:07:53.440 significant
+00:07:55.240 digits just as they would be in our
+00:07:58.240 computer that has six correct
+00:08:00.360 significant
+00:08:02.879 digits then I'll use uh mat lab's
+00:08:05.919 command roots to find the roots of that
+00:08:09.639 polinomial so I'm cheating here a little
+00:08:11.680 bit as I'll explain in a second but you
+00:08:13.919 see that the answers are pretty close to
+00:08:16.120 2.5
+00:08:18.080 exactly and minus 1.25 which we know to
+00:08:22.120 be the exact roots of the original
+00:08:24.120 polinomial and in fact if you rounded
+00:08:26.520 them off to six signif significant
+00:08:28.560 digits keeping in mind what the first
+00:08:31.560 admitted digit is you would get exactly
+00:08:34.240 those results to six
+00:08:41.519 digits and when I say I'm cheating uh
+00:08:44.320 what I mean is I'm doing a partial
+00:08:45.600 experiment I've perturbed the data to
+00:08:47.720 the problem I've perturbed the
+00:08:49.080 polinomial coefficients but I didn't
+00:08:51.080 perturb the arithmetic the arithmetic is
+00:08:52.800 still the native double Precision
+00:08:54.600 arithmetic so if I wanted to explore
+00:08:57.240 what the algorithm of roots was doing
+00:08:58.760 I'd have to go go into it and step by
+00:09:01.160 step for each arithmetic operation
+00:09:03.720 introduce um rounding errors scaled up
+00:09:06.680 to size 10us
+00:09:09.399 6 so you can do these experiments but
+00:09:12.040 even uh they're relatively
+00:09:13.880 straightforward but tedious to
+00:09:16.279 do so here's a case where everything
+00:09:18.600 worked out nicely okay the perturbation
+00:09:20.839 and the answer was essentially the same
+00:09:23.200 size is the perturbation in the data and
+00:09:25.760 that makes us pretty happy but in fact
+00:09:28.519 we can't that all the time and there's a
+00:09:30.839 relatively simple example to say
+00:09:43.600 why so if we take the um internal uh
+00:09:47.839 representation of Pi okay it's accurate
+00:09:50.720 to about 16 significant
+00:09:56.160 digits then there is a rational number
+00:09:58.640 approximation it's better than 22 7 I'm
+00:10:01.880 going to subtract this number from from
+00:10:04.240 PI so I'll make it negative and you see
+00:10:06.519 it agrees with pi to about
+00:10:12.320 um 1 two 3 4 5 6 s
+00:10:24.399 right well that means that when I um
+00:10:29.160 take Alpha and add
+00:10:31.399 X right these digits cancel each other
+00:10:37.399 out and the error starts in the seventh
+00:10:41.160 decimal
+00:10:43.240 place well there's a problem right
+00:10:45.880 because I know that I started
+00:10:48.680 with this many accurate digits right
+00:10:52.959 plus the ones that got canceled out so
+00:10:56.279 there's no way I could hope to get more
+00:10:58.320 than
+00:10:59.639 1 2 3 4 5 6 Seven 8 nine digits
+00:11:15.920 left in other words yes the number is
+00:11:19.040 represented still to 16 significant
+00:11:21.000 digits but I know
+00:11:24.959 that at least or perhaps as many as
+00:11:28.600 seven of them are utter garbage they
+00:11:32.519 can't possibly be correct because the
+00:11:35.040 original computation didn't even know pi
+00:11:37.680 to more digits than
+00:11:40.120 that this is a phenomenon known as
+00:11:43.560 cancellation
+00:11:47.040 error whenever you subtract two nearby
+00:11:50.120 values to get a much smaller result
+00:11:53.560 smaller in magnitude you get this kind
+00:11:56.120 of cancellation effect another way of
+00:11:59.120 looking at it is that this result is
+00:12:01.839 accurate relative to to X and Alpha but
+00:12:05.720 not to
+00:12:07.240 itself so accurate relative to the data
+00:12:10.399 but not to the
+00:12:22.600 answer and cancellation is bad news we
+00:12:25.279 want to avoid it whenever possible um
+00:12:28.199 and what we're going to do do next is
+00:12:30.160 talk about Thea the difference between
+00:12:32.560 cases where it's unavoidable and cases
+00:12:35.279 where it's
+00:12:36.480 avoidable
