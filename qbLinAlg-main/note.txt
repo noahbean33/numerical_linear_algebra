@@ -1,0 +1,129 @@
+
+
+
+
+Let me read the remaining algorithm files to give a thorough evaluation.
+
+
+
+I've now read every file in the repository. Here's my evaluation:
+
+---
+
+# Evaluation: qbLinAlg as Pedagogical C++ NLA Examples
+
+## Overall Verdict: **Decent introductory scaffold, but significant issues limit its value for serious NLA pedagogy.**
+
+The library covers a reasonable breadth of topics and the code is generally readable. However, it has correctness bugs, outdated C++ idioms, and missing algorithmic coverage that would need to be addressed before using it as a teaching reference.
+
+---
+
+## Strengths
+
+### 1. Topical Coverage
+The library touches many core NLA topics in a logical progression:
+
+| File | Topic |
+|---|---|
+| [qbVector.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbVector.h:0:0-0:0) | Vector operations, dot/cross product, normalization |
+| [qbMatrix.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:0:0-0:0) | Dense matrix storage, arithmetic, row echelon, determinant, inverse, rank |
+| [qbQR.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbQR.h:0:0-0:0) | QR decomposition via Householder reflections |
+| [qbEIG.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbEIG.h:0:0-0:0) | Power iteration, inverse power iteration, QR algorithm for eigenvalues |
+| [qbLinSolve.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbLinSolve.h:0:0-0:0) | Gaussian elimination + back-substitution |
+| [qbLSQ.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbLSQ.h:0:0-0:0) | Least squares via normal equations |
+| [qbPCA.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbPCA.h:0:0-0:0) | PCA (mean-centering → covariance → eigen-decomposition) |
+
+### 2. Readability
+- Verbose, descriptive comments explain *intent* at nearly every step.
+- Functions are reasonably short and self-contained.
+- The header file block comments with `INPUTS / OUTPUTS` documentation (e.g., [qbLinSolve.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbLinSolve.h:0:0-0:0), [qbQR.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbQR.h:0:0-0:0)) are genuinely helpful for students.
+
+### 3. Companion Video Series
+The code is paired with YouTube lectures, which is a strong pedagogical asset. Each file links to the relevant video(s).
+
+---
+
+## Weaknesses and Bugs
+
+### 1. Correctness Issues
+
+- **[qbQR.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbQR.h:0:0-0:0) — missing return statement** (`@C:\Users\marin\Documents\GitHub\numerical_linear_algebra\qbLinAlg-main\qbQR.h:168`). The function signature returns `int` but there's no `return` at the end. This is **undefined behavior**.
+
+- **[qbMatrix.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:0:0-0:0) [Separate()](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:685:0-718:1) bug** — line 700 resizes `matrix2` to `numCols1` instead of `numCols2`:
+```@C:\Users\marin\Documents\GitHub\numerical_linear_algebra\qbLinAlg-main\qbMatrix.h:699-700
+	matrix1.Resize(numRows, numCols1);
+	matrix2.Resize(numRows, numCols1);
+```
+  This should be [matrix2.Resize(numRows, numCols2)](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:212:0-234:1). This bug silently corrupts the [Inverse()](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:817:0-961:1) method for non-square-augmented cases.
+
+- **[qbEIG.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbEIG.h:0:0-0:0) [qbEIG_PIt](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbEIG.h:169:0-227:1) — eigenvalue recovery is fragile**. The eigenvalue is computed from just the first row of $Av = \lambda v$ (`@C:\Users\marin\Documents\GitHub\numerical_linear_algebra\qbLinAlg-main\qbEIG.h:222-225`). If [v1.GetElement(0)](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbVector.h:137:0-144:1) is near zero, this divides by ~0. The standard approach is the **Rayleigh quotient** $\lambda = v^T A v / v^T v$.
+
+- **[qbEIG.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbEIG.h:0:0-0:0) [qbInvPIt](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbEIG.h:103:0-167:1) — computes full inverse every iteration** (`@C:\Users\marin\Documents\GitHub\numerical_linear_algebra\qbLinAlg-main\qbEIG.h:147-149`). This is $O(n^3)$ per step instead of solving a linear system. Pedagogically misleading — students should learn that you *solve* $(A - \mu I)w = v$, not form the inverse.
+
+- **[qbMatrix.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:0:0-0:0) [IsRowEchelon()](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:1208:0-1230:1) — sums raw values instead of absolute values** (`@C:\Users\marin\Documents\GitHub\numerical_linear_algebra\qbLinAlg-main\qbMatrix.h:1224`). A matrix with lower-triangular entries $+1$ and $-1$ that cancel would falsely pass this test.
+
+- **[qbMatrix33.hpp](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix33.hpp:0:0-0:0) [Transpose()](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:963:0-983:1) — hardcodes `double`** instead of using template parameter `T`:
+```@C:\Users\marin\Documents\GitHub\numerical_linear_algebra\qbLinAlg-main\qbMatrix33.hpp:440
+	qbMatrix33<double> result;
+```
+  This silently breaks for [qbMatrix33<float>](cci:2://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix33.hpp:49:0-114:2) or any other type.
+
+### 2. Memory Management (Pre-Modern C++)
+
+- **[qbMatrix.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:0:0-0:0) uses raw [new[]](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/rust/sparse_matrix.rs:19:4-49:5) / `delete[]` throughout** for `m_matrixData`. This is the single largest pedagogical concern — students learning from this will internalize manual memory management patterns that are considered poor practice in modern C++.
+  - No move constructor or move assignment operator.
+  - [operator=](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:653:0-682:1) returns by value (`@C:\Users\marin\Documents\GitHub\numerical_linear_algebra\qbLinAlg-main\qbMatrix.h:655`) — should return [qbMatrix2<T>&](cci:2://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:49:0-138:2).
+  - The default constructor leaves `m_matrixData = nullptr` but sets `m_nElements = 1`, creating a mismatch.
+  - [SwapRow](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:1272:0-1291:1) allocates a heap `T*` temp row instead of using `std::swap` or a stack vector.
+
+- **Operator overloads allocate temporary `new T[]` arrays** (e.g., [operator+](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:359:0-373:1), [operator-](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix33.hpp:275:0-287:1), [operator*](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:517:0-531:1) for [qbMatrix2](cci:2://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:49:0-138:2)) instead of constructing directly into the result. This causes unnecessary double-allocation.
+
+- Contrast with [qbVector.h](cci:7://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbVector.h:0:0-0:0), which *does* use `std::vector<T>` internally — the inconsistency is confusing for students.
+
+### 3. Algorithmic Gaps
+
+For a library aligned with your Kutz/Trefethen & Bau curriculum, notable omissions include:
+
+- **No SVD** — the most important decomposition in applied NLA.
+- **No LU decomposition** (with or without pivoting) — [qbLinSolve](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbLinSolve.h:68:0-162:1) uses Gaussian elimination on the augmented matrix but never exposes the factorization itself.
+- **No condition number** computation.
+- **No iterative solvers** (Jacobi, Gauss-Seidel, GMRES, CG).
+- **No sparse matrix support**.
+- **No backward stability analysis** or residual computation.
+
+### 4. Style and Idiom Issues
+
+- **`<math.h>` instead of `<cmath>`** in every file — the C header pollutes the global namespace.
+- **No `constexpr`, `noexcept`, or `[[nodiscard]]`** — missed opportunities to teach modern C++ correctness features.
+- **No unit tests** — the [TestCode/](cci:9://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/TestCode:0:0-0:0) directory is empty (0 items). Students have no way to verify correctness.
+- **Inconsistent naming**: some functions are `PascalCase` ([GetElement](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbVector.h:137:0-144:1)), some are `camelCase` ([norm](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbVector.h:152:0-164:1), [dot](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbVector.h:287:0-303:1), [cross](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbVector.h:305:0-326:1)).
+- **[qbMatrix33](cci:2://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix33.hpp:49:0-114:2) / `qbMatrix44` are near-complete copy-paste duplicates** of each other (~530 and ~525 lines respectively). This misses an opportunity to teach code reuse via templates or CRTP.
+- **Magic numbers**: tolerance is hardcoded as `1e-9` in [CloseEnough()](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:1359:0-1363:1) with no way to configure it.
+
+### 5. Pedagogical Structure
+
+- **Everything in headers** — while this works for templates, the lack of `.cpp` files and a build system means students don't learn about compilation units, linking, or `CMake`/`Makefile` workflows.
+- **No [main()](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/rust/sparse_matrix.rs:282:0-328:1) or examples** — there's nothing runnable in the repo. Students can't experiment without writing their own driver code.
+
+---
+
+## Summary Scorecard
+
+| Criterion | Score | Notes |
+|---|---|---|
+| **Topical breadth** | 6/10 | Covers basics; missing SVD, LU, iterative methods, sparse |
+| **Correctness** | 4/10 | Multiple bugs ([Separate](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:685:0-718:1), [IsRowEchelon](cci:1://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/qbLinAlg-main/qbMatrix.h:1208:0-1230:1), missing return, UB) |
+| **Modern C++ idioms** | 3/10 | Raw `new/delete`, no move semantics, C headers, no RAII |
+| **Readability** | 7/10 | Well-commented, clear intent; verbose but approachable |
+| **Testability** | 1/10 | Empty test directory, no build system, no examples |
+| **Alignment w/ Kutz curriculum** | 5/10 | Good on QR/Eigen/PCA; missing LU, SVD, iterative, sparse, conditioning |
+
+---
+
+## Recommendation
+
+The library is a reasonable *starting point* for showing students how matrix operations work under the hood, but **it should not be used as-is** for a rigorous NLA course. If you want to incorporate it into your materials, I'd suggest either:
+
+1. **Cherry-pick and fix** — extract the QR, eigenvalue, and linear solve modules, fix the bugs, modernize the memory management, and add tests.
+2. **Use as a "before/after" exercise** — show students the code and ask them to identify and fix the bugs and modernize it (great pedagogical exercise in itself).
+3. **Replace with your own Rust implementations** — you're already building cleaner, more modern code in your [rust/](cci:9://file:///C:/Users/marin/Documents/GitHub/numerical_linear_algebra/rust:0:0-0:0) directory. Continuing that path would give you bug-free, well-structured examples aligned directly with your curriculum.
