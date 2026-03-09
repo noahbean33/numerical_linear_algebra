@@ -1,0 +1,655 @@
+LU Factorization
+Any non-singular matrix  A
+  can be factored into a lower triangular matrix  L
+ , and upper triangular matrix  U
+  using procedures we have already established with Gaussian elimination. This proves very useful for numerical computation and is, in fact, one of the most common ways most packaged linear algebra solvers solve non-sparse linear systems.
+
+Previously, we learned that by using Gaussian elimination we can solve the linear system  Ax⃗ =b⃗ 
+  in  O(13n3)
+  arithmetic operations to determine  x⃗ 
+ . It turns out if  A
+  has the form  A=LU
+  we can solve for  x⃗ 
+  using a two step process. First we let  y⃗ =Ux⃗ 
+  and solve the system for  Ly⃗ =b⃗ 
+  for  y⃗ 
+ . Since  L
+  is lower triangular we use a forward substitution process that only takes  O(n2)
+  operations. Once  y⃗ 
+  is known, the upper triangular system  Ux⃗ =y⃗ 
+  can be solved with back substitution in  O(n2)
+  operations. Therefore using this procedure we can reduce the solution of  Ax⃗ =b⃗ 
+  from  O(13n3)
+  to  O(2n2)
+  operations. For large systems this can reduce the calculation time by more than 95%. Determining the  L
+  and  U
+  matrices still takes  O(13n3)
+ , but it only has to be done for a single  A
+  matrix and can be used efficiently to solve for  x⃗ 
+  with many right-hand side vectors,  b⃗ 
+ .
+
+We already know one way to transform  A
+  into  U
+  by using Gaussian elimination. We will leave the proof for linear algebra class, but we find  L
+  by performing negations of the same operations on the identity matrix in reverse order. For example when going  A→U
+  if we perform the row operation
+
+Ei−mjiEj→Ei
+ 
+to undo this and return to  A
+  we would perform
+
+Ei+mjiEj→Ei
+ 
+by performing the second operation on the identity matrix with the same dimensions as  A
+  we will end up with an  L
+ . I emphasize an here because this is only one way to decompose  A
+  into  L
+  and  U
+ , there are other methods and an infinite number of  L
+  and  U
+  matrices, i.e. they are not unique.
+
+LU
+  Example 
+We will look at a simple example and write out the row operations.
+
+A=⎡⎣⎢12311−10−1−1⎤⎦⎥−→−−−E2−2E1⎡⎣⎢1031−1−10−1−1⎤⎦⎥−→−−−E3−3E1⎡⎣⎢1001−1−40−1−1⎤⎦⎥−→−−−E3−4E2⎡⎣⎢1001−100−13⎤⎦⎥=U
+I=⎡⎣⎢100010001⎤⎦⎥−→−−−E3+4E2⎡⎣⎢100014001⎤⎦⎥−→−−−E3+3E1⎡⎣⎢103014001⎤⎦⎥−→−−−E2+2E1⎡⎣⎢123014001⎤⎦⎥=L
+Let's check our results with Python
+
+L = np.array([[1,0,0],[2,1,0],[3,4,1]])
+U = np.array([[1,1,0],[0,-1,-1],[0,0,3]])
+L @ U
+array([[ 1,  1,  0],
+       [ 2,  1, -1],
+       [ 3, -1, -1]])
+Notice that the entries in  L
+  below the diagonal are simply the  mij
+ 's therefore we do not actually have to perform the row operations we can simply insert the  mij
+  components into their proper place and move forward.
+
+Psuedocode for a simple  LU
+  factorization 
+Consider the matricies:
+
+A=⎛⎝⎜⎜⎜⎜⎜⎜a11a21⋮an1a12⋱...…⋱...a1na2n⋮ann⎞⎠⎟⎟⎟⎟⎟⎟,L=⎛⎝⎜⎜⎜⎜⎜⎜l11l21⋮ln1l12⋱...…⋱...l1nl2n⋮lnn⎞⎠⎟⎟⎟⎟⎟⎟,U=⎛⎝⎜⎜⎜⎜⎜⎜u11u21⋮un1u12⋱...…⋱...u1nu2n⋮unn⎞⎠⎟⎟⎟⎟⎟⎟
+Steps	
+1.	Initialize  L
+  to an identity matrix,  I
+  of dimension  n×n
+  and  U=A
+ .
+2.	For  i=1,…,n
+  do Step 3
+3.	 
+  For  j=i+1,…,n
+  do Steps 4-5
+4.	 
+  Set  lji=uji/uii
+ 
+5.	 
+  Perform  Uj=(Uj−ljiUi)
+  (where  Ui,Uj
+  represent the  i
+  and  j
+  rows of the matrix  U
+ , respectively)
+Python / NumPy implementation of a simple  LU
+  factorization 
+def lu(A):
+    
+    #Get the number of rows
+    n = A.shape[0]
+    
+    U = A.copy()
+    L = np.eye(n, dtype=np.double)
+    
+    #Loop over rows
+    for i in range(n):
+            
+        #Eliminate entries below i with row operations 
+        #on U and reverse the row operations to 
+        #manipulate L
+        factor = U[i+1:, i] / U[i, i]
+        L[i+1:, i] = factor
+        U[i+1:] -= factor[:, np.newaxis] * U[i]
+        
+    return L, U
+Psuedocode for a simple  PLU
+  factorization 
+If we observe the pseudocode presented previously we can see that something as simple as  aii=0
+  will cause our algorithm to fail. We can prevent this from happening by doing a row exchange with a row that has a nonzero value in the  ith
+  column. Like Gauss elimination there are several pivot strategies that can be utilized. For simplicity, we will exchange any row that has a zero on the diagonal with the first row below it that has a nonzero number in that column. Here we have to keep track of the row exchanges by creating a permutation matrix,  P
+  by performing the same row exchanges to an identity matrix. This gives a matrix with precisely one nonzero entry in each row and in each column and each nonzero entry is 1. We will need  P
+  later, when we use the  LU
+  factorization to solve the permuted system of equations,  PAx⃗ =Pb⃗ 
+ .
+
+Consider the matrices:
+
+A=⎡⎣⎢⎢⎢⎢⎢⎢a11a21⋮an1a12⋱……⋱…a1na2n⋮ann⎤⎦⎥⎥⎥⎥⎥⎥,L=⎡⎣⎢⎢⎢⎢⎢⎢l11l21⋮ln1l12⋱……⋱…l1nl2n⋮lnn⎤⎦⎥⎥⎥⎥⎥⎥,U=⎡⎣⎢⎢⎢⎢⎢⎢u11u21⋮un1u12⋱……⋱…u1nu2n⋮unn⎤⎦⎥⎥⎥⎥⎥⎥,P=⎡⎣⎢⎢⎢⎢⎢⎢p11p21⋮pn1p12⋱……⋱…p1np2n⋮pnn⎤⎦⎥⎥⎥⎥⎥⎥
+Steps	
+1.	Initialize  L=P=I
+  of dimension  n×n
+  and  U=A
+ 
+2.	For  i=1,…,n
+  do Steps 3-4, 8
+3.	 
+  Let  k=i
+ ,
+4.	 
+  While  uii=0
+ , do Steps 5-7
+5.	 
+  Swap row  Ui
+  with row  Uk+1
+ 
+6.	 
+  Swap row  Pi
+  with row  Pk+1
+ 
+7.	 
+  Increment  k
+  by  1
+ .
+8.	 
+  For  j=i+1,…,n
+  do Steps 9-10
+9.	 
+  Set  lji=uji/uii
+ 
+10.	 
+  Perform  Uj=Uj−ljiUi
+  (where  Ui,Uj
+  represent the  i
+  and  j
+  rows of the matrix  U
+ , respectively)
+Python/NumPy implementation of  PLU
+  decomposition 
+def plu(A):
+    
+    #Get the number of rows
+    n = A.shape[0]
+    
+    #Allocate space for P, L, and U
+    U = A.copy()
+    L = np.eye(n, dtype=np.double)
+    P = np.eye(n, dtype=np.double)
+    
+    #Loop over rows
+    for i in range(n):
+        
+        #Permute rows if needed
+        for k in range(i, n): 
+            if ~np.isclose(U[i, i], 0.0):
+                break
+            U[[k, k+1]] = U[[k+1, k]]
+            P[[k, k+1]] = P[[k+1, k]]
+            
+        #Eliminate entries below i with row 
+        #operations on U and #reverse the row 
+        #operations to manipulate L
+        factor = U[i+1:, i] / U[i, i]
+        L[i+1:, i] = factor
+        U[i+1:] -= factor[:, np.newaxis] * U[i]
+        
+    return P, L, U
+The SciPy function scipy.linalg.lu performs a  PLU
+  decomposition. However, we can't compare our implementation to SciPy's in general, because the SciPy implementation uses a slightly different strategy which could result in a different (but still correct) decomposition.
+
+Solving equations after  LU
+  factorization 
+Once we have  L
+  and  U
+  we can solve for as many right-hand side vectors  b⃗ 
+  as desired very quickly using the following two step process. First we let  y⃗ =Ux⃗ 
+  and then solve for  Ly⃗ =b⃗ 
+  for  y⃗ 
+  by using forward substitution. The pseudocode for this is as follows
+
+Psuedocode for forward substitution 
+Steps	
+1.	Set  y1=b1/l11
+ 
+2.	For  i=2,3,…n
+  do Step 3
+3.	
+yi=(bi−∑j=1i−1lijyj)/lii
+ 
+Python/NumPy implementation of forward substitution 
+def forward_substitution(L, b):
+    
+    #Get number of rows
+    n = L.shape[0]
+    
+    #Allocating space for the solution vector
+    y = np.zeros_like(b, dtype=np.double);
+    
+    #Here we perform the forward-substitution.  
+    #Initializing  with the first row.
+    y[0] = b[0] / L[0, 0]
+    
+    #Looping over rows in reverse (from the bottom  up),
+    #starting with the second to last row, because  the 
+    #last row solve was completed in the last step.
+    for i in range(1, n):
+        y[i] = (b[i] - np.dot(L[i,:i], y[:i])) / L[i,i]
+        
+    return y
+Then solve  Ux⃗ =y⃗ 
+  for  x⃗ 
+  using backward substitution. The psuedocode for this is
+
+Pseudocode Back substitution 
+Steps	
+1.	Set  xn=yn/unn
+ 
+2.	For  i=n−1,n−2,...,1
+  do Step 3.
+3.	
+xi=(yi−∑j=i+1nuijxj)/uii
+ 
+Python/NumPy implementation of backward substitution 
+def back_substitution(U, y):
+    
+    #Number of rows
+    n = U.shape[0]
+    
+    #Allocating space for the solution vector
+    x = np.zeros_like(y, dtype=np.double);
+
+    #Here we perform the back-substitution.  
+    #Initializing with the last row.
+    x[-1] = y[-1] / U[-1, -1]
+    
+    #Looping over rows in reverse (from the bottom up), 
+    #starting with the second to last row, because the 
+    #last row solve was completed in the last step.
+    for i in range(n-2, -1, -1):
+        x[i] = (y[i] - np.dot(U[i,i:], x[i:])) / U[i,i]
+        
+    return x
+Putting everything together for a solution process
+
+def lu_solve(A, b):
+    
+    L, U = lu(A)
+    
+    y = forward_substitution(L, b)
+    
+    return back_substitution(U, y)
+Testing the code
+
+A = np.array([[1, 4, 5], [6, 8, 22], [32, 5., 5]])
+b = np.array([1, 2, 3.])
+
+lu_solve(A, b)
+array([ 0.05614973,  0.25935829, -0.01871658])
+and comparing to NumPy's np.lingalg.solve
+
+np.linalg.solve(A, b)
+array([ 0.05614973,  0.25935829, -0.01871658])
+For a  PLU
+  factorization would have the additional step of permuting the right-hand side vector  b⃗ =Pb⃗ 
+  before doing the forward substitution to solve for  y⃗ 
+ .
+
+def plu_solve(A, b):
+    
+    P, L, U = plu(A)
+    
+    y = forward_substitution(L, np.dot(P, b))
+    
+    return back_substitution(U, y)
+Testing our implementation
+
+A = np.array([[0, 4, 5], [6, 8, 22], [32, 5., 5]])
+b = np.array([1, 2, 3.])
+
+plu_solve(A, b)
+array([ 0.05363985,  0.2835249 , -0.02681992])
+Comparing to the NumPy np.linalg.solve function (which also uses the PLU factorization method)
+
+np.linalg.solve(A, b)
+array([ 0.05363985,  0.2835249 , -0.02681992])
+LU
+  factorization, another look 
+Let's consider a generic  LU
+  factorization, for simplicity we will consider a set of  3×3
+  matrices, but these ideas will apply in the  n×n
+  case as well
+
+LU=⎡⎣⎢l11l21l310l22l3200l33⎤⎦⎥⎡⎣⎢u1100u12u220u13u23u33⎤⎦⎥=⎡⎣⎢a11a21a31a12a22a32a13a23a33⎤⎦⎥=A
+ 
+If we multiply the two matrices on the left together, we have
+
+⎡⎣⎢l11u11l21u11l31u11l11u12l21u12+l22u22l31u12+l32u22l11u13l21u13+l22u23l31u13+l32u23+l33u33⎤⎦⎥=⎡⎣⎢a11a21a31a12a22a32a13a23a33⎤⎦⎥
+ 
+Now if we take the same approach as before where the  lii
+ 's are the 1's we can solve the first row of equations trivially, namely
+
+u11=a11,u12=a12,u13=a13,
+ 
+then we have enough information to solve the rest of the first column,
+
+l21=a21/a11,l31=a31/a11,
+ 
+and the rest of the second row,
+
+u22=(a22−a221/a11),u23=(a23−a21a23/a11),
+ 
+etc.
+
+When this procedure is generalized it is known as the Doolittle alogrithm. There is a similar procedure known as Crout's method that uses the 1's on the diagonal of the  U
+  matrix. The generalization of these methods will be shown in the sequel described in their pseudocode.
+
+Pseudocode for Doolittle algorithm. 
+Consider the matrices
+
+A=⎡⎣⎢⎢⎢⎢⎢⎢a11a21⋮an1a12⋱……⋱…a1na2n⋮ann⎤⎦⎥⎥⎥⎥⎥⎥,L=⎡⎣⎢⎢⎢⎢⎢⎢l11l21⋮ln1l12⋱……⋱…l1nl2n⋮lnn⎤⎦⎥⎥⎥⎥⎥⎥,U=⎡⎣⎢⎢⎢⎢⎢⎢u11u21⋮un1u12⋱……⋱…u1nu2n⋮unn⎤⎦⎥⎥⎥⎥⎥⎥
+Steps	
+1.	For  k=1,2,…,n
+  do Steps 2-3, 5
+2.	 
+  Set  lkk=1
+ 
+3.	 
+  For  j=k,k+1,…,n
+  do Step 4
+4.	
+ukj=akj−∑m=1k−1lkmumj
+ 
+5.	 
+  For  i=k+1,k+2,…,n
+  do Step 6
+6.	
+lik=(aik−∑m=1k−1limumk)/ukk
+ 
+def doolittle(A):
+    
+    n = A.shape[0]
+    
+    U = np.zeros((n, n), dtype=np.double)
+    L = np.eye(n, dtype=np.double)
+    
+    for k in range(n):
+        
+        U[k, k:] = A[k, k:] - L[k,:k] @ U[:k,k:]
+        L[(k+1):,k] = (A[(k+1):,k] - L[(k+1):,:] @ U[:,k]) / U[k, k]
+    
+    return L, U
+A = np.array([[1, 4, 5], [6, 8, 22], [32, 5., 5]])
+L, U = doolittle(A)
+A=
+ [[ 1. 4. 5.] [ 6. 8. 22.] [32. 5. 5.]]
+LU=
+ [[ 1. 4. 5.] [ 6. 8. 22.] [32. 5. 5.]]
+Pseudocode for Crout algorithm 
+Consider the matrices
+
+A=⎡⎣⎢⎢⎢⎢⎢⎢a11a21⋮an1a12⋱……⋱…a1na2n⋮ann⎤⎦⎥⎥⎥⎥⎥⎥,L=⎡⎣⎢⎢⎢⎢⎢⎢l11l21⋮ln1l12⋱……⋱…l1nl2n⋮lnn⎤⎦⎥⎥⎥⎥⎥⎥,U=⎡⎣⎢⎢⎢⎢⎢⎢u11u21⋮un1u12⋱……⋱…u1nu2n⋮unn⎤⎦⎥⎥⎥⎥⎥⎥
+Steps	
+1.	For  k=1,2,...,n
+  do Steps 2-3, 5
+2.	 
+  Set  lkk=akk−∑k−1m=1lkmumk
+ 
+3.	 
+  For  j=k,k+1,…n
+  do Step 4
+4.	
+ukj=(akj−∑m=1k−1lkmumj)/lkk
+ 
+5.	 
+  For  i=k+1,k+2,…,n
+  do Step
+6.	
+lik=(aik−∑m=1k−1limumk)/ukk
+ 
+def crout(A):
+    
+    n = A.shape[0]
+    
+    U = np.zeros((n, n), dtype=np.double)
+    L = np.zeros((n, n), dtype=np.double)
+    
+    for k in range(n):
+        
+        L[k, k] = A[k, k] - L[k, :] @ U[:, k]
+        
+        U[k, k:] = (A[k, k:] - L[k, :k] @ U[:k, k:]) / L[k, k]
+        L[(k+1):, k] = (A[(k+1):, k] - L[(k+1):, :] @ U[:, k]) / U[k, k]
+    
+    return L, U
+L, U = crout(A)
+A=
+ [[ 1. 4. 5.] [ 6. 8. 22.] [32. 5. 5.]]
+LU=
+ [[ 1. 4. 5.] [ 6. 8. 22.] [32. 5. 5.]]
+Pseudocode for Cholesky decomposition 
+If matrix  A
+  is symmetric and positive definite, then there exists a lower triangular matrix  L
+  such that  A=LL⊺
+ . This is just a special case of the  LU
+  decomposition,  U=L⊺
+ . The algorithm is slightly simpler than the Doolittle or Crout methods.
+
+Consider the matrices
+
+A=⎡⎣⎢⎢⎢⎢⎢⎢a11a21⋮an1a12⋱……⋱…a1na2n⋮ann⎤⎦⎥⎥⎥⎥⎥⎥,L=⎡⎣⎢⎢⎢⎢⎢⎢l11l21⋮ln1l12⋱……⋱…l1nl2n⋮lnn⎤⎦⎥⎥⎥⎥⎥⎥,
+ 
+Steps	
+1.	For  k=1,2,…n
+  do Steps 2-3
+2.	 
+  Set  lkk=akk−∑k−1m=1l2km−−−−−−−−−−−−√
+ 
+3.	 
+  For  i=k+1,k+2,…,n
+  do Step 4.
+4.	
+lik=(aik−∑m=1k−1limlmk)/lkk
+ 
+def cholesky(A):
+    
+    n = A.shape[0]
+    
+    L = np.zeros((n, n), dtype=np.double)
+    
+    for k in range(n):
+        
+        L[k, k] = np.sqrt(A[k, k] - np.sum(L[k, :] ** 2))
+        
+        L[(k+1):, k] = (A[(k+1):, k] - L[(k+1):, :] @ L[:, k]) / L[k, k]
+    
+    return L
+Testing the implementation
+
+A = np.array([[2, -1, 0],[-1, 2, -1.], [0, -1, 2.]])
+L = cholesky(A)
+L=
+ [[ 1.41421356 0. 0. ] [-0.70710678 1.22474487 0. ] [ 0. -0.81649658 1.15470054]]
+A=LL⊺=
+ [[ 2. -1. 0.] [-1. 2. -1.] [ 0. -1. 2.]]
+Testing with the built in numpy.linalg.cholesky function
+
+L = np.linalg.cholesky(A)
+L=
+ [[ 1.41421356 0. 0. ] [-0.70710678 1.22474487 0. ] [ 0. -0.81649658 1.15470054]]
+Solving for the inverse of  A
+  with the  LU
+  decomposition 
+Once the  LU
+  decomposition of  A
+  is complete it is straightforward to find the inverse of  A
+ , using the same forward and backward substitution process we used when solving for an arbitrary right hand side vector  b⃗ 
+ . Except we will do the procedure  n
+  times, where  n
+  is the number of columns of  A
+  and
+
+b⃗ =[b⃗ 1,b⃗ 2,…,b⃗ n]=I
+ 
+are the columns of the identity matrix. Stated differently, we will use the columns of the identity matrix as individual right-hand side vectors,  b⃗ 
+ , in order to solve for the inverse column-by-column.
+
+Pseudocode for inverse solve after  LU
+  decomposition 
+Steps	
+1.	Set  b⃗ =I
+  with dimension  n×n
+ 
+2.	For  k=1,2,…,n
+  do Steps 3-4, 6-7
+3.	 
+  Set  y1k=b1kl11
+ 
+4.	 
+  For  i=2,3,…n
+  do Step 5.
+5.	
+yik=(bik−∑i−1j=1lijyjk)/lii
+ 
+6.	 
+  Set  xnk=ynkunn
+ 
+7.	 
+  For  i=n−1,n−2,…,1
+  do Step 8
+8.	
+xik=(yik−∑j=i+1nuijxjk)/uii
+ 
+def plu_inverse(A):
+    
+    n = A.shape[0]
+    
+    b = np.eye(n)
+    Ainv = np.zeros((n, n))
+    
+    P, L, U = plu(A)
+    
+    for i in range(n):
+        
+        y = forward_substitution(L, np.dot(P, b[i, :]))
+        
+        Ainv[i, :] = back_substitution(U, y)
+        
+    return Ainv
+Testing the plu_inverse implementation
+
+plu_inverse(A)
+array([[0.75, 0.5 , 0.25],
+       [0.5 , 1.  , 0.5 ],
+       [0.25, 0.5 , 0.75]])
+and comparing with the built in NumPy matrix inverse function np.linalg.inv
+
+np.linalg.inv(A)
+array([[0.75, 0.5 , 0.25],
+       [0.5 , 1.  , 0.5 ],
+       [0.25, 0.5 , 0.75]])
+Determinant of a Matrix 
+You might recall from linear algebra that there are several ways of computing the determinant of a matrix (e.g. Leibniz formula, Laplace formula, Cramer's rule, etc.); however, none of these are as computationally efficient as using the  LU
+  decomposition and a few properties of determinants to solve for the determinate of a matrix  A
+ . Recall,
+
+For  A=LU,⟹det(A)=det(L)det(U)
+ 
+
+also for an upper (or lower) triangular matrix. The determinate of the matrix is simply the product of the diagonal entries. Therefore, if we solve for  L
+  and  U
+  using the Doolittle method, where there are 1's on the diagonal of the  L
+  matrix, then the determinate of  L
+  is 1. Thus,
+
+det(A)=1⋅det(U)=∏j=1nujj
+ 
+Similarly, for a  PLU
+  decomposition,
+
+det(A)=det(P)det(L)det(U)=det(P)⋅∏j=1nujj
+ 
+but,  P
+  is just a permutation of the identity matrix. Let's observe what happens when we do five semi-random row permutations of the identity matrix and calculate the determinate of  P
+  each time.
+
+P = np.eye(5)
+P[[0, 1]] = P[[1, 0]]
+print(np.linalg.det(P))
+
+P[[1, 2]] = P[[2, 1]]
+print(np.linalg.det(P))
+
+P[[0, 4]] = P[[4, 0]]
+print(np.linalg.det(P))
+
+P[[1, 3]] = P[[3, 1]]
+print(np.linalg.det(P))
+
+P[[4, 1]] = P[[1, 4]]
+print(np.linalg.det(P))
+-1.0
+1.0
+-1.0
+1.0
+-1.0
+Therefore all we need to do is keep track of the number of row permutations and the  det(P)
+  will have the following properties
+
+det(P)={1,−1,for even number of permutationsfor odd number of permutations
+ 
+Python/NumPy implementation of  PLU
+  determinate 
+First we modify our plu function from before to only return  U
+  and the number of permutations of  P
+ .
+
+def plu_for_det(A):
+    
+    #Get the number of rows
+    n = A.shape[0]
+    
+    U = A.copy()
+    L = np.eye(n, dtype=np.double)
+    P = np.eye(n, dtype=np.double)
+    
+    number_of_permutations = 0
+    
+    #Loop over rows
+    for i in range(n):
+        
+        for k in range(i, n): 
+            if ~np.isclose(U[i, i], 0.0):
+                break
+            U[[k, k+1]] = U[[k+1, k]]
+            P[[k, k+1]] = P[[k+1, k]]
+            number_of_permutations += 1
+            
+        #Eliminate entries below i with row operations on U and
+        #reverse the row operations to manipulate L
+        factor = U[i+1:, i] / U[i, i]
+        L[i+1:, i] = factor
+        U[i+1:] -= factor[:, np.newaxis] * U[i]
+        
+    return U, number_of_permutations
+Now we can easily implement the determinate calculation
+
+def plu_det(A):
+    
+    U, number_of_permutations = plu_for_det(A)
+    
+    if number_of_permutations % 2 == 0:
+        return np.diagonal(U).prod()
+    else:
+        return -np.diagonal(U).prod()
+Checking our implementation
+
+plu_det(A)
+4.0
+Comparing against np.linalg.det
+
+np.linalg.det(A)
+4.0

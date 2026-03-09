@@ -1,0 +1,1 @@
+You have a intuition focused python lecture, a mathematical rigor focused hand calculation, and a c++ implementation. Then, the user can connect the dots or pick and choose.

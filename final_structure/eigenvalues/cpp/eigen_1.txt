@@ -1,0 +1,363 @@
+Numerical Solution of a Single Eigenvalue
+The eigenvalue problem was discussed previously in conjunction with the convergence of iterative methods in the solution of linear systems. As engineers we are often introduced to the eigenproblem in mechanics courses as the principal values and directions of the moment of inertia tensor, the stress and strain tensors, and as natural frequencies and modes in vibration theory. From a mathematical standpoint the eigenproblem can provide an elegant method viewing the structure of a matrix. A more formal introduction to the problem and the methods one might use to solve the eigenproblem is the subject of this section.
+
+First, a short refresher. Suppose a scalar,  λ
+ , and a vector  x⃗ 
+  are found to satisfy the matrix equation
+
+Ax⃗ =λx⃗ 
+ 
+Then  λ
+  is said to be an eigenvalue and  x⃗ 
+  an eigenvector of  A
+ . We can rearrange this equation to be in the equivalent form
+
+(A−λI)x⃗ =0
+ 
+In order for a non-trivial solution to exist then,
+
+det(A−λI)=0
+ 
+which results in a polynomial equation in  λ
+  known as the characteristic polynomial. The roots of the characteristic polynomial can be found to solve for the eigenvalues of  A
+ . This would be a very direct method for finding the eigenvalues of  A
+  and typically how we may have been taught to do it in vibrations class or when solving for principal stresses in mechanics and materials. However, for large  A
+ , the problem becomes intractable to proceed by hand and we must resort to the computer for help. The problem is, that finding determinants of matrices is somewhat computationally expensive and finding good approximations to the roots of the characteristic polynomial can be difficult (we shall see when we cover nonlinear root solving). There are other computational ways of estimating the eigenvalues of a matrix, these methods are discussed in the sequel.
+
+The Power Method 
+The Power Method is an iterative technique used to determine the eigenvalue of largest magnitude in a matrix. Once this method is understood, we will modify it slightly to determine other eigenvalues. This method also produces an associated eigenvector. Sometimes this method is used to find an eigenvector when an eigenvalue is known or found by other means. Let us assume that an  n×n
+  matrix  A
+  has  n
+  eigenvalues,  λ1,λ2,…,λn
+  with an associated collection of linearly independent eigenvectors  v⃗ 1,v⃗ 2,…,v⃗ n
+ . Let us also make the assumption that  λ1
+  is the largest in magnitude, meaning  |λ1|>|λ2|≥…≥|λn|
+ . If we define a vector  x⃗ 
+  in  Rn
+ , because the eigenvectors are linear independent, it implies that constants  β1,β2,…,βn
+  exist such that,
+
+x⃗ =∑j=1nβjv⃗ j
+ 
+Multiplying this equation on both sides by  A,A2,…,Ak
+  we have:
+
+Ax⃗ =∑j=1nβjAv⃗ j=∑j=1nβjλjv⃗ jA2x⃗ =∑j=1nβjA2v⃗ j=∑j=1nβjλ2jv⃗ j⋮Akx⃗ =∑j=1nβjAkv⃗ j=∑j=1nβjλkjv⃗ j
+Now let us factor out  λk1
+  from the right hand side of the last equation.
+
+Akx⃗ =λk1∑j=1nβj(λjλ1)kv⃗ j
+ 
+Now take the limit of both sides as  k→∞
+ .
+
+limk→∞Akx⃗ =limk→∞λk1∑j=1nβj(λjλ1)kv⃗ j
+ 
+For  j=2,3,…,n
+  we have  limk→∞(λjλ1)k=0
+  because  |λ1|>|λj|
+ , that leaves
+
+limk→∞Akx⃗ =limk→∞λk1β1v⃗ 1
+ 
+The final equation converges to  0
+  if  |λ1|<1
+  and diverges if  |λ1|>1
+ .
+
+To avoid confusion with taking powers of scalars, we use the additional parenthesis on the superscript to indicate iterations.
+
+Looking at the final relationship we can scale the powers of  Akx⃗ 
+  in a manner which ensures that the limit is always finite and non-zero. The scaling begins by choosing  x⃗ 
+  to be a unit vector,  x⃗ (0)
+ , relative to the infinity norm and choosing a component  x(0)p0
+  of  x⃗ (0)
+  such that
+
+x(0)p0=1=∥x⃗ (0)∥L∞
+ 
+Now, we let  y⃗ (1)=Ax⃗ (0)
+ , and define  μ(1)=y(1)p0
+ . Then,
+
+μ(1)=y(1)p0=y(1)p0x(0)p0=β1λ1v(1)p0+∑nj=2βjλjv(j)p0β1v(1)p0+∑nj=2βjv(j)p0=λ1⎡⎣⎢β1λ1v(1)p0+∑nj=2βj(λjλ1)v(j)p0β1v(1)p0+∑nj=2βjv(j)p0⎤⎦⎥
+Let  p1
+  be the smallest integer such that
+
+|y(1)p1|=∥y⃗ (1)∥L∞
+ 
+finally we define  x⃗ (1)
+  as
+
+x⃗ (1)=1y(1)p1y⃗ (1)=1y(1)p1Ax⃗ (0)
+ 
+then,
+
+x(1)p1=1=||x⃗ (1)||L∞
+ 
+Now define,
+
+y⃗ (2)=Ax⃗ (1)=A2x⃗ (0)
+ 
+and
+
+μ(2)=y(2)p1=y(2)p1x(1)p1=[β1λ21v(1)p1+∑nj=2βjλ2jv(j)p1]/y(1)p1[β1λ1v(1)p1+∑nj=2βjλjv(j)p1]/y(1)p1=λ1⎡⎣⎢⎢β1v(1)p1+∑nj=2βj(λjλ1)2v(j)p1β1v(1)p1+∑nj=2βj(λjλ1)v(j)p1⎤⎦⎥⎥
+Let  p2
+  be the smallest integer such that
+
+|y(2)p2|=∥y⃗ (2)∥L∞
+ 
+finally we define  x⃗ (1)
+  as
+
+x⃗ (2)=1y(2)p2y⃗ (2)=1y(2)p1Ax⃗ (1)=1y(2)p1y(1)p1A2x⃗ (0)
+ 
+Continuing this sequence we have,
+
+y⃗ (m)=Ax⃗ (m−1)
+ 
+μ(m)=y(m)pm−1=y(2)p0x(1)p0=λ1⎡⎣⎢⎢β1v(1)pm−1+∑nj=2βj(λjλ1)mv(j)pm−1β1v(1)pm−1+∑nj=2βj(λjλ1)m−1v(j)pm−1⎤⎦⎥⎥(1)
+and
+
+x⃗ (m)=y⃗ (m)y(m)pm=Amx⃗ (0)∏mk=1y(k)pk
+ 
+where at each step,  pm
+  is used to represent the smallest integer for which
+
+|y(m)pm|=∥y⃗ (m)∥L∞
+ 
+If we look at ( 1
+ ) we can see that as  m→∞
+ , then  μ→λ1
+  as long as  x⃗ (0)
+  is chosen so that  β1≠0
+ . Also, the sequence of vectors  x⃗ (m)
+  converges to an eigenvector associated with  λ1
+  that has infinity norm of unity. This method has the disadvantage that it will not work if the matrix does not have a single dominant eigenvalue.
+
+Pseudocode for Power Method 
+Steps	
+1.	Initialize an eigenvector,  x⃗ =[x1,x2,…,xn]⊺
+ , that is not in the nullspace of  A
+ , i.e.  Ax⃗ ≠0
+ 
+2.	Initialize  ERR>TOL
+ 
+3.	Find the smallest integer  p
+  with  1≤p≤n
+  and  |xp|=∥x⃗ ∥L∞
+ 
+4.	Set  x⃗ =x⃗ xp
+ 
+5.	While  ERR>TOL
+ , do Steps 6-10.
+6.	 y⃗ =Ax⃗ 
+ 
+7.	 μ=yp
+ 
+8.	 
+  Find the smallest integer  p
+  with  1≤p≤n
+  and  |yp|=∥y⃗ ∥L∞
+ 
+9.	 
+  Set  ERR=∥x⃗ −(y⃗ yp)∥L∞
+ 
+10.	 
+  Set  x⃗ =y⃗ yp
+ 
+The rate of convergence for the Power Method is  O(∣∣λ2λ1∣∣m)
+ . Next we will make some modifications to help improve the rate of convergence.
+
+Python/NumPy implementation of Power Method 
+Below is an implementation of the power method. We've broken the implementation down into several functions, this is to assist in generating the animation below.
+
+def __find_p(x):
+    return np.argwhere(np.isclose(np.abs(x), np.linalg.norm(x, np.inf))).min()
+
+def __iterate(A, x, p):
+    
+    y = np.dot(A, x)       
+    μ = y[p]      
+    p = __find_p(y)     
+    error = np.linalg.norm(x - y / y[p],  np.inf)
+    x = y / y[p]
+    
+    return (error, p, μ, x) 
+
+def power_method(A, tolerance=1e-10, max_iterations=10000):
+    
+    n = A.shape[0]
+    x = np.ones(n)
+    
+    p = __find_p(x)
+    
+    error = 1
+    
+    x = x / x[p]
+    
+    for _ in range(max_iterations):
+        
+        if error < tolerance:
+            break
+            
+        error, p, μ, x = __iterate(A, x, p)
+        
+    
+    return (μ, x)
+Simulation of Power Method Converging 
+The following simulation shows as Power Law method converging to an eigenvalue and eigenvector with the following  A
+  matrix and initial guess for an eigenvector.
+
+A=[0.1110.1],v⃗ =[10]
+ 
+
+
+        
+ Once  Loop  Reflect
+Inverse Power Method 
+The Inverse Power Method is a modification of the power method that gives faster convergence. It is used to determine the eigenvalue of  A
+  that is closest to a specific number  q
+ .
+
+Suppose the matrix  A
+  has eigenvalues  λ1,λ2,…,λn
+  with linearly independent eigenvectors  v⃗ (1),…,v⃗ (n)
+ . The eigenvalues of  (A−qI)−1
+ , where  q≠λi
+ , for  i=1,2,…,n
+ , are
+
+1λ1−q,1λ2−q,…,1λn−q,
+ 
+If we apply the power method to  (A−qI)−1
+  we have
+
+y⃗ (m)=(A−qI)−1x⃗ (m−1)
+ 
+μ(m)=y(m)pm−1=y(m)pp−1x(m−1)pm−1=∑nj=1βj1(λj−q)mv(j)pm−1∑nj=1βj1(λj−q)m−1v(j)pm−1
+ 
+and
+
+x⃗ (m)=y⃗ (m)y(m)pm
+ 
+where, at each step,  pm
+  represents the smallest integer for which  |y(m)pm|=∥y⃗ (m)∥L∞
+ .  μ
+  will then converge to  1(λk−q)
+ , where
+
+1|λk−q|=max(1|λj−q|)
+ 
+where  i=1,2,…,n
+  and  λk≈q+1μ(m)
+  is an eigenvalue of  A
+  closest to  q
+ .
+
+Once  k
+  is known we can write,
+
+μ(m)=⎡⎣⎢⎢βkv(k)pm−1+∑nj=1βj[λk−qλj−q]mv(j)pm−1βkv(k)pm−1+∑nj=1βj[λk−qλj−q](m−1)v(j)pm−1⎤⎦⎥⎥
+ 
+The choice of  q
+  determines the convergence, provided that  1λk−q
+  is a dominant eigenvalue of  (A−qI)−1
+ . The closer  q
+  is to an eigenvalue  λk
+ , the faster the convergence. The convergence is on the order
+
+Convergence
+
+O(∣∣∣(λ−q)−1(λk−q)−1∣∣∣m)=O(∣∣∣(λk−q)(λ−q)∣∣∣m)
+ 
+where  λ
+  represents the eigenvalue of  A
+  that is second closest to  q
+ .
+
+The vector  y⃗ (m)
+  is obtained by solving the equation,
+
+(A−qI)y⃗ (m)=x⃗ (m−1)
+ 
+This equation can be solved by any of the methods we previously learned for solving linear systems. The selection of  q
+  can be based on some means of localizing an eigenvalue (e.g. Gerschogrin Circle, etc.) If we have an initial approximation of the eigenvector,  x⃗ (0)
+ , we can choose  q
+ , as such
+
+q=x⃗ (0)TAx⃗ (0)x⃗ (0)Tx⃗ (0)
+ 
+Pseudocode for Inverse Power Method 
+Steps	
+1.	Initialize an eigenvector,  x⃗ =[x1,x2,…,x3]⊺
+ , that is not in the null space of  A
+ 
+2.	Initialize  ERR>TOL
+ 
+3.	Set  q=x⃗ TAx⃗ x⃗ Tx⃗ 
+ 
+4.	Find the smallest integer  p
+  with  1≤p≤n
+  and  |xp|=∥x⃗ ∥L∞
+ 
+5.	Set  x⃗ =x⃗ xp
+ 
+6.	While  ERR>TOL
+ , do steps 7-12
+7.	 
+  Solve  (A−qI)y⃗ =x⃗ 
+ 
+8.	 
+   μ=yp
+ 
+9.	 
+  Find the smallest integer  p
+  with  1≤p≤n
+  and  |yp|=∥y⃗ ∥L∞
+ 
+10.	 
+  Set  ERR=∥∥x⃗ −(y⃗ yp)∥∥L∞
+ 
+11.	 
+  Set  x⃗ =y⃗ yp
+ 
+12.	 
+  Set  μ=(1μ)+q
+ 
+Python/NumPy implementation of Inverse Power Method 
+def inverse_power_method(A, tolerance=1e-10, max_iterations=10000):
+    
+    n = A.shape[0]
+    x = np.ones(n)
+    I = np.eye(n)
+    
+    q = np.dot(x, np.dot(A, x)) / np.dot(x, x)
+    
+    p = __find_p(x)
+    
+    error = 1
+    
+    x = x / x[p]
+    
+    for _ in range(max_iterations):
+        
+        if error < tolerance:
+            break
+            
+        y = np.linalg.solve(A - q * I, x)       
+        μ = y[p]      
+        p = __find_p(y)     
+        error = np.linalg.norm(x - y / y[p],  np.inf)
+        x = y / y[p]
+        μ = 1. / μ + q 
+        
+    
+    return (μ, x)
+Deflation techniques 
+There are several ways of determining approximation to the other eigenvalues once a dominant eigenvalue is known. A class of techniques called deflation techniques involve forming a new matrix  B
+  with eigenvalues identical to those in  A
+  except with the dominant eigenvalue of  A
+  replaced with  0
+ . There are then a series of steps that allow you to find the remaining eigenvalues. One popular deflation technique is called Wieland deflation. These deflation techniques tend to be very susceptible of roundoff error and usually they are only used in approximating the initial guess,  q
+ , for use with the Inverse Power Method. When all the eigenvalues of a matrix are required there are better methods for achieving their approximations. Therefore, we will fore go a discussion of deflation techniques and move on to these other methods which involve similarity transformations.

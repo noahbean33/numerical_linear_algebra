@@ -1,0 +1,1210 @@
+Numerical Solution for all Eigenvalues
+In this section we'll continue our discussion on solving for eigenvalues. First, we introduce the Householder similarity transform as a method to tridiagonalize a symmetric matrix without changing its eignenvalues. Then we discuss an efficient and simple deflation technique to solve for all the eigenvalues of a matrix.
+
+Householder's Method 
+Householder's Method is a similarity transform. We will use it to find the eigenvalues of a matrix, but it has other uses outside this process. The method is used to find a symmetric tridiagonal matrix B which is similar to a given symmetric matrix A. We'll start by defining the Householder Transformation
+
+Let  
+→
+ω
+ ∈Rn with  
+→
+ω
+  
+→
+ω
+ ⊺=1. The n×n matrix,
+
+P=I−2 
+→
+ω
+  
+→
+ω
+ ⊺
+This transformation is symmetric and orthogonal, therefore P−1=P.
+
+Householder's method begins by determining a transform P(1) with the property, A(2)=P(1)AP(1) that has
+
+a
+(2)
+j1
+=0,∀j=3,4,…,n
+and by symmetry, a
+(2)
+1j
+=0. The desired outcome of this transformation along with the fact that  
+→
+ω
+  
+→
+ω
+ ⊺=1 by definition, imposes n constraints on the n unknown components of  
+→
+ω
+ . If we set ω1=0, then a
+(2)
+11
+=a11. Now, we want
+
+P(1)=I−2 
+→
+ω
+  
+→
+ω
+ ⊺
+to satisfy
+
+P(1)[a11,a21,a31,…an1]⊺=[a11,α,0,…,0]⊺,
+ 
+where α will be chosen later. Defining some notation
+
+ˆ
+→
+ω
+ 
+ =[ω2,ω3,…,ωn]⊺∈Rn−1, 
+ˆ
+→
+y
+ 
+ =[a21,a31,…,an1]⊺∈Rn−1,
+and  
+ˆ
+P
+  is the (n−1)×(n−1) Householder transformation
+
+ˆ
+P
+ =In−1−2 
+ˆ
+→
+ω
+ 
+  
+ˆ
+→
+ω
+ 
+ ⊺.
+with these definitions, (1) becomes
+
+ˆ
+P
+ (1)[ 
+a11
+a21
+⋮
+an1
+ ]=[ 
+1	 
+→
+0
+ ⊺
+→
+0
+ 	 
+ˆ
+P
+ 
+ ][ 
+a11
+ˆ
+→
+y
+ 
+ 
+ ]=[ 
+a11
+ˆ
+P
+  
+ˆ
+→
+y
+ 
+ 
+ ]=[ 
+a11
+α
+→
+0
+ 
+ ]
+with
+
+ˆ
+P
+  
+ˆ
+→
+y
+ 
+ =[In−1−2 
+→
+ω
+  
+→
+ω
+ ⊺] 
+ˆ
+→
+y
+ 
+ = 
+ˆ
+→
+y
+ 
+ −2( 
+ˆ
+→
+ω
+ 
+ ⊺ 
+ˆ
+→
+y
+ 
+ ) 
+ˆ
+→
+ω
+ 
+ =[α,0,…,0]⊺
+ 
+Let r= 
+ˆ
+→
+ω
+ 
+ ⊺ 
+ˆ
+→
+y
+ 
+ . Then,
+
+[α,0,…,0]⊺=[a21−2rω2,a31−2rω3,…,an1−2rωn]⊺
+we can determine all of the ωj once we know α and r. Equating components
+
+α=a21−2rω2
+and
+
+0=aj1−2rωjforj=3,4,…,n
+Rearranging slightly,
+
+2rω2=a21−α
+ 
+2rωj=aj1forj=3,4,…,n
+ 
+Now we square both sides of each equation and add the equations together,
+
+4r2 
+n
+∑
+j=2
+ ω
+2
+j
+=(a21−α)2+ 
+n
+∑
+j=3
+ a
+2
+j1
+.
+Since  
+ˆ
+→
+ω
+ 
+  
+ˆ
+→
+ω
+ 
+ ⊺=1 and ω1=0, we have ∑
+n
+j=2
+ω
+n
+j
+=1, and
+
+4r2= 
+n
+∑
+j=2
+ a
+2
+j1
+−2αa21+α2.
+ 
+Equation (2) and the fact that P is orthogonal implies that
+
+α2=[α,0,…,0][α,0,…,0]⊺=[ 
+ˆ
+P
+  
+ˆ
+→
+y
+ 
+ ]⊺ 
+ˆ
+P
+  
+ˆ
+→
+y
+ 
+ = 
+ˆ
+→
+y
+ 
+  
+ˆ
+P
+ ⊺ 
+ˆ
+P
+  
+ˆ
+→
+y
+ 
+ = 
+ˆ
+→
+y
+ 
+ T 
+ˆ
+→
+y
+ 
+ 
+Thus,
+
+α2= 
+n
+∑
+j=2
+ a
+2
+j1
+,
+Substituting into (5)
+
+2r2= 
+n
+∑
+j=2
+ a
+2
+j1
+−αa21
+To ensure 2r2=0 only when a21=a31=…=an1=0, we chose
+
+α=−sgn(a21)
+√
+n
+∑
+j=2
+ a
+2
+j1
+therefore,
+
+2r2= 
+n
+∑
+j=2
+ a
+2
+j1
++|a21|
+√
+n
+∑
+j=2
+ a
+n
+j1
+With this choice of α and 2r2 we can solve (3) and (4) to obtain,
+
+ω2=
+a21−α
+2r
+ 
+ and ωj=
+aj1
+2r
+ 
+, and for j=3,…,n
+
+To summarize:
+
+α=−sgn(a21)
+√
+n
+∑
+j=2
+ a
+n
+j1
+r=
+√
+1
+2
+ 
+α2−
+1
+2
+ 
+a21α
+ω1=0ω2=
+a21−α
+2r
+ 
+ωj=
+aj1
+2r
+ 
+,for eachj=3,…,n
+For these choices we have:
+
+A(2)=P(1)AP(1)=[ 
+a
+(2)
+11
+a
+(2)
+12
+0	…	0
+a
+(2)
+21
+a
+(2)
+22
+a
+(2)
+23
+…	a
+(2)
+2n
+0	a
+(2)
+32
+a
+(2)
+33
+…	a
+(2)
+3n
+⋮	⋮	⋮	⋱	⋮
+0	a
+(2)
+n2
+a
+(2)
+n3
+…	a
+(2)
+nn
+ ]
+Having found P(1) and computed A(2), the process is repeated for k=2,3,…,n−2:
+
+α=−sgn(a
+(k)
+k+1,k
+)
+√
+n
+∑
+j=2
+ (a
+(k)
+jk
+)2
+r=
+√
+1
+2
+ 
+α2−
+1
+2
+ 
+αα
+(k)
+k+1,k
+ω
+(k)
+1
+=ω
+(k)
+2
+=…=ω
+(k)
+k
+=0ω
+(k)
+k+1
+=
+a
+(k)
+k+1,k
+−α
+2r
+ 
+ω
+(k)
+j
+=
+ajk
+2r
+ 
+, for each j=k+2,k+3,…,n
+
+P(k)=I−2 
+→
+ω
+ (k)⋅ 
+→
+ω
+ (k)⊺
+A(k+1)=P(k)A(k)P(k)
+Continuing in this manner, the tridiagonal and symmetric matrix A(n−1) is formed
+
+A(n−1)=P(n−2)P(n−3)…P(1)AP(1)…P(n−3)P(n−2).
+Psuedocode for Householder's Method 
+Give a symmetric matrix A with n number of rows
+
+Steps	
+1.	For k=1,2,…,n−2 do steps 2, 5-8, 10, 12, 14, 19-20, 22-23
+2.	 If ak+1,k=0 do Step 3.
+3.	 Set
+α=−
+√
+n
+∑
+j=k+1
+ (ajk)2
+ Else, do Step 4.
+4.	 Set
+α=−sgn(ak+1,k)
+√
+n
+∑
+j=k+1
+ (ajk)2
+5.	 Set 2r2=α2−αak+1,k
+6.	 Set vk=0
+7.	 Set vk+1=ak+1,k−α
+8.	 For j=k+2,…,n do Step 9
+9.	vj=ajk (note  
+→
+ω
+ =
+1
+2r
+ 
+→
+v
+ )
+10.	 For j=k,k+1,…,n do Step 11
+11.	uj=
+1
+2r2
+ 
+∑
+n
+i=k+1
+ajivi (note  
+→
+u
+ =
+1
+r
+ 
+A 
+→
+ω
+ )
+12.	 For j=k,k+1,…,n do Step 13
+13.	zj=uj−(
+→
+u
+ ⋅ 
+→
+v
+ 
+4r2
+ 
+)vj (note  
+→
+z
+ =
+1
+r
+ 
+A 
+→
+ω
+ − 
+→
+ω
+  
+→
+ω
+ ⊺
+1
+r
+ 
+A 
+→
+ω
+ )
+14.	 For l=k+1,k+2,…,n−1 do Steps 15, 18
+15.	 For j=l+1,…,n Do Steps 16-17
+16.	ajl=ajl−vlzj−vjzl
+17.	alj=ajl
+18.	 Set all=all−2vlzl
+19.	 Set ann=ann−2vnzn
+20.	 For j=k+2,…,n do Step 21
+21.	 Set akj=ajk=0
+22.	 Set ak+1,k=ak+1,k−vk+1zk
+23.	 Set ak,k+1=ak+1,k
+Python/NumPy implementation of Householder's method 
+def householder(A):
+
+    n = A.shape[0]
+    v = np.zeros(n, dtype=np.double)
+    u = np.zeros(n, dtype=np.double)
+    z = np.zeros(n, dtype=np.double)
+
+    for k in range(0, n - 2):
+
+        if np.isclose(A[k + 1, k], 0.0):
+            α = -np.sqrt(np.sum(A[(k + 1) :, k] ** 2))
+        else:
+            α = -np.sign(A[k + 1, k]) * np.sqrt(np.sum(A[(k + 1) :, k] ** 2))
+
+        two_r_squared = α ** 2 - α * A[k + 1, k]
+        v[k] = 0.0
+        v[k + 1] = A[k + 1, k] - α
+        v[(k + 2) :] = A[(k + 2) :, k]
+        u[k:] = 1.0 / two_r_squared * np.dot(A[k:, (k + 1) :], v[(k + 1) :])
+        z[k:] = u[k:] - np.dot(u, v) / (2.0 * two_r_squared) * v[k:]
+
+        for l in range(k + 1, n - 1):
+
+            A[(l + 1) :, l] = (
+                A[(l + 1) :, l] - v[l] * z[(l + 1) :] - v[(l + 1) :] * z[l]
+            )
+            A[l, (l + 1) :] = A[(l + 1) :, l]
+            A[l, l] = A[l, l] - 2 * v[l] * z[l]
+
+        A[-1, -1] = A[-1, -1] - 2 * v[-1] * z[-1]
+        A[k, (k + 2) :] = 0.0
+        A[(k + 2) :, k] = 0.0
+
+        A[k + 1, k] = A[k + 1, k] - v[k + 1] * z[k]
+        A[k, k + 1] = A[k + 1, k]
+Gram-Schmidt Process 
+In an orthogonal basis of a vector space (matrix), every vector is perpendicular to every other vector. If we divide each vector by its length we have unit vectors that span the vector space which we will call an orthonormal basis. A common orthonormal basis is the standard basis represented as the identity matrix. This is not the only orthonormal basis, we can rotate the axes without changing the right angles at which the vectors meet. These rotation matrices, we will call Q. Every basis has an orthonormal basis which can be constructed by a simple process known as Gram-Schmidt orthonormalization. This process takes a skewed set of axes and makes them perpendicular.
+
+In numerical linear algebra orthonormal matrices are important because they don't introduce any numerical instability. When lengths stay the same, roundoff error stays in control. Suppose we are given a 3×3 matrix A=[ 
+→
+a
+ | 
+→
+b
+ | 
+→
+c
+ ], where  
+→
+a
+ , 
+→
+b
+ , 
+→
+c
+  are the column vectors of A. We want to produce three column vectors,  
+→
+q
+ 1, 
+→
+q
+ 2, and  
+→
+q
+ 3 which form an orthonormal basis of A. To start we can choose  
+→
+q
+ 1 to be in the same direction of A for convenience, all we have to do is make it a unit vector.
+
+→
+q
+ 1=
+→
+a
+ 
+|a|
+ 
+For  
+→
+q
+ 2 we must subtract any component of  
+→
+b
+  that is in the direction of  
+→
+q
+ 1. We calculate the projection of  
+→
+b
+  onto  
+→
+q
+ 1 by ( 
+→
+q
+ 
+⊺
+1
+→
+b
+ ) 
+→
+q
+ 1, subtracting for this projection from  
+→
+b
+ , gives us an intermediate orthogonal vector  
+→
+B
+ , that we can make orthonormal by dividing by its length:
+
+→
+B
+ = 
+→
+b
+ −( 
+→
+q
+ 
+⊺
+1
+→
+b
+ ) 
+→
+q
+ 1
+→
+q
+ 2=
+→
+B
+ 
+| 
+→
+B
+ |
+ 
+To get  
+→
+c
+  to  
+→
+q
+ 3 we need to subtract any components of  
+→
+c
+ , that might lie in the  
+→
+q
+ 1, 
+→
+q
+ 2 plane. What is left over is an orthogonal vector to  
+→
+q
+ 1 and  
+→
+q
+ 2,  
+→
+C
+ , that we make orthonormal by dividing by its length
+
+→
+C
+ = 
+→
+c
+ −(q
+⊺
+1
+→
+c
+ ) 
+→
+q
+ 1−( 
+→
+q
+ 
+⊺
+2
+→
+c
+ ) 
+→
+q
+ 2
+→
+q
+ 3=
+→
+C
+ 
+|C|
+ 
+The matrix Q, then forms an orthonormal basis of A.
+
+Q=[ 
+→
+q
+ 1| 
+→
+q
+ 2| 
+→
+q
+ 3]
+Pseudocode for Gram-Schmidt 
+Given a matrix A=[ 
+→
+x
+ 1| 
+→
+x
+ 2|…| 
+→
+x
+ n
+ ]
+
+Steps	
+1.	For j=1,2,…,n do Step 2-3
+2.	 Set  
+→
+v
+ j= 
+→
+x
+ j
+3.	For j=1,2,…,n do Step 4-5
+4.	 Set  
+→
+q
+ j= 
+→
+v
+ j/| 
+→
+v
+ j|
+ 5.	 For k=j+1,2,…,n do Step 6
+6.	 
+→
+v
+ k= 
+→
+v
+ k−( 
+→
+q
+ 
+⊺
+k
+→
+v
+ j) 
+→
+q
+ k
+Python/NumPy implementation of Gram-Schmidt 
+def gram_schmidt(A):
+
+    m = A.shape[1]
+    Q = np.zeros(A.shape, dtype=np.double)
+    temp_vector = np.zeros(m, dtype=np.double)
+
+    Q[:, 0] = A[:, 0] / np.linalg.norm(A[:, 0], ord=2)
+
+    for i in range(1, m):
+        q = Q[:, :i]
+        temp_vector = np.sum(np.sum(q * A[:, i, None], axis=0) * q, axis=1)
+        Q[:, i] = A[:, i] - temp_vector
+        Q[:, i] /= np.linalg.norm(Q[:, i], ord=2)
+
+    return Q
+QR Factorization 
+What is the relationship between the matrices A and Q from the Gram-Schmidt process? The relationship between  
+→
+a
+  and  
+→
+q
+ 1 is trivial since we set them equal to one another. The vector  
+→
+b
+  is a combination of the orthonormal  
+→
+q
+ 1 and  
+→
+q
+ 2, and we know what that relationship is
+
+→
+b
+ =( 
+→
+q
+ 
+T
+1
+→
+b
+ ) 
+→
+q
+ 1+( 
+→
+q
+ 
+⊺
+2
+→
+b
+ ) 
+→
+q
+ 2
+Similarly  
+→
+c
+  is the sum of its  
+→
+q
+ i's
+
+→
+c
+ =(q
+T
+1
+→
+c
+ ) 
+→
+q
+ 1+( 
+→
+q
+ 
+⊺
+2
+→
+c
+ ) 
+→
+q
+ 2+( 
+→
+q
+ 
+⊺
+3
+→
+c
+ ) 
+→
+q
+ 3
+If we write these relationships in matrix form, we have
+
+A=[ 
+→
+a
+ | 
+→
+b
+ | 
+→
+c
+ ]=[ 
+→
+q
+ 1| 
+→
+q
+ 2| 
+→
+q
+ 3][ 
+( 
+→
+q
+ 
+⊺
+1
+→
+a
+ )	( 
+→
+q
+ 
+⊺
+1
+→
+b
+ )	( 
+→
+q
+ 
+⊺
+1
+→
+c
+ )
+0	( 
+→
+q
+ 
+⊺
+2
+→
+b
+ )	( 
+→
+q
+ 
+⊺
+2
+→
+c
+ )
+0	0	( 
+→
+q
+ 
+⊺
+3
+→
+c
+ )
+ ]=QR
+QR Algorithm for computing eigenvalues 
+This algorithm is so simple it's scary. We start with a matrix A(0) and perform QR factorization,
+
+A(0)=Q(0)R(0)
+Then we reverse the factors to form the matrix A(1),
+
+A(1)=R(0)Q(0)
+ 
+We can do this because A(1) is similar to A(0), we can verify
+
+Q(0)−1A(0)Q(0)=Q(0)−1(Q(0)R(0))Q(0)=A(1)
+And we continue this process without changing the eigenvalues. The above process is called the unshifted QR algorithm, and almost always A(k) approaches a triangular form, its diagonal entries approach its eigenvalues, which are also the eigenalues of A(0). This algorithm is okay, but we can make it even better by using two refinements
+
+We allow shifts, in a similar fashion to the inverse power method. If the number α(k) is close to an eigenvalue, the step in (6) should be shifted as follows
+
+A(k)−α(k)I=Q(k)R(k) and then A(k+1)=R(k)Q(k)+α(k)I
+
+One popular method of choosing the shifted constant, α(k) is to simply use the a
+(k)
+nn
+ entry of the matrix. Another method uses a shifting constant that is the eigenvalue of the matrix
+
+[ 
+a
+(k)
+n−1,n−1
+a
+(k)
+n−1,n
+a
+(k)
+n,n−1
+a
+(k)
+nn
+ ]
+
+that is closest to a
+(k)
+nn
+.
+
+After a few iterations the matrix A(k) will come to look as follows:
+
+A(k)=[ 
+∗	∗	∗	∗
+∗	∗	∗	∗
+0	∗	∗	∗
+0	0	ϵ	μ1
+ ],whereϵ<<1.
+
+μ1 will be accepted as λ1. We will find the next eigenvalue by eliminating the last row and column and performing the same procedure with the smaller submatrix. And continue until all eigenvalues have been found. At this point the QR algorithm is completely described. If the eigenvectors are desired they are one step away with an inverse power method using the eigenvalues found here.
+
+The last thing we can do to greatly improve the QR algorithm is to make the QR factorization very fast at each step. This is where the Housholder transformation comes in. It turns out that the QR factorization generally takes O(n3) operations, however for a matrix that is already in tridiagonal form this becomes O(n) and once the matrix A(0) is in tridiagonal form, each A(k) will stay that way at each step.
+
+Pseudocode for QR Algorithm for computing eigenvalues 
+Starting with a symmetric tridiagonal matrix, we will relabel some of the terms for simplicity:
+
+A=[ 
+a1	b2	0	…	0
+b2	a2	b3	⋱	⋮
+0	b3	⋱	⋱	0
+⋮	⋱	⋱	⋱	bn
+0	…	0	bn	an
+ ]
+Steps	
+1.	Set k=1, Set SHIFT=0
+2.	While k≤M do Steps 3,6,13,15,18,22-23,32-34,36-37,46-49,52-54
+3.	 If |bn|≤TOL do Steps 4-5
+4.	 Set λn=an+SHIFT
+5.	 Set n=n−1
+6.	 If |b2|≤TOL do Steps 7-10
+7.	 Set λ2=a1+SHIFT
+8.	 Set n=n−1
+9.	 Set a1=a2
+10.	 For j=2,…,n do Steps 11-12
+11.	 Set aj=aj+1
+12.	 Set bj=bj+1
+13.	 If n=0 do Step 14
+14.	 Break out of loop.
+15.	 If n=1 then
+16.	 Set λ1=a1+SHIFT
+17.	 Break out of loop.
+18.	 For j=3,…,n−1 do Step 19
+19.	 If |bj|≤TOL do Step 20-21
+20.	 Print "Split into a1,…,aj−1,b2,…,bj−1 and aj,…an,bj+1,…,bn"
+21.	 Break out of loop.
+22.	 Set B=−(an−1+an),C=anan−1−b
+2
+n
+,D=
+√
+B2−4C
+23.	 If B>0 do Steps 25-26
+24.	 Set μ1=−2C/(B+D)
+25.	 Set μ2=−(B+D)/2
+ Else do Steps 26-27
+26.	 Set μ1=(D−B)/2
+27.	 Set μ2=2C/(D−B)
+28.	 If n=2 then do Steps 29-31
+29.	 Set λ1=μ1+SHIFT
+30.	 Set λ2=μ2+SHIFT
+31.	 Break out of loop.
+32.	 Choose S so that |S−an|=min(|μ1−a|,|μ2−a2|).
+33.	 Set SHIFT=SHIFT+S
+34.	 For j=1,…,n do Step 35
+35.	 Set dj=aj−S
+36.	 Set x1=d1,y1=b2
+37.	 For j=2,…,n do Steps 38-43
+38.	 Set zj−1=(x
+2
+j−1
++b
+2
+j
+)1/2
+39.	 Set cj=xj−1/zj−1
+40.	 Set sj=bj/zj−1
+41.	 Set qj−1=cjyj−1+sjdj
+42.	 Set xj=−sjyj−1+cjdj
+43.	 If j≠n do Steps 44-45
+44.	 Set rj−1=sjbj+1
+45.	 Set yj=cjbj+1
+46.	 Set zn=xn
+47.	 Set a1=s2q1+c2z1
+48.	 Set b2=s2z2
+49.	 For j=2,3,…,n−1 do Steps 50-51
+50.	 aj=sj+1qj+cjcj+1zj
+51.	 bj+1=sj+1zj+1
+52.	 Set an=cnzn
+53.	 Set k=k+1
+54.	 If k=M then do Step 55
+55.	 Print "Number of iteration exceeded"
+Python/NumPy implementation of QR eigenvalue algorithm 
+The pseudocode above exploits the tridiagonal structure of A to perform the QR factorization row-by-row in an efficient manner without using matrix multiplication operations. However, a likely user of Python will simply use the built in numpy.linalg packaged functions to compute eigenvalues (which use the QR algorithm); therefore, the implementation below simply uses the matrix operations for clarity in the method.
+
+def QR(A):
+
+    Q = gram_schmidt(A)
+    R = Q.T @ A
+
+    return (Q, R)
+
+
+def eigs_2x2(A):
+
+    b = -(A[-1, -1] + A[-2, -2])
+    c = A[-1, -1] * A[-2, -2] - A[-2, -1] * A[-1, -2]
+    d = np.sqrt(b ** 2 - 4 * c)
+
+    if b > 0:
+        return (-2 * c / (b + d), -(b + d) / 2)
+    else:
+        return ((d - b) / 2, 2 * c / (d - b))
+
+
+def QR_eigenvalues(A, max_iterations=10000, tolerence=1e-6):
+
+    n = A.shape[0]
+    λ = np.zeros(n, dtype=np.double)
+
+    for _ in range(max_iterations):
+
+        # Check to see if we have converged, then deflate by 1
+        if np.abs(A[-1, -2]) <= tolerence:
+            n -= 1
+            λ[n] = A[-1, -1]
+            A = A[:-1, :-1]
+
+        # Here we are finding the eigenvalues of the lower 2 x 2 submatrix to
+        # find the best value to shift by to improve convergence rates.
+        μ1, μ2 = eigs_2x2(A)
+
+        # Since we have a explicit formula for 2x2 case, let's use it
+        if n == 2:
+            λ[0] = μ1
+            λ[1] = μ2
+            break
+
+        p = np.array([μ1 - A[-1, -1], μ2 - A[-1, -1]]).argmin()
+
+        α = μ1 if p == 0 else μ2
+
+        I = np.eye(n)
+        # Shifted QR decomp
+        Q, R = QR(A - α * I)
+        # Reverse QR
+        A = R @ Q + α * I
+
+    return λ

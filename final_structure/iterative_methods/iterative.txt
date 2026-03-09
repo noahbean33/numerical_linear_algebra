@@ -1,0 +1,239 @@
+Iterative Methods for Solving Linear Systems of Equations
+Iterative techniques are rarely used for solving linear systems of small dimension because the computation time required for convergence usually exceeds that required for direct methods such as Gaussian elimination. However, for very large systems, especially sparse systems (systems with a high percentage of 0 entries in the matrix), these iterative techniques can be very efficient in terms of computational run times and memory usage.
+
+An iterative technique starts to solve the matrix equation  Ax⃗ =b⃗ 
+  starts with an initial approximation  x0→
+  and generates a sequence of vectors  {x⃗ 1,x⃗ 2,…,x⃗ N}
+  that converges to  x⃗ 
+  as  N→∞
+ . These techniques involve a process that converts the system  Ax⃗ =b⃗ 
+  to an equivalent system of the form  x⃗ =Tx⃗ +c⃗ 
+ . The process then follows, for an initial guess  x⃗ 0
+ 
+
+x⃗ 1x⃗ 2x⃗ N=Tx⃗ 0+c⃗ =Tx⃗ 1+c⃗ ⋮=Tx⃗ N−1+c⃗ 
+ 
+We will stop the iteration when some convergence criterion has been reached. A popular convergence criterion uses the  L∞
+ norm. The  L∞
+  norm is a metric that represents the greatest length or size of a vector or matrix component. Expressed mathematically,
+
+x⃗ =[x1,x2,...,xn]T
+ 
+∥x⃗ ∥L∞=max|xi|∀i=1,2,...,n
+ 
+An example using an iterative method 
+Consider the system:
+
+E1:E2:E3:E4:10x1−x12x1−x2+11x2−x2−3x2+2x3−x3+10x3−x3+3x4−x4+8x4====625−1115
+ 
+Let us solve each equation,  Ej
+ , for the variable  xj
+ .
+
+E1:E2:E3:E4:x1=x2=x3=x4=111x1−15x1110x2+110x2−38x2−15x3111x3+18x3−311x4+110x4+35+2511−1110+158
+ 
+using the notation introduced previously we have
+
+x⃗ 1=⎡⎣⎢⎢⎢⎢⎢0111−1501100110−38−151110180−3111100⎤⎦⎥⎥⎥⎥⎥x⃗ 0+⎡⎣⎢⎢⎢⎢⎢352511−1110158⎤⎦⎥⎥⎥⎥⎥,
+ 
+for
+
+x⃗ 0=⎡⎣⎢⎢⎢0000⎤⎦⎥⎥⎥,x⃗ 1=⎡⎣⎢⎢⎢0.60002.2727−1.10001.8750⎤⎦⎥⎥⎥
+ 
+we repeat this process until the desired convergence has been reached. This technique is called the Jacobi iterative method.
+
+Psuedocode for Jacobi iteration 
+For the matrix equation  Ax⃗ =b⃗ 
+  with an initial guess  x⃗ 0
+ .
+
+A=⎡⎣⎢⎢⎢⎢⎢⎢a11a21⋮an1a12⋱......⋱...a1n⋮⋮ann⎤⎦⎥⎥⎥⎥⎥⎥,b⃗ =⎡⎣⎢⎢⎢⎢b1b2⋮bn⎤⎦⎥⎥⎥⎥,x⃗ 0=⎡⎣⎢⎢⎢⎢⎢x01x02⋮x0n⎤⎦⎥⎥⎥⎥⎥,
+ 
+Steps	
+1.	While  ∥x⃗ k−x⃗ k−1∥L∞∥x⃗ ∥L∞>tolerance
+  do Step 2
+2.	 
+  For  i=1,2,…,n
+  do Step 3
+3.	
+xki=⎛⎝⎜⎜−∑j=1i≠jnaijxkj+bi⎞⎠⎟⎟/aii
+ 
+Python/NumPy implementation of Jacobi iteration 
+def jacobi(A, b, tolerance=1e-10, max_iterations=10000):
+    
+    x = np.zeros_like(b, dtype=np.double)
+    
+    T = A - np.diag(np.diagonal(A))
+    
+    for k in range(max_iterations):
+        
+        x_old  = x.copy()
+        
+        x[:] = (b - np.dot(T, x)) / np.diagonal(A)
+        
+        if np.linalg.norm(x - x_old, ord=np.inf) / np.linalg.norm(x, ord=np.inf) < tolerance:
+            break
+            
+    return x
+Observations on the Jacobi iterative method 
+Let's consider a matrix  A
+ , in which we split into three matrices,  D
+ ,  U
+ ,  L
+ , where these matrices are diagonal, upper triangular, and lower triangular respectively.
+
+A=⎡⎣⎢⎢⎢⎢⎢⎢a11a21⋮an1a12⋱……⋱…a1n⋮⋮ann⎤⎦⎥⎥⎥⎥⎥⎥,D=⎡⎣⎢⎢⎢⎢⎢⎢a110⋮00⋱……⋱…0⋮⋮ann⎤⎦⎥⎥⎥⎥⎥⎥,L=⎡⎣⎢⎢⎢⎢⎢⎢0−a21⋮−an10⋱……⋱−an(n−1)0⋮⋮0⎤⎦⎥⎥⎥⎥⎥⎥,U=⎡⎣⎢⎢⎢⎢⎢⎢0⋮⋮0−a12⋱……⋱…−a1n⋮−a(n−1)n0⎤⎦⎥⎥⎥⎥⎥⎥
+If we let  A=D−L−U
+ , then the matrix equation  Ax⃗ =b⃗ 
+  becomes
+
+(D−L−U)x⃗ =b⃗ orDx⃗ =(L+U)x⃗ +b⃗ 
+ 
+if  D−1
+  exists, that implies  ajj≠0
+ , then
+
+x⃗ =D−1(L+U)x⃗ +D−1b⃗ 
+ 
+The results in the matrix form of the Jacobi iteration method
+
+x⃗ k=D−1(L+U)x⃗ k−1+D−1b⃗ 
+ 
+We can see that one requirement for the Jacobi iteration to work is for  aii≠0
+ . This may involve row exchanges before iterating for some linear systems.
+
+Gauss-Seidel iteration: An improvement to the Jacobi iterative method 
+During the Jacobi iteration we always use the components of  x⃗ k−1
+  to compute  x⃗ k
+  but for  i>1,xk1,…,xki−1
+  are already computed and are most likely the best approximations of the real solution. Therefore, we can calculate  xki
+  using the most recently calculated values when available. This technique is called Gauss-Seidel iteration. The pseudocode is as follows
+
+Pseudocode for Gauss-Seidel iteration 
+For the matrix equation  Ax⃗ =b⃗ 
+  with an initial guess  x⃗ 0
+ .
+
+A=⎡⎣⎢⎢⎢⎢⎢⎢a11a21⋮an1a12⋱……⋱…a1n⋮⋮ann⎤⎦⎥⎥⎥⎥⎥⎥,b¯=⎡⎣⎢⎢⎢⎢b1b1⋮bn⎤⎦⎥⎥⎥⎥,x¯0=⎡⎣⎢⎢⎢⎢⎢x01x02⋮x0n⎤⎦⎥⎥⎥⎥⎥
+ 
+Steps	
+1.	While  ∥x⃗ k−x⃗ k−1∥L∞∥x¯k∥L∞>tolerance
+  do Step 2
+2.	 
+  For  i=1,2,...,n
+  do Step 3
+3.	
+xki=(−∑j=1i−1aijxkj−∑j=i+1naijxk−1j+bi)/aii
+ 
+Python/NumPy implementation of Gauss-Seidel iteration 
+def gauss_seidel(A, b, tolerance=1e-10, max_iterations=10000):
+    
+    x = np.zeros_like(b, dtype=np.double)
+    
+    #Iterate
+    for k in range(max_iterations):
+        
+        x_old  = x.copy()
+        
+        #Loop over rows
+        for i in range(A.shape[0]):
+            x[i] = (b[i] - np.dot(A[i,:i], x[:i]) - np.dot(A[i,(i+1):], x_old[(i+1):])) / A[i ,i]
+            
+        #Stop condition 
+        if np.linalg.norm(x - x_old, ord=np.inf) / np.linalg.norm(x, ord=np.inf) < tolerance:
+            break
+            
+    return x
+Observations on the Gauss-Seidel iterative method 
+Let's consider a matrix  A
+ , in which we split into three matrices,  D,U,L
+ , where these matrices are diagonal, upper triangular, and lower triangular respectively.
+
+A=⎡⎣⎢⎢⎢⎢⎢⎢a11a21⋮an1a12⋱……⋱…a1n⋮⋮ann⎤⎦⎥⎥⎥⎥⎥⎥,D=⎡⎣⎢⎢⎢⎢⎢⎢a110⋮00⋱……⋱…0⋮⋮ann⎤⎦⎥⎥⎥⎥⎥⎥,L=⎡⎣⎢⎢⎢⎢⎢⎢0−a21⋮−an10⋱……⋱−an(n−1)0⋮⋮0⎤⎦⎥⎥⎥⎥⎥⎥,U=⎡⎣⎢⎢⎢⎢⎢⎢0⋮⋮0−a12⋱……⋱…−a1n⋮−a(n−1)n0⎤⎦⎥⎥⎥⎥⎥⎥
+We will leave, as an exercise for the student, the derivation, but the matrix equation for the Gauss-Seidel iteration method is as follows:
+
+x⃗ k=(D−L)−1Ux⃗ k−1+(D−L)−1b⃗ 
+ 
+In order for the lower triangular matrix  D−L
+  to be invertible it is necessary and sufficient for  aii≠0
+ . As before, this may involve row exchanges before iterating for some linear systems.
+
+Convergence of iterative methods 
+First, a definition, the spectral radius,  ρ
+ , of matrix  A
+  is the maximum of the absolute values of the matrix  A
+ 's eigenvalues.
+
+ρ(A)=max|λi|
+ 
+where the  λi
+ 's are the eigenvalues of  A
+ .
+
+Now, if  ρ(A)<1
+ , then  (I−A)−1
+  exists, and
+
+(I−A)−1=I+A+A2+…=∑j=0∞Aj
+ 
+We can prove this, starting with the eigenvalue equation
+
+Ax⃗ =λx⃗ →(I−A)x⃗ =(1−λ)x⃗ 
+ 
+λ
+  is an eigenvalue of  A
+ , exactly when  (1−λ)
+  is an eigenvalue of  I−A
+ . But  |λ|≤ρ(A)<1
+ , therefore  1
+  cannot be an eigenvalue of  A
+ , and  0
+  cannot be an eigenvalue of  I−A
+ . A matrix in which none of the eigenvalues are zero is always invertible, therefore  (I−A)−1
+  exists. There also exists an identity which states that a matrix  A
+  is convergent if  ρ(A)<1
+ , which implies that  limn→∞Anx⃗ =0
+  for all  x⃗ 
+ . Now, let
+
+Sm=I+A+A2+…+Am
+ 
+.
+
+Then,
+
+(I−A)Sm=(1+A+A2+…+Am)−(A+A2+…+Am+1)=(I−Am+1).
+Since  A
+  is convergent, we can see that by taking the limit of both sides
+
+limm→∞(I−A)Sm=limm→∞(I−Am+1)=I,
+ 
+therefore
+
+(I−A)−1=limm→∞Sm=∑j=0∞Aj
+ 
+Now for any  x¯0∈Rn
+  the sequence  {x¯k}∞k=0
+  computed by
+
+x⃗ k=Tx⃗ k−1+c⃗ ,
+ 
+for each  k≥1
+ 
+
+Converges to the unique solution of  x⃗ =Tx⃗ +c⃗ 
+  if and only if  ρ(T)<1
+ . We can prove this, first we will assume that  ρ(T)<1
+ . Then,
+
+x⃗ k=Tx⃗ k−1+c⃗ =T(Tx⃗ k−2+c⃗ )+c⃗ =T2x⃗ k−2+(T−I)c⃗ ⋮=Tkx⃗ 0+(Tk−1+…+T+I)c¯
+ 
+Since  ρ(T)<1
+ ,  T
+  is convergent, then from what we learned previously, it follows
+
+limk→∞x⃗ k=limk→∞Tkx⃗ 0+(∑j=0∞Tj)c⃗ =0+(I−T)−1c⃗ 
+ 
+Therefore,  x⃗ k
+  converges to  (I−T)−1c⃗ 
+ .

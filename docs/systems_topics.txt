@@ -1,0 +1,38 @@
+**Memory and cache**
+- Cache hierarchy and cache lines—why naive GEMM is slow
+- Cache-oblivious algorithms—matrix transposition, recursive layouts
+- Row vs column major storage (C vs Fortran order) and why it matters for access patterns
+- Blocking/tiling for cache reuse
+- TLB misses and virtual memory overhead
+
+**Data layout**
+- Dense vs sparse storage formats—CSR, CSC, COO, ELLPACK
+- Blocked sparse formats for cache efficiency
+- Structure of arrays vs array of structures
+- Memory alignment and SIMD requirements
+
+**Hardware arithmetic**
+- IEEE 754 floating point—rounding modes, ULP, machine epsilon
+- Catastrophic cancellation in practice
+- FMA (fused multiply-add) and when it matters
+- Floating point non-associativity and why parallel reductions are nondeterministic
+
+**Broadcasting and vectorization**
+- SIMD—SSE, AVX, AVX-512
+- Auto-vectorization and what breaks it
+- Broadcasting semantics and how Eigen implements expression templates to avoid temporaries
+
+**Parallelism**
+- OpenMP for shared memory parallelism
+- False sharing and cache line contention
+- Thread scaling limits and Amdahl's law in practice
+
+**BLAS/LAPACK interface**
+- Why you call BLAS instead of writing your own
+- Level 1/2/3 BLAS hierarchy and why Level 3 is qualitatively faster
+- How Eigen maps onto BLAS operations
+
+**Profiling and measurement**
+- FLOP counting and roofline model
+- Memory bandwidth as the actual bottleneck
+- perf, valgrind, cachegrind

@@ -1,0 +1,85 @@
+Singular Value Decomposition
+The singular value decomposition is closely associated with the eigenvalue-eigenvector factorization  QΛQ⊺
+  of a positive definite matrix. However, we encounter many matrices that are not positive definite and the decomposition is not true. Consider a rectangular matrix (non-square) matrix, the eigenvalues are not defined in this scenario. If we allow the  Q
+  on the left and the  Q
+  on the right to be any two orthogonal matrices  U
+  and  V⊺
+ , then any matrix will have a decomposition  A=UΣV⊺
+ .
+
+Σ
+  has eigenvalues from  A⊺A
+ , not from  A
+ . These positive entries will be  σ1,…,σr
+ . They are the singular values of  A
+ . They fill the first  r
+  places on the main diagonal of  Σ
+  when  A
+  has rank  r
+ . The rest of  Σ
+  is zero. The columns of  U
+  are the eigenvectors of  AA⊺
+ , and the columns of  V
+  are the eigenvectors of  A⊺A
+ . The  r
+  singular values on the diagonal of  Σ
+  are the square roots of the nonzero eigenvalues of both  AA⊺
+  and  A⊺A
+ .
+
+The SVD is really good for numerically stable computations, because  U
+  and  V
+  are orthogonal matrices. They never change the length of a vector.  Σ
+  could multiply or divide a vector by a large  σ
+ , but at least now we have an idea of exactly what is large and what is small. The ratio of  σmax/σmin
+  is the condition number of a nonsingular matrix. For us as numerical analysts, this might be the most important use of the SVD. Other common uses of the SVD are listed below
+
+Image processing
+Effective rank
+Polar decomposition
+Least squares
+Pseudoinverse
+and even... the algorithm that computes eHarmony.com's 29 Dimensions ®
+  of compatability (U.S. Patent 6,735,568)!
+
+SVD Algorithm 
+We already have elementary forms of all the tools required to calculate a symmetric matrix's SVD. We can use the  QR
+  algorithm to find the eigenvalues of the  AA⊺
+  matrix. Then use the inverse Power Method to find the eigenvectors that correspond to the singular values for both the  AA⊺
+  and  A⊺A
+ . Finally we can use the Gram-Schmidt method to find an orthogonal basis of these eigenvectors to define the  U
+  and  V
+  matrices. This is the process that is performed in np.linalg.svd.
+
+More on Condition Number and Preconditioning 
+We can use the condition number of a matrix to determine the accuracy of our solution. For the matrix equation
+
+Ax⃗ =b⃗ 
+ 
+The relative error is  ∥x⃗ ∥<σmax/σminϵm
+ 
+
+The goal of matrix preconditioner (we used them for iterative techniques in solving linear systems) is to reduce the condition number of the preconditioned matrix with respect to the original matrix. These are most useful in iterative techniques because the rate of convergence of most iterative solvers increases as the condition number of the preconditioned matrix decreases. Preconditioned iterative solvers usually outperform direct methods, especially for sparse matrices. This is why we typically use iterative solvers for the Finite Element Methods, where the equations of motion generally result in very sparse matrices.
+
+Instead of solving the original equation above we would solve something like
+
+P−1(Ax⃗ −b⃗ )=0⃗ 
+ 
+where,  P
+  is the preconditioner. Usually there is some trade off for the computational expense of computing  P−1
+  that guides our selection of  P
+ . The least computational expensive preconditioner would be  P=I
+ , however this does nothing to the original system. The best preconditioner would be  P−1=A−1
+ , which has a condition number of 1, but this is as computationally expensive as solving the original system. Therefore, our choice of a preconditioner is usually somewhere in between. We strive for a minimal number of iterations for convergence and a minimal expense in computing  P−1
+ .
+
+Survey of Software for use in Linear Algebra 
+If you ever find the need to write software that uses a lot of matrix manipulations and/or linear systems solving techniques you can use the subroutine library LAPACK and it's accompanying lower-level operations package called BLAS. These package libraries are written in C and/or FORTRAN and can be called from C/C++ or even Python (although they are used internally by NumPy and SciPy) programs. They run well on shared memory and parallel processing machines. The following table shows equivalent or nearly equivalent commands between LAPACK, Python/NumPy/SciPy. This list is not complete, but shows a few of the operations we have covered while studying numerical techniques for linear systems.
+
+LAPACK	Python/NumPy/SciPy
+SGETRF	scipy.lingalg.lu
+SGERTS	np.linalg.solve
+SPOTRF	scipy.linalg.cholesky
+SPOTRI	np.linalg.inv
+SSTEQR	np.linalg.eigvals
+STREVC	np.linalg.eigvecs

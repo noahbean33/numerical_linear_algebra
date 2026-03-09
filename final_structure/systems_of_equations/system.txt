@@ -1,0 +1,464 @@
+Direct Methods for Solving Linear Systems of Equations
+This section covers direct methods for solving linear systems of equations. Later, we'll also cover iterative methods; the distinction will be obvious once both types of methods are discussed.
+
+Solving systems of linear equations 
+Recall the three basic rules for matrix manipulation from linear algebra:
+
+Switching two rows or columns does not change the solution of the linear system.
+Any row can be multiplied by a constant without changing the solution of the linear system.
+Any row or linear multiple of a row can be added/subtracted to/from another row without changing the solution of the linear system.
+Consider the system of equations:
+
+3x1+8x2=10
+4x1+6x2=2
+We can write in augmented matrix form:
+
+[ 
+3	8	10
+4	6	2
+ ]
+We can multiply the 1st row (R1) by −
+4
+3
+ 
+ and add it to the 2nd row (R2), etc...
+
+[ 
+3	8	10
+4	6	2
+ ] 
+−
+4
+3
+ 
+R1→R1
+→
+ [ 
+−4	−
+32
+3
+ 
+−
+40
+3
+ 
+4	6	2
+ ] 
+R1+R2→R2
+→
+ [ 
+−4	−
+32
+3
+ 
+−
+40
+3
+ 
+0	−
+14
+3
+ 
+−
+34
+3
+ 
+ ] 
+−
+1
+4
+ 
+R1→R1
+→
+−
+3
+14
+ 
+R2→R2
+ [ 
+1	
+8
+3
+ 
+10
+3
+ 
+0	1	
+17
+7
+ 
+ ]
+By inspection we can see that x2=
+17
+7
+ 
+ we can then substitute this solution into a modified first equation
+
+x1+
+8
+3
+ 
+x2=
+10
+3
+ 
+and solve for x1. The final solution is x1=−
+22
+7
+ 
+, x2=
+17
+7
+ 
+.
+
+This procedure is called Gaussian elimination.
+
+Stability of Gaussian elimination 
+Recall that another way of writing a linear system of equations in matrix form is A 
+→
+x
+ = 
+→
+b
+ , where A is the coefficient matrix,  
+→
+x
+  is the vector of unknowns, and  
+→
+b
+  is the right-hand side vector.
+
+One method of determining if a linear system has a solution is to take the determinate of the A matrix. If the determinate of A=0 then the matrix is said to be singular and the system either has no solution or an infinite number of solutions.
+
+A matrix that is near-singular is said to be ill-conditioned whereas one that is far from singular is said to be well-conditioned. There is a notion of condition number that mathematically quantifies a matrix's amenability to numeric computations with matrices having high condition numbers being well conditioned and matrices with low condition numbers being ill conditioned. We will return to condition numbers in more detail when we discuss singular value decomposition. Below is an example of two matrices A and B. A is an ill-conditioned matrix, B is well-conditioned.
+
+If we were to change the last entry of A to a22=1, it would be singular.
+
+A = np.array([[1, 1], 
+              [1, 1.0001]])
+
+np.linalg.det(A)
+9.99999999999889e-05
+B = np.array([[0.0001, 1],
+              [1     , 1]])
+
+np.linalg.det(B)
+-0.9999
+To illustrate the ill-conditioning of A in another way let's consider two very close right-hand side vectors,  
+→
+b
+ :
+
+x1	+x2=2
+x1	+1.0001x2=2
+ 
+and
+x1	+x2=2
+x1	+1.0001x2=2.0001
+ 
+
+The system of equations (1) has the solution x1=2,x2=0, and the system of equations (2) has the solution x1=x2=1. Notice that a change in the fifth digit of  
+→
+b
+  was amplified to a change in the first digit of the solution. Even the most robust numerical method will have trouble with this sensitivity to small perturbations.
+
+Now I would like to illustrate that even a well-conditioned matrix like B can be ruined by a poor algorithm. Consider the matrix B with the right-hand side vector,  
+→
+b
+ =[1,2] and let's proceed with Gaussian elimination.
+
+[ 
+0.0001	1	1
+1	1	2
+ ] 
+10000R1+R2→R2
+→
+ [ 
+0.0001	1	1
+0	−9999	−9998
+ ] 
+−
+1
+9999
+ 
+R2→R2
+→
+ [ 
+0.0001	1	1
+0	1	0.9999
+ ]
+by inspection we see that x2=0.9999, now we can back substitute into the first equation
+x1+10000x2=10000
+
+and solve for x1. The final solution is x1=1,x2=0.9999. Now let us do the same computation, this time on a computer that rounds the results of the computations to 3 decimal places (a machine epsilon of 0.0001), the resulting matrix after manipulations would be
+
+The leading non-zero entry of the row you are using to eliminate entries below is called the pivot. 0.0001 is the pivot in this example.
+
+[ 
+0.0001	1	1
+0	1	1
+ ]
+by inspection we see that x2=1 and back substitution yields x1=0. This is the incorrect solution brought on by the small pivot 0.0001. For this matrix Gaussian elimination is a poor algorithm. Fortunately there is an easy solution: exchange rows.
+
+Now lets do the same computation on the same computer that rounds off the computation to 3 decimal places. This time we will exchange the rows before proceeding with the Gaussian elimination. Eliminating some detail we can see
+
+[ 
+1	1	2
+0.0001	1	1
+ ] 
+R1−10000R2→R2
+→
+ [ 
+1	1	2
+0	0.999	0.999
+ ] 
+1
+0.999
+ 
+R2→R2
+→
+ [ 
+1	1	2
+0	1	1
+ ]
+by inspection we see that x2=1, and back substitution yields x1=1. We can see that this solution differs from the exact solution only by the roundoff error of the computer. Exchanging rows to obtain the largest possible pivot is called partial pivoting. Exchanging both rows and columns to obtain the largest possible pivot is called full pivoting. Full pivoting will result in the most stable algorithm but requires more computations and the requirement of tracking column permutations. For most matrices partial pivoting is sufficient enough for stability.
+
+Pseudocode for Gaussian elimination with back substitution and partial pivoting 
+Consider a linear system with n equations and n unknowns:
+
+E1	:a11x1+a12x2+…+a1nxn=a1,n+1
+E2	:a21x1+a22x2+…+a2nxn=a2,n1
+⋮
+En	:an1x1+an2x2+…+annxn=an,n+1
+ 
+Pseudocode is a human readable computer algorithm description. It omits any language specific syntax in favor of clarity using general programming flow control and conditional statements.
+
+Steps	
+1	For i=1, ..., n do Steps 2-4
+2	 Find p, where p is the largest number with i≤p≤n
+3	 If p≠i, then exchange row i with row p
+4	 For j=i+1,...,n do Steps 5-6
+5	 set mji=aji/aii
+6	 Perform Ej=(Ej−mjiEi)
+7	Set xn=an,n+1/ann
+8	For i=n−1,...,1 do Step 9
+9	
+xi=(ai,n+1− 
+∑
+j=i+1
+ aijxj)/aii
+Python/NumPy implementation for Gaussian elimination with back substitution and partial pivoting 
+This implementation eliminates a few of the explicit loops described in the algorithm pseudocode by using NumPy broadcasting operations.
+
+def gauss_solve(A, b):
+    
+    #Concontanate the matrix A and right hand side column 
+    #vector b into one matrix
+    temp_mat = np.c_[A, b]
+    
+    #Get the number of rows
+    n = temp_mat.shape[0]
+    
+    #Loop over rows
+    for i in range(n):
+            
+        #Find the pivot index by looking down the ith 
+        #column from the ith row to find the maximum 
+        #(in magnitude) entry.
+        p = np.abs(temp_mat[i:, i]).argmax()
+            
+        #We have to reindex the pivot index to be the 
+        #appropriate entry in the entire matrix, not 
+        #just from the ith row down.
+        p += i 
+    
+        #Swapping rows to make the maximal entry the 
+        #pivot (if needed).
+        if p != i:
+            temp_mat[[p, i]] = temp_mat[[i, p]]
+            
+        #Eliminate all entries below the pivot
+        factor = temp_mat[i+1:, i] / temp_mat[i, i]
+        temp_mat[i+1:] -= factor[:, np.newaxis] * temp_mat[i]
+                
+    #Allocating space for the solution vector
+    x = np.zeros_like(b, dtype=np.double);
+
+    #Here we perform the back-substitution.  Initializing 
+    #with the last row.
+    x[-1] = temp_mat[-1,-1] / temp_mat[-1, -2]
+    
+    #Looping over rows in reverse (from the bottom up), starting with the second to
+    #last row, because the last row solve was completed in the last step.
+    for i in range(n-2, -1, -1):
+        x[i] = (temp_mat[i,-1] - np.dot(temp_mat[i,i:-1], x[i:])) / temp_mat[i,i]
+        
+    return x
+Gauss-Jordan elimination 
+Gauss-Jordan elimination simply adds steps to the simple Gauss elimination procedure to produce a matrix that is in reduced row echelon form. This is done by eliminating values both above and below the pivots and ensuring that each pivot has the value 1. Starting where we ended on the exact solution of matrix B earlier we can simply add two steps to produce a reduced row echelon matrix.
+
+[ 
+0.0001	1	1
+0	1	0.9999
+ ] 
+R1−R2→R1
+→
+ [ 
+0.0001	0	0.0001
+0	1	0.9999
+ ]
+then we normalize the first equation to produce a 1 on the pivot:
+
+[ 
+0.0001	0	0.0001
+0	1	0.9999
+ ] 
+1
+0.0001
+ 
+R1→R1
+→
+ [ 
+1	0	1
+0	1	0.9999
+ ]
+now by inspection (and without the use of back substitution) we can see that the solution is x1=1,x2=0.9999 just as before.
+
+For a linear system with n equations and m unknowns. The innermost loops (one subtraction and one multiplication) of a Gauss-Jordan elimination routine are executed n3 and n2 m times. The corresponding loops in a Gaussian scheme are executed 
+1
+3
+ 
+n3 and 
+1
+2
+ 
+n2m times, followed by a back substitution for a similar loop (one subtraction and one multiplication) that occurs 
+1
+2
+ 
+n2 times. If there are far more equations that unknowns the Gaussian scheme with back substitution enjoys roughly a factor of 3 advantage over the Gauss-Jordan, for n=m Gaussian elimination with back substitution enjoys a factor of 6 advantage over Gauss-Jordan. For matrix inversion (discussed later) the two methods have identical efficiencies.
+
+Pseudocode for Gauss-Jordan elimination with partial pivoting 
+Consider a linear system with n equations and n unknowns:
+
+E1	:a11x1+a12x2+...+a1nxn=a1,n+1
+E2	:a21x1+a22x2+...+a2nxn=a2,n1
+⋮
+En	:an1x1+an2x2+...+annxn=an,n+1
+ 
+Steps	
+1	For i=1,...,n do Steps 2-4
+2	 Find p, where p is the largest number with i≤p≤n
+3	 If p≠i, then exchange row i with row p
+4	 For j=1,...,n do Steps 5-6
+5	 Perform Ei=
+1
+aii
+ 
+Ei
+6	 If i≠j perform Ej−ajiEi
+7	For i=1,...,n set xi=ai,n+1
+Python/NumPy implementation for Gauss-Jordan elimination with partial pivoting 
+def gauss_jordan_solve(A, b):
+    
+    #Concontanate the matrix A and right hand side column 
+    #vector b into one matrix
+    temp_mat = np.c_[A, b]
+    
+    #Get the number of rows
+    n = temp_mat.shape[0]
+    
+    #Loop over rows
+    for i in range(n):
+            
+        #Find the pivot index by looking down the ith 
+        #column from the ith row to find the maximum 
+        #(in magnitude) entry.
+        p = np.abs(temp_mat[i:, i]).argmax()
+            
+        #We have to reindex the pivot index to be the 
+        #appropriate entry in the entire matrix, not 
+        #just from the ith row down.
+        p += i 
+    
+        #Swapping rows to make the maximal entry the 
+        #pivot (if needed).
+        if p != i:
+            temp_mat[[p, i]] = temp_mat[[i, p]]
+            
+        #Make the diagonal entires 1
+        temp_mat = temp_mat / np.diagonal(temp_mat)[:, np.newaxis]
+        
+        #Eliminate all entries above the pivot
+        factor = temp_mat[:i, i] 
+        temp_mat[:i] -= factor[:, np.newaxis] * temp_mat[i]
+            
+        #Eliminate all entries below the pivot
+        factor = temp_mat[i+1:, i] 
+        temp_mat[i+1:] -= factor[:, np.newaxis] * temp_mat[i]
+    
+    #If solution is a column vector, flatten it into a 1D array
+    if temp_mat[:,n:].shape[1] == 1:
+        return temp_mat[:,n:].flatten()
+    else:
+        return temp_mat[:,n:]
+Matrix Inversion with Gauss-Jordan scheme 
+For matrix inversion, both the Gauss elimination with back-substitution and Gauss-Jordan schemes described previously have identical efficiencies. For this reason we will, for simplicities sake, only consider the process for matrix inversion using the Gauss-Jordan scheme.
+
+All we have to do is augment an A matrix with an identity matrix of the same dimensions and proceed with Gauss-Jordan elimination exactly as we have done previously. Consider the following A matrix:
+
+A=[ 
+1	3	2
+2	4	5
+10	7	3
+ ]
+we augment it with a 3×3 identity matrix A|I and proceed with Gauss-Jordan Elimination.
+
+[ 
+1	3	2	1	0	0
+2	4	5	0	1	0
+10	7	3	0	0	1
+ ]→[ 
+1	0	0	−
+23
+57
+ 
+5
+57
+ 
+7
+57
+ 
+0	1	0	
+44
+57
+ 
+−
+17
+57
+ 
+−
+1
+57
+ 
+0	0	1	−
+26
+57
+ 
+−
+23
+57
+ 
+−
+2
+57
+ 
+ ]
+We can see by inspection the right side 3×3 submatrix on the right is the inverse of A.
+
+Python / NumPy implementation of matrix inverse with Gauss-Jordan algorithm 
+def gauss_jordan_inverse(A):
+    #initialize b as an identity matrix the same size as A, and call
+    #gauss_jordan_solve as before.
+    return gauss_jordan_solve(A, np.eye(A.shape[0]))

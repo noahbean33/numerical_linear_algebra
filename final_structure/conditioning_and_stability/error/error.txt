@@ -1,0 +1,105 @@
+Computer Preliminaries and Error Descriptors
+Unfortunately computers can't store numbers with infinite precision, but instead use an approximation that can be packed into a fixed number of bits. These bits can be arranged to represent different data types usually called fixed point numbers or integers and floating point numbers. Of most importance to us as numerical analysts are floating point numbers.
+
+A floating point number is represented within the computer as a bit sign (positive or negative), an integer number representing the number of significant digits called the significand or mantissa, and an integer exponent. Symbolically, we might write:
+
+s×M×BsE
+ 
+where,  s
+  is the sign,  M
+  is the mantissa,  B
+  is called the base usually  2
+ , but sometimes  10
+  or  16
+ , and  E
+  is the integer exponent.
+
+The smallest floating point number which, when added to the floating point number  1.0
+ , produces a result different than  1.0
+  is called the machine precision or machine epsilon,  ϵm
+ . Most modern computers have a machine epsilon value somewhere around  2−53
+   (1.11×10−16)
+ , although  ϵm
+  can range depending on the base and the bit wordlength (32-bit, 64-bit, etc.)
+
+Almost any arithmetic between floating point numbers will produce an additional fraction error of size  ϵm
+ , this error is called roundoff error. Numpy has a special function that can report what  ϵm
+  is for the machine we are using:
+
+import numpy as np
+eps = np.finfo(np.float).eps;  eps
+2.220446049250313e-16
+We can verify that adding  ϵm
+  to 1.0 returns something that differs from 1.0.
+
+1.0 + eps != 1.0
+True
+However dividing  ϵm
+  by 10 and adding to 1.0 simply returns 1.0.
+
+1.0 + eps / 10 == 1
+True
+Truncation Error 
+Roundoff error, is a characteristic of computer hardware; however, there is another type of error that is completely a result of the algorithm or software.
+
+Most numerical algorithms compute discrete approximations to a continuous desired quantity. An example of this is the use of the Taylor series to approximate the function  sin(x)
+ . The Taylor series approximation of the function is as follows:
+
+sin(x)=x−x33!+x55!−x77!⋯
+ 
+Of course, this representation requires that the series be infinite for the solution to be exact. Even the best computers cannot evaluate an infinite number of terms in the Taylor series; therefore, we must take a finite number of terms for the approximation. The difference between the approximated answer and the exact solution is called the truncation error. Let's take a look at some numerics, we all know that  sin(π2)=1
+ .
+
+We start by defining a function representing the Taylor series expansion of  sin(x)
+ .
+
+x = sympy.Symbol('x')
+taylor_sin = lambda N=9: sympy.series(sympy.sin(x),x,n=N);
+display(Latex('$\sin(x) ={}$'.format(sympy.latex(taylor_sin()))))
+sin(x)=x−x36+x5120−x75040+O(x9)
+ 
+By evaluating the function above at  x=π2
+  and subtracting it from 1 we can see how the truncation error evolves as we add more terms in the Taylor series.
+
+1
+ 
+Error  =1
+ 
+Here is an interesting visualization of how the difference between the two functions evolve as we add more terms of the Taylor series. The truncation error is visualized as the maximum difference between the two curves.
+
+
+The minimization of truncation error is one of the main goals of numerical analysis.
+
+Stability 
+Usually roundoff error and truncation error do not interact with each other, but sometimes roundoff error can cause a numerical algorithm to become unstable. This happens when roundoff error gets mixed into the calculation and is magnified as it continues. Let's look at an example:
+
+Suppose we want to calculate the powers of the so called "Golden Mean"
+
+ϕ=5√−12
+ 
+
+It can be verified that the power of  ϕn+1
+  can be calculated using the simple recursion relationship,
+
+ϕn+1=ϕn−1−ϕn
+ 
+
+Therefore by calculating  ϕ0=1
+  and  ϕ1=0.618034
+  and successively applying the recursion relationship we should be able to calculate as many powers as desired. Let's see this in action:
+
+First we'll calculate what we will call the "exact" answer by actually evaluating all the power individually. We can do this efficiently with NumPy broadcasting.
+
+phi_exact = (np.sqrt(5) / 2 - 1 / 2) ** np.arange(80)
+Next we explicitly will calculate the first 2 powers and use the recursion formula to evaluate the rest.
+
+phi_recursion = np.zeros(80)
+phi_recursion[0] = 1
+phi_recursion[1] = (np.sqrt(5) / 2 - 1 / 2)
+
+for n in range(1,79):
+    phi_recursion[n + 1] = phi_recursion[n - 1] - phi_recursion[n]
+Visualizing the results of these two methods.
+
+
+The recursion relationship is unstable and cannot be used as stated to solve this problem. Stability of algorithms is something we always need to be aware of as numerical analysts.
