@@ -1,0 +1,275 @@
+# tactiq.io free youtube transcript
+# MATH426: Blockwise multiplication
+# https://www.youtube.com/watch/Sn-9tlPe4gg
+
+00:00:06.359 an interesting fact about the formula
+00:00:08.639 for matrix multiplication is that it
+00:00:10.519 works just as well if the matrices are
+00:00:13.080 described as blocks of other matrices
+00:00:16.239 rather than just blocks of numbers so in
+00:00:19.400 this formula where we have the sum of AI
+00:00:24.039 J times or AI K time
+00:00:27.240 bkj U everything goes through just fine
+00:00:30.640 if aik and bkj happen to be matrices
+00:00:33.719 rather than scalers so long as the sizes
+00:00:36.920 uh of the individual pieces line up
+00:00:39.360 correctly so that sounds a lot more
+00:00:41.559 confusing than it really is it turns out
+00:00:43.399 to be quite simple in practice so here
+00:00:46.160 are a couple of uh example matrices here
+00:00:49.239 I've got a matrix which overall is uh
+00:00:55.680 2x3 however we can write it in terms of
+00:00:58.519 two blocks one block d which is 2x
+00:01:01.559 two and a block e which is 2x
+00:01:06.560 1 or here's another example of a 3X3
+00:01:10.119 Matrix written in terms of four blocks
+00:01:13.759 uh f is 2x
+00:01:15.479 two G is 2x 1 H is 1x two and J is a
+00:01:20.720 scalar 1X one now you're not completely
+00:01:23.400 free to determine the sizes of these
+00:01:25.320 things when I draw the blocks I have to
+00:01:27.759 use vertical lines
+00:01:30.880 I'm sorry straight lines either vertical
+00:01:32.920 or horizontal in order to break the
+00:01:35.200 Matrix into different pieces and that
+00:01:37.399 puts some restrictions on the sizes of
+00:01:39.320 the different blocks the number of rows
+00:01:41.439 in F had to be the same as the number of
+00:01:43.119 rows in G and so
+00:01:45.079 on but those those rules are very
+00:01:47.719 natural uh and then if we look at the
+00:01:49.920 product of these two block defined
+00:01:52.799 matrices well de I could think of that
+00:01:55.880 if I just look at the letters I could
+00:01:57.320 really think of that now as a 1 by two
+00:02:00.360 block
+00:02:01.399 Matrix and fghj is really a 2X two block
+00:02:07.000 Matrix and so if I think of this as 1X 2
+00:02:09.840 * 2x two then the result is also going
+00:02:12.840 to be 1X two right so I have one entry
+00:02:16.440 here and an entry
+00:02:18.800 here and if you think in terms of an
+00:02:22.480 inner product of a row with a column I
+00:02:24.840 should get DF plus eh that's exactly
+00:02:28.120 what I have here now d remember is 2x
+00:02:31.200 two and F is also 2x two so DF is 2x
+00:02:36.000 two e is 2 by one and H is 1 by two so
+00:02:42.239 eh and DF are both 2x two so the whole
+00:02:46.560 thing here is a 2X two block the only
+00:02:49.280 way you can add matrices together is if
+00:02:51.080 they're exactly the same
+00:02:53.159 size similarly on the other block I have
+00:02:57.599 d e * GJ so that's DJ or DG plus
+00:03:04.000 EJ DG is going to be
+00:03:09.480 2x1 and EJ is also 2 by one so therefore
+00:03:14.480 we can add them together and we get
+00:03:17.159 overall a matrix which has got uh two
+00:03:21.640 rows and three
+00:03:23.640 columns as it must but it will be equal
+00:03:27.120 to the product of the original uh
+00:03:30.040 full-sized
+00:03:32.640 matrices so that's a neat trick but
+00:03:36.080 what's the importance of it well the
+00:03:37.599 most important case is when we start
+00:03:39.599 writing a matrix in terms of its columns
+00:03:42.879 so here we have a matrix X which is M
+00:03:47.720 byn and if I think of it in terms of its
+00:03:50.360 columns I'll write the vectors X1
+00:03:53.079 through xn in fact we're going to do
+00:03:54.720 this so often that uh you'll make we'll
+00:03:57.079 make this notational connection quite a
+00:03:59.120 bit
+00:04:01.720 well then if I take a * X well in the
+00:04:04.480 block sense a is 1x one and X is 1 byn
+00:04:08.840 and so we can just take that one by one
+00:04:10.640 and move it inside and multiply each of
+00:04:12.599 the ve uh column vectors in other words
+00:04:15.280 a * X is nothing more than the
+00:04:17.519 collection of a * each column of
+00:04:23.560 X and then if we look at a product like
+00:04:26.800 that which is a matrix times a vector so
+00:04:29.919 here x is our Matrix again now we have a
+00:04:32.720 vector v of length n so we have The
+00:04:35.479 Columns of X right this is still M byn
+00:04:38.600 each of those X's xjs is actually an M
+00:04:42.720 by one vector okay V is itself a vector
+00:04:46.080 so each of these V's is a scalar um it's
+00:04:49.960 a little unfortunate but quite common
+00:04:51.720 that we don't make any distinction
+00:04:53.600 notationally between scalers and vectors
+00:04:55.639 like we do in Vector calculus you're
+00:04:57.960 just going to have to know um that in
+00:05:00.360 this case the X's are vectors and the
+00:05:02.039 v's are
+00:05:03.160 scalers uh from the context of how they
+00:05:05.440 were
+00:05:07.000 created but now if you just look at the
+00:05:09.160 letters and think of it in Block
+00:05:10.919 structure it looks like a block inner
+00:05:13.199 product and in fact we have V1 X1 * V2
+00:05:17.440 X2 and so on now I played a little
+00:05:19.880 subtle trick here um we should always be
+00:05:22.120 careful about the order of our products
+00:05:24.520 so I should have
+00:05:26.000 had X1 V1 here and X 2 V2 and so on but
+00:05:31.479 now V V1 is a scalar so it really is
+00:05:35.080 independent of the order and we can just
+00:05:36.759 say V1 * X1 if we
+00:05:40.960 like okay so what I'm doing is I'm
+00:05:43.160 taking um each column of X multiplying
+00:05:46.759 by a scalar to get a vector and then I
+00:05:50.440 add all those vectors together in linear
+00:05:53.840 algebra that's what we call a linear
+00:05:57.400 combination of The Columns of x
+00:06:01.840 X so a matrix Vector product is a linear
+00:06:05.560 combination of
+00:06:09.160 columns here you can see that
+00:06:10.880 demonstrated with numerical values so uh
+00:06:15.000 here if I think of this Matrix in terms
+00:06:17.880 of its three
+00:06:19.440 columns then the Matrix times the vector
+00:06:21.800 I take two * the First Column 0 * the
+00:06:25.880 second column and 1 * the third column
+00:06:30.360 those are individually easy operations
+00:06:32.479 to do and then I add those three vectors
+00:06:34.800 to get the
+00:06:35.800 result
+00:06:39.400 42 now that means that if I had a matrix
+00:06:42.199 matrix product okay notice that this
+00:06:46.720 column here is the same as the First
+00:06:49.919 Column down here so remember this is
+00:06:52.120 like our example earlier of a *
+00:06:56.120 X right I'm going to use this rule here
+00:06:59.599 a * X is the same as taking a * each
+00:07:02.400 column of X so that would mean that
+00:07:05.160 here's my
+00:07:07.319 a right here's the First Column well I
+00:07:11.160 just did that computation up here that
+00:07:13.120 answer is the same as the
+00:07:14.840 answer that we got
+00:07:18.000 before then in the second
+00:07:21.000 column right this is some different
+00:07:23.000 linear combination of The Columns of a
+00:07:26.599 and this is some third linear
+00:07:28.960 combination of The Columns of a and we
+00:07:30.759 would get different
+00:07:35.360 answers
+00:07:36.919 okay now there's something similar
+00:07:39.240 instead of having a matrix on the left
+00:07:41.120 and a vector on the right we can have a
+00:07:43.639 vector on the left and a matrix on the
+00:07:45.319 right now in this course we are going to
+00:07:48.159 prefer column vectors if we write down a
+00:07:51.840 vector we mean a column Vector unless we
+00:07:54.720 specifically say otherwise and the trick
+00:07:57.440 for pulling that off in general because
+00:07:59.599 we do need rows sometimes is to use
+00:08:02.000 transpose so remember that a
+00:08:06.440 transpose right
+00:08:09.360 reverses or
+00:08:12.960 swaps rows and
+00:08:16.759 columns so in other words what were rows
+00:08:19.400 before become columns what were columns
+00:08:21.479 before become rows when you take a
+00:08:23.919 transpose so if you take the transpose
+00:08:26.479 of a column
+00:08:27.800 Vector 1 2
+00:08:33.519 3 and it's just the row Vector 1
+00:08:40.880 23 okay so this way um whenever we write
+00:08:45.040 a y1 transpose we know it has to be a
+00:08:47.399 row Vector so here I have a matrix Y and
+00:08:51.640 I'm breaking it down in terms of its
+00:08:56.000 rows then if we multiply by a vector on
+00:08:58.800 the left
+00:09:00.519 okay um again I want column vectors so
+00:09:03.760 in order to make it a row Vector I have
+00:09:05.200 to use W transpose so w is going to be W
+00:09:09.360 transpose is going to be 1 by
+00:09:12.720 m and let's say Y is M we know it has M
+00:09:16.399 rows and N
+00:09:21.160 columns well then again in block form
+00:09:24.600 this looks like an inner product and we
+00:09:26.800 have W1 y1 transposed Plus W2 Y2
+00:09:30.760 transpose and so on all the way through
+00:09:33.040 adding them together okay now I'm taking
+00:09:36.079 a scalar tensor row plus a scalar times
+00:09:38.279 another row and so on it's a linear
+00:09:40.680 combination of
+00:09:45.760 rows so the very important connection to
+00:09:48.640 remember here is that when you
+00:09:52.279 multiply on the right side of a matrix
+00:09:55.760 you operate on The Columns of that
+00:09:58.120 Matrix and when you multiply on the left
+00:10:00.920 side of a matrix you operate on the rows
+00:10:03.839 of that Matrix and here operate
+00:10:08.760 means take a linear
+00:10:19.560 combination now this is all still the
+00:10:21.720 same kind of Matrix Matrix products that
+00:10:24.320 we started with from the definition but
+00:10:27.160 having these alternative ways of doing
+00:10:29.160 things turns out to be very a fast way
+00:10:31.360 of thinking in a lot of important
+00:10:33.760 problems so here's an example where we
+00:10:36.079 have a which is a 4x3
+00:10:40.360 matrix I'm just going to put in dots to
+00:10:42.720 represent the values because we don't
+00:10:44.320 care what they
+00:10:46.519 are and I want to represent the
+00:10:48.800 operation of multiplying the First
+00:10:51.720 Column of a by one multiply the second
+00:10:54.639 column of a by two and multiply the
+00:10:57.600 third column of a by 3
+00:11:00.360 three right well to solve that we're
+00:11:04.720 taking a particular kind of the near
+00:11:06.279 combination so first we multiply the
+00:11:08.040 First Column by
+00:11:10.120 one and then we add 0 * the second
+00:11:13.560 column and 0 * the third
+00:11:17.639 column if we want to multiply the second
+00:11:19.800 column by two well we take 0 * the first
+00:11:23.240 column 2 * the second column 0 * the
+00:11:27.440 third column
+00:11:30.399 and then finally uh we do it again we
+00:11:32.720 take 0 * the First Column 0 * the second
+00:11:36.560 column and 3 * the thir column so
+00:11:40.160 whatever a is If I multiply a by this
+00:11:43.720 Matrix on the right I'm operating on The
+00:11:45.720 Columns of a in such a way as that in
+00:11:48.160 the First Column I just take 1 * A1 in
+00:11:52.360 the second column I just take 2 * A2 and
+00:11:55.320 in the third column I just take 3 * A3
+00:12:02.279 as another example suppose we have a 3X3
+00:12:07.120 Matrix and I want to just add the rows
+00:12:13.519 together well that's a linear
+00:12:15.600 combination of the rows where the
+00:12:17.959 coefficient of each row is
+00:12:20.480 one so all I have to do is multiply on
+00:12:23.320 the left by the row Vector 1 1
+00:12:27.279 1 and that will add the three rows
+00:12:30.560 together it's always a useful check at
+00:12:33.440 the end of a problem like this to see
+00:12:36.519 whether the sizes actually work so in
+00:12:38.920 the first example I have a
+00:12:41.399 4x3 * a 3X3 so the answer is defined and
+00:12:46.320 4x3 and that's correct that's we wanted
+00:12:49.560 an answer the same size as a here I have
+00:12:53.639 a
+00:12:54.959 1x3 * a
+00:12:57.839 3X3 and the answer is 1x3 it's a that's
+00:13:02.240 what you should get if you add up the
+00:13:03.760 rows of a 3X3
+00:13:06.639 Matrix finally let me say what all this
+00:13:08.720 has to do with mat lab so we've already
+00:13:11.600 seen that to extract a block from within
+00:13:14.480 a matrix you use the parentheses
+00:13:17.519 notation and the colons to Define what
+00:13:20.360 which rows and which columns to
+00:13:24.199 select similarly if you want to build a
+00:13:26.839 matrix out of blocks well you use the
+00:13:29.839 same notation that you use for scalers
+00:13:32.320 you use the square brackets with commas
+00:13:34.720 to separate columns semicolons to
+00:13:37.279 separate rows as long as all the sizes
+00:13:39.880 line up internally you'll be fine and
+00:13:42.160 you get the answer that you
+00:13:43.680 want

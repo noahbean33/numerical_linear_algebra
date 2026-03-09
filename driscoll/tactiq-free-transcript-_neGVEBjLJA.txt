@@ -1,0 +1,235 @@
+# tactiq.io free youtube transcript
+# QR algorithm for eigenvalues
+# https://www.youtube.com/watch/_neGVEBjLJA
+
+00:00:01.760 okay so now we know that the shore
+00:00:04.880 factorization of a takes the form U
+00:00:10.160 ustar for a unitary U and a triangular
+00:00:14.879 t so if we multiply on the left by ustar
+00:00:18.760 and on the right by U we can rewrite
+00:00:21.840 this as ustar a
+00:00:25.880 u is
+00:00:28.720 triangular now to turn this into an
+00:00:31.000 algorithm we first have to accept the
+00:00:33.000 fact that we have to kind of sneak up on
+00:00:35.200 this there's no way to get the complete
+00:00:38.000 answer in a finite number of steps so
+00:00:40.239 what I mean by that is in the Lu
+00:00:43.559 factorization in the QR factorization
+00:00:46.840 there's a well- defined finite sequence
+00:00:49.000 of steps uh you generally work from top
+00:00:52.199 to bottom left to right when you reach
+00:00:54.399 the corner of the Matrix you're
+00:00:56.840 done with I values that's not possible
+00:00:59.719 and and there are deep theoretical
+00:01:01.039 reasons for that um it's known that we
+00:01:03.719 can't
+00:01:04.640 solve uh finding roots of General pooms
+00:01:08.240 in finite amount of operations and since
+00:01:11.360 there's a connection between roots of
+00:01:12.920 polinomial and I values of matrices uh
+00:01:15.759 if you could solve The Matrix Pro igen
+00:01:17.880 value problem you could solve the
+00:01:19.920 polinomial root finding problem too and
+00:01:21.799 since you can't do that we know we can't
+00:01:24.000 do the the Aon value problem either in a
+00:01:26.759 finite number of
+00:01:28.200 steps so in principle it's an iteration
+00:01:31.799 that never closes never quite finishes
+00:01:35.439 but in reality you get so close to the
+00:01:37.759 answer um in a reasonable amount of time
+00:01:41.360 that it doesn't act a whole lot
+00:01:42.759 differently from solving linear systems
+00:01:45.640 or solving linear squares problems in
+00:01:50.360 practice okay but in principle what we
+00:01:53.399 have to do is to find uh not U Allin one
+00:01:57.240 go but u in a sequence of
+00:02:01.360 stages okay so imagine it's a product of
+00:02:04.759 a bunch of unitary
+00:02:06.680 matrices you1 to
+00:02:09.000 UK okay and then it's Herm Mission would
+00:02:12.000 be the Matrix that you see on the left
+00:02:14.280 of a
+00:02:16.720 here and what we want is in the limit as
+00:02:20.239 K goes to Infinity we want this whole
+00:02:22.560 thing to look like T an upper triangular
+00:02:28.599 Matrix okay so the way to think about
+00:02:31.440 this is to do it from the inside out so
+00:02:35.239 if we just take the uh the three
+00:02:37.319 innermost terms right we would call that
+00:02:41.720 A1 and then each of those has a U2 on
+00:02:45.159 the outside of that so that becomes A2
+00:02:49.040 right so A2 has uh the U1 and the U2 but
+00:02:53.800 of course that's just U2 star * U2 With
+00:02:57.959 A1 in the middle and so on so we can do
+00:03:01.959 this by finding a sequence A1 A2 A3 and
+00:03:06.080 so on right the idea being that the AKs
+00:03:09.720 converged to
+00:03:17.280 triangular now here's a bit of an oddl
+00:03:19.360 looking
+00:03:20.360 idea so we're just going to be greedy
+00:03:23.959 and say um let's suppose we can do it in
+00:03:26.920 such a way that and I have a misprint
+00:03:29.280 here
+00:03:30.360 okay this should just be a
+00:03:33.920 here let's suppose we can just find a U1
+00:03:37.360 right so that U1 star a by itself is
+00:03:39.959 upper
+00:03:41.599 triangular okay so that doesn't mean
+00:03:43.760 that A1 will be upper triangular because
+00:03:47.720 A1 right
+00:03:53.480 oops A1 has this extra term in
+00:03:57.439 it right the U1 on the right
+00:04:01.640 um so we know that after we multiply by
+00:04:04.079 U1 we can't expect it to be upper
+00:04:05.519 triangular but we can try it anyway and
+00:04:08.439 the nice thing about it is that we have
+00:04:09.680 a way of doing this because what we're
+00:04:12.040 saying is that a is equal
+00:04:14.200 to
+00:04:16.040 U1 R1 and at least if we're thinking in
+00:04:19.440 the real case this is just a QR
+00:04:21.720 factorization once again and actually
+00:04:24.639 that's true for complex numbers
+00:04:27.960 too so for the rest the discussion we
+00:04:30.880 may still keep using the complex
+00:04:32.360 notation but everything's going to be
+00:04:34.240 real so you might as well think of
+00:04:39.320 transposes okay so we know how to do
+00:04:41.199 that we know how to get our hands on the
+00:04:42.720 U1 Matrix here so what we'll do is um
+00:04:47.520 you know here's a a matrix that we want
+00:04:49.560 to find the igen values of it's a Vander
+00:04:56.000 Matrix well we'll take the QR
+00:04:58.960 factorization of that Matrix right so a
+00:05:01.880 is equal
+00:05:05.400 to q1 R1 so that means R1 is equal to q1
+00:05:11.520 Star a so q1 star a should be up a
+00:05:16.400 triangular um but then we multiply by q1
+00:05:19.360 again and we get
+00:05:24.639 A1
+00:05:28.319 oops and so A1 is not
+00:05:33.880 triangular but we can keep going so now
+00:05:36.720 we have A1 we take um the QR
+00:05:40.039 factorization of A1 so A1 is Q2
+00:05:45.319 R2 R2 is Q2
+00:05:49.240 star
+00:05:50.800 A1 and A2
+00:05:53.680 is Q2
+00:05:56.199 star A1 Q2
+00:06:01.319 right and we just keep going like this
+00:06:03.280 now what you might notice about this if
+00:06:06.560 we go back and compare to the original
+00:06:09.039 Matrix the numbers in the original
+00:06:11.120 Matrix in this lower triangle were
+00:06:13.120 actually quite large
+00:06:16.160 initially and then multiplying on the
+00:06:18.560 left by q1 transpose made them zero but
+00:06:22.160 then multiplying again made them not
+00:06:24.280 zero but you'll notice that they're a
+00:06:26.840 lot smaller than when we started
+00:06:30.720 by orders of
+00:06:32.680 magnitude and then when we do it again
+00:06:35.599 you can see especially in the last row
+00:06:38.199 if you look carefully at the last
+00:06:43.440 row again the numbers get smaller by a
+00:06:46.639 couple of orders of magnitude in some
+00:06:50.000 cases and we do it again we see they've
+00:06:53.759 gotten even
+00:06:54.879 smaller and the ones above it are
+00:06:57.360 following behind and and so it seems
+00:07:00.080 like even though the matrices themselves
+00:07:02.680 don't stay triangular they stay kind of
+00:07:07.160 close and in fact
+00:07:10.759 um we can take this idea out further so
+00:07:15.639 here's the here are the actual igen
+00:07:19.560 values of this Matrix Lambda 1 to Lambda
+00:07:25.280 5 just for reference then uh so we're
+00:07:29.360 starting over with a now we're just
+00:07:31.199 going to do the QR factorization and
+00:07:32.759 we're not going to number the A's um so
+00:07:35.759 you know we start with a we get A1 and
+00:07:37.840 then A1 becomes A2 and A2 becomes A3
+00:07:41.000 well every time I'm just going to throw
+00:07:42.400 away the old a and keep the new one
+00:07:46.560 here okay and what we see is after 20
+00:07:49.360 iterations of this that at least to this
+00:07:52.400 number of digits um most of those
+00:07:55.400 numbers in the lower triangle are
+00:07:57.800 zero and if you compare the ion
+00:08:02.319 values okay these diagonal numbers are
+00:08:05.879 looking an awful lot like the igen
+00:08:10.199 values of the original Matrix that we're
+00:08:12.879 looking for and so this Matrix is
+00:08:15.560 somehow close
+00:08:17.960 to T
+00:08:22.360 triangular there's one more twist in
+00:08:24.440 this process that makes it very
+00:08:27.440 Sleek so we saying that if we do a QR
+00:08:30.520 factorization of
+00:08:32.120 a then that's the way of getting an
+00:08:34.320 upper triangular R okay by putting the Q
+00:08:37.640 transpose on the left and then the
+00:08:40.320 Matrix that we um substitute for a is Q
+00:08:43.760 transpose a
+00:08:45.640 q well that means that what we really
+00:08:48.320 have is Q since Q transpose of a is r
+00:08:51.040 that means we really have
+00:08:53.240 RQ and so all we're really doing is
+00:08:56.320 saying given an a take the QR
+00:08:58.680 factorization
+00:09:00.600 and then reverse the order of the
+00:09:02.560 factors and reassign that to a it's
+00:09:05.760 really that simple and this is called
+00:09:08.760 this has various names it's the QR
+00:09:14.279 algorithm or the QR
+00:09:19.800 iteration
+00:09:21.720 or it's named The Francis
+00:09:24.440 algorithm it's kind of nice to have the
+00:09:27.519 algorithm named after the person who
+00:09:29.240 really discovered it but you'll see it
+00:09:32.040 referred to all these different ways not
+00:09:34.440 to be confused
+00:09:36.640 right with the term QR
+00:09:44.399 factorization so QR factorization is an
+00:09:47.600 important step in the QR
+00:09:51.399 algorithm but it's not the same
+00:09:54.880 thing okay so here we see the QR
+00:09:57.600 iteration the same one that we did
+00:09:58.839 before or the only thing that I changed
+00:10:01.320 was to go
+00:10:03.519 from Q prime a
+00:10:06.399 q to just
+00:10:09.959 RQ but the result is exactly the same
+00:10:12.480 because it's exactly the same
+00:10:17.920 mathematics okay so let's do this with a
+00:10:20.560 little bit more experimental flare so
+00:10:23.440 here again we're starting over with the
+00:10:25.000 same Matrix here are the exact ion
+00:10:27.680 values again as Lambda
+00:10:29.720 okay we're going to do the QR iteration
+00:10:31.880 and now what we're going to do is going
+00:10:32.800 to keep track of the errors so if this
+00:10:35.360 is converging to a triangular Matrix
+00:10:38.040 then the IG values of a should be along
+00:10:39.720 the
+00:10:42.240 diagonal okay so what we'll do is we'll
+00:10:45.079 take those diagonal number the numbers
+00:10:47.279 that are on the diagonal and compare
+00:10:49.600 them to the actual ion
+00:10:51.519 values so we'll look at that difference
+00:10:53.639 as the error and see what happens so if
+00:10:56.560 we plot the error as a function of the
+00:10:59.360 iteration
+00:11:01.000 number okay so K and then this
+00:11:05.519 is Lambda K minus AK k
+00:11:12.399 k we see in fact they do
+00:11:15.160 decrease it's hard to see how fast they
+00:11:17.320 decrease but if we happen to use a log
+00:11:19.920 scale on the Y AIS we get this beautiful
+00:11:22.399 plot which reveals very regular
+00:11:25.040 structure in the
+00:11:26.360 convergence all right so we'll talk more
+00:11:28.360 about this convergence rate uh and what
+00:11:31.160 it
+00:11:32.000 means

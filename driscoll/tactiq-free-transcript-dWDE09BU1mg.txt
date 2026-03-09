@@ -1,0 +1,99 @@
+# tactiq.io free youtube transcript
+# MATH426: Solving linear systems in MATLAB
+# https://www.youtube.com/watch/dWDE09BU1mg
+
+00:00:02.399 so in order to solve a linear system in
+00:00:04.920 mat lab here's an example um I'm going
+00:00:07.399 to Define here a 4x4
+00:00:09.960 Matrix and a 4x1 Vector so that defines
+00:00:14.400 a linear system we have linear system a
+00:00:17.279 * xals B to solve for x and since a is
+00:00:21.240 4x4 X will also be 4X
+00:00:24.000 1 so here's the Syntax for doing it in
+00:00:26.519 mat lab a
+00:00:28.480 SLB that's equ ENT to solving the system
+00:00:32.040 a * x = b and you see that we get um the
+00:00:36.680 answer here and in this case the
+00:00:39.320 difference between the two sides b and a
+00:00:41.360 * X is actually zero because the answer
+00:00:44.280 was integers so the machine got them
+00:00:46.239 exactly right so one way of remembering
+00:00:48.920 this syntax here is that if you did a
+00:00:51.840 inverse B of course a has to stay on the
+00:00:54.199 left and B has to stay on the right
+00:00:55.879 because of matrix
+00:00:57.680 multiplication but um a is sort of the
+00:01:00.199 denominator if you want to think of it
+00:01:01.640 that way so that's why we use the
+00:01:02.920 backslash it makes it look like sort of
+00:01:05.199 like B is in the numerator and a is in
+00:01:06.720 the denominator that's the thinking
+00:01:08.880 behind that
+00:01:10.759 notation okay um if you want to do
+00:01:13.240 multiple right hand sides and you know
+00:01:15.119 all the right hand sides uh you can do
+00:01:17.520 that in one go so here's a 4x6 Matrix
+00:01:22.439 each column of this 4x6 Matrix defines a
+00:01:26.439 new linear system so in other words it's
+00:01:28.320 a * x equals B where each little each
+00:01:32.720 little B is one of The Columns of this
+00:01:35.159 capital B so there are six linear
+00:01:38.159 systems to solve and it's the same
+00:01:41.159 syntax and now you see that the residual
+00:01:45.000 the difference between the two sides of
+00:01:46.840 what's supposed to be inequality the
+00:01:49.159 difference here is small it's comparable
+00:01:51.840 to the machine
+00:01:54.320 Precision now sometimes you have to
+00:01:56.240 solve multiple systems where you don't
+00:01:58.640 know all the right hand sides at once
+00:02:01.439 instead you know them as part of an
+00:02:03.240 iteration so here's an example of um
+00:02:06.360 applying effectively applying a inverse
+00:02:09.878 over and over again to a vector that
+00:02:11.440 keeps changing so we give V this
+00:02:14.519 starting value and then inside this Loop
+00:02:18.640 we replace V with a inverse time
+00:02:22.720 V and then we um this is just going to
+00:02:27.280 normalize V so its maximum component is
+00:02:29.480 one then the next time through the loop
+00:02:31.840 right this is the right hand side data
+00:02:34.040 and it's changed so we just keep doing a
+00:02:36.640 back SLV over and over again now later
+00:02:40.080 on in the chapter we'll see that there's
+00:02:41.599 a more efficient way of doing this kind
+00:02:43.599 of thing but this gets the job
+00:02:45.920 done okay and then the last thing I want
+00:02:48.159 to point out is that the difficulty of
+00:02:50.560 this problem or the time it takes to
+00:02:52.120 solve this problem is related to the
+00:02:54.959 size of the Matrix and the size of the
+00:02:56.680 right hand side so here's a 5x5
+00:03:00.400 system okay with this Matrix
+00:03:03.400 A and B just a vector of ones so for
+00:03:07.159 this 5x5 system it takes essentially no
+00:03:10.280 time at all I mean that's as little time
+00:03:11.879 as the machine can measure so here I'm
+00:03:14.440 going to do an experiment where I let
+00:03:15.920 the size of the Matrix go from 100 up to
+00:03:18.400 a
+00:03:19.120 thousand and um I'm going to do 10
+00:03:22.239 solves for each Matrix so that I just
+00:03:25.319 kind of average out fluctuations in the
+00:03:27.599 timer all right so um on my machine this
+00:03:30.720 is all very fast even up to a th so you
+00:03:33.879 can see that the time increases as n
+00:03:37.239 increases but it's not necessarily a
+00:03:39.959 smooth easy pattern so if you go from
+00:03:42.599 200 to 400 that looks like a factor of
+00:03:46.720 about four or five if you go from 400 to
+00:03:52.439 800 again that's something like a factor
+00:03:54.760 of five or so so later on we'll see um
+00:03:58.879 you know how this effort might scale
+00:04:01.239 with n but if you think about it the
+00:04:03.400 size of the Matrix is N squared so if
+00:04:06.120 you go from 200 to 400 you've already
+00:04:08.360 got twice as many num or four times as
+00:04:10.439 many numbers to deal with so it's not
+00:04:12.480 surprising that the time goes up by at
+00:04:14.040 least a factor of four

@@ -1,0 +1,246 @@
+# tactiq.io free youtube transcript
+# MATH426: Least squares data fitting
+# https://www.youtube.com/watch/0hasngyl4AM
+
+00:00:05.629 let's return once again to our census
+00:00:09.209 data remember we had a couple of
+00:00:12.269 different kinds of interpolations of
+00:00:14.039 that data so the blue curve is the
+00:00:18.539 piecewise linear curve the dots are the
+00:00:20.460 actual data and with the piecewise
+00:00:22.980 linear approximation or interpolation i
+00:00:25.289 should say the curve only feels local
+00:00:29.310 effects so the value of the interpolant
+00:00:33.360 here depends only on the two neighbors
+00:00:35.609 nearby it doesn't depend on any sort of
+00:00:37.350 larger trend on the other hand the black
+00:00:41.100 curve is the global polynomial
+00:00:43.290 interpolant and that certainly feels
+00:00:45.420 things globally but much too strongly so
+00:00:48.120 things that are going on at the left end
+00:00:50.579 can actually still affect everything
+00:00:51.989 that's going on at the right so we'd
+00:00:54.420 like to somehow split the difference
+00:00:57.000 between these two maybe we'd like a
+00:00:59.190 method that does take into account
+00:01:01.410 what's going on everywhere but doesn't
+00:01:04.709 get hung up on every single small
+00:01:07.079 deviation or or or make these wild
+00:01:10.619 oscillations near the ends and so one
+00:01:13.680 way the most common way of doing that is
+00:01:15.510 by doing what's known as a data fitting
+00:01:18.299 but you don't try to have a curve that
+00:01:20.729 passes through all the data instead you
+00:01:23.549 try to have a curve that represents the
+00:01:25.080 data well in statistics this technique
+00:01:28.290 goes by the name of regression and
+00:01:30.950 regression is a certainly a major form
+00:01:33.960 of what we would now call machine
+00:01:35.670 learning or even artificial intelligence
+00:01:39.170 so our strategy for data fitting least
+00:01:43.560 squares data fitting is to pick some
+00:01:47.759 sort of standardized form for the
+00:01:49.590 function that we're going to use in the
+00:01:50.909 fit so it has some empty pram or open
+00:01:54.090 parameters in it but it's otherwise well
+00:01:56.820 define and then we'll define some sort
+00:01:59.790 of error on how well it approximates the
+00:02:01.710 data minimize that error now at this
+00:02:05.460 point in the discussion we have to do a
+00:02:06.930 notation shift so previously we labeled
+00:02:10.979 these points is going from T 0 y 0 to T
+00:02:14.819 n YN well now we're just
+00:02:17.850 to find it more convenient to stick with
+00:02:20.760 a different numbering of those data
+00:02:23.550 points so the first one will now be t 1
+00:02:26.340 y 1 and the last one will call TM ym so
+00:02:34.350 with that new naming convention let's
+00:02:37.320 let f of t be some candidate for our fit
+00:02:41.250 so we want to know how well does F to
+00:02:43.590 the job well there are a number of ways
+00:02:45.390 we could define how well F is doing its
+00:02:47.340 job so one way is to look at the
+00:02:49.530 difference between F evaluated at TI and
+00:02:52.500 the data point ok and then simply ask
+00:02:56.270 you know what's the what's the maximum
+00:02:58.560 deviation of that sort an absolute value
+00:03:02.270 ok another way we might do it is to say
+00:03:04.950 well let's look at the difference
+00:03:06.000 between the fitting function f and the
+00:03:09.870 target data why but we'll take the
+00:03:12.960 absolute value and add them up over all
+00:03:14.340 the points or we could even decide to do
+00:03:18.630 things in sort of a root-mean-square way
+00:03:21.840 where we square up all these individual
+00:03:24.570 point wise errors add them up and then
+00:03:27.570 take a square root of the whole thing so
+00:03:31.400 will easily see that these are familiar
+00:03:35.040 friends for us if we make this
+00:03:37.020 definition of a vector fee ok Sophie is
+00:03:40.800 an M vector consisting of the values of
+00:03:43.290 this candidate function f at the point
+00:03:46.320 t1 through TM sophie is now an M by one
+00:03:50.160 vector just like why is an m by 1 vector
+00:03:52.620 of the data then these three types of
+00:03:55.680 error before are really just the three
+00:03:58.650 vector norms that we've played around
+00:03:59.970 with so you know the maximum of the
+00:04:02.820 difference is the max norm or the
+00:04:04.530 Infinity norm the sum of of all the
+00:04:10.560 errors is the one norm and then the
+00:04:13.410 square root of the sum of the squares is
+00:04:14.820 the to norm of all those errors so we
+00:04:18.420 might choose to minimize any one of
+00:04:21.089 those particular errors but it turns out
+00:04:24.180 that and there are applications where
+00:04:26.220 you do any of those there are valid
+00:04:28.169 choices situations where you want to
+00:04:30.660 choose the
+00:04:31.170 but for our purposes we're going to
+00:04:33.340 focus entirely on the two norm and
+00:04:36.670 that's where we get this term least
+00:04:38.680 squares we sum up the squares of the
+00:04:41.860 errors can we want to minimize the sum
+00:04:45.010 of squares it just turns out that that's
+00:04:48.040 the most mathematically convenient and
+00:04:49.690 the algorithmically easiest to solve it
+00:04:52.000 leads to a linear problem for us to
+00:04:53.770 solve which the others don't okay so in
+00:04:58.390 order to make that nice simple
+00:05:01.180 conclusion to the problem we have to
+00:05:03.400 make one more big assumption so this
+00:05:05.950 vector Fira member fee consists of the
+00:05:08.169 values of the candidate fitting function
+00:05:10.870 whatever it is and now we want to be
+00:05:15.100 able to claim that we can write fee as
+00:05:17.350 the product of a matrix a times X where
+00:05:21.580 this matrix a depends on the T locations
+00:05:27.600 the t1 through TM but not
+00:05:34.430 on the data
+00:05:42.780 or anything else for that matter so if
+00:05:47.310 we can do that right if we can write the
+00:05:49.710 in this form M by n matrix times an N by
+00:05:52.320 1 vector X then we simply plug fee in or
+00:05:55.919 we plug ax and for fee above and this is
+00:05:58.889 what we get as our what we call now a
+00:06:01.860 linear least squares problem it's linear
+00:06:11.940 because the thing that we're minimizing
+00:06:13.200 over is X X represents some parameter
+00:06:16.230 vector and it appears only linearly in
+00:06:18.840 the problem so let's make this more
+00:06:21.750 concrete with an example one of the most
+00:06:25.830 classic things you want to do is to fit
+00:06:27.419 a straight line so if we said our
+00:06:29.850 candidate functions consists of all
+00:06:31.710 functions of the form X 1 T plus X 2
+00:06:34.950 that's all linear functions well we can
+00:06:38.340 write that in in the form that we want
+00:06:41.070 so the vector fee right is X 1 T 1 plus
+00:06:48.030 X 2 and then x 2 t 2 plus X 2
+00:06:56.650 right and that I'm sorry we have em
+00:07:01.760 points I don't know why I stopped it too
+00:07:03.410 I shouldn't have stopped at two so that
+00:07:05.600 should continue down too sorry this is
+00:07:09.320 an x1 here x1 TM plus x2 so remember fee
+00:07:15.830 is the value of F at all different t1
+00:07:18.680 through TM okay and that vector we can
+00:07:24.530 write in the form of a times X where and
+00:07:27.740 X are defined here right so we simply
+00:07:31.190 have linear combination of those two
+00:07:33.170 columns of a we could extend that to the
+00:07:38.600 case where F is any polynomial in T so a
+00:07:42.070 polynomial is a combination of TN to the
+00:07:45.530 minus 1 to n to the minus 2 and so on
+00:07:47.690 down to tea and one those parameters
+00:07:50.930 will call x1 through xn and as we've
+00:07:53.810 seen in the past when we do Bandar bond
+00:07:55.610 matrices a polynomial can be written in
+00:07:58.460 terms of a linear combination whether
+00:08:02.120 you take the columns that represent
+00:08:03.890 evaluations of the individual monomial
+00:08:05.960 functions and you put all the
+00:08:09.620 coefficients of the polynomial into the
+00:08:12.230 vector X here and in fact polynomials
+00:08:19.010 are one of the most important cases but
+00:08:21.430 the only thing that we really care about
+00:08:23.540 is a linear combination structure right
+00:08:26.480 all we really need to be able to do is
+00:08:28.760 to have FB a linear combination of known
+00:08:31.880 functions okay these functions may be
+00:08:35.960 nonlinear functions of T
+00:08:41.950 and in fact we saw that with the
+00:08:45.380 polynomial it doesn't matter because we
+00:08:48.230 can still write fee which is x 1g one of
+00:08:54.680 t 1 and so on through xn g n of t 1 and
+00:09:01.840 then as we go down the rows we just
+00:09:04.510 increase the index on t
+00:09:14.480 and we can still write that as a linear
+00:09:17.120 combination structure where we take G 1
+00:09:21.290 evaluated at all the points for the
+00:09:24.019 first column with FG to in the second
+00:09:28.940 column and so on GN and the ends column
+00:09:35.199 so it's quite a general form for this
+00:09:38.899 problem the key again is to be able to
+00:09:46.220 take these parameters the exes that
+00:09:48.649 describe the whole family of candidate
+00:09:50.690 functions and separate them out so that
+00:09:53.810 they affect the problem only in a linear
+00:09:55.639 fashion now there are some other cases
+00:10:00.800 where we can do some transformations
+00:10:02.690 that allow us to extend to even more
+00:10:05.660 kinds of problems so for example here is
+00:10:07.880 an exponential fitting function f of T
+00:10:10.370 is equal to a times e to the BTA where a
+00:10:13.639 and B are considered parameters so in
+00:10:19.040 other words we want to consider all
+00:10:20.209 possible functions of this form for
+00:10:21.949 different values of a and B well that is
+00:10:25.250 not expressible as linear combinations
+00:10:28.100 with using a and B the unknowns but if
+00:10:31.370 we take the log of both sides and here
+00:10:33.980 we're always going to use natural logs
+00:10:35.899 for our logarithms in this course so we
+00:10:39.649 take the log of the right hand side
+00:10:41.019 that's the log of a product so it's the
+00:10:44.510 sum of the logs
+00:10:51.550 and that's log of a plus log of e to the
+00:10:58.850 BT is just B times T so we can recognize
+00:11:04.670 this as if we call this parameter X 1 we
+00:11:09.710 call B now we call that X 2 we're back
+00:11:13.070 to the case of a straight line fit but
+00:11:15.370 it's not that the original function is a
+00:11:18.710 straight line fit it's the log of the
+00:11:21.020 candidate function which is a straight
+00:11:22.520 line fit so we must fit the log of the
+00:11:25.130 data
+00:11:37.860 or if we have a power-law like f of t
+00:11:41.259 equals a times T to the B again the
+00:11:46.449 trick is to take the log of both sides
+00:11:51.839 so we take a log of a product is the sum
+00:11:54.550 of the logs so we get B times log T
+00:11:57.819 using the power rule for logs or the
+00:12:00.670 exponential rule for logs so now we can
+00:12:06.519 call this X 1 we call this B X 2 and now
+00:12:14.050 we would call this to be the function G
+00:12:16.750 2 of T right so we have a linear
+00:12:21.759 combination of the functions G 1 right
+00:12:25.750 or that's just one really for all values
+00:12:28.689 of T but we do have x1 times G 1 of T
+00:12:33.069 plus x 2 x g 2 of T so if we were to
+00:12:38.050 write this out right the matrix a
+00:12:44.440 okay would consist of evaluating g1 at
+00:12:48.340 all the different points in the first
+00:12:51.160 column evaluating g2 at all the
+00:12:55.270 different points in the second column so
+00:12:56.920 that's log of T 1 log of T 2
+00:13:07.220 okay those are only two columns X
+00:13:10.220 consists of the two parameters X 1 and X
+00:13:12.439 2 okay and then we fit since we had to
+00:13:19.790 take the log of F we have to fit that to
+00:13:21.920 the vector log y 1 log y 2 and so
+00:13:34.709 so with these transformation tricks we
+00:13:37.869 can sometimes take a genuinely nonlinear
+00:13:39.579 problem and turn it into a linear
+00:13:40.869 problem on the other hand there are
+00:13:42.879 fitting functions that are intractably
+00:13:45.249 nonlinear no matter what you do to them

@@ -1,0 +1,255 @@
+# tactiq.io free youtube transcript
+# Power iteration for eigenvalues
+# https://www.youtube.com/watch/Hl3AUAtyEL4
+
+00:00:01.959 now let's return to
+00:00:04.040 our Mass spring Dynamics
+00:00:08.920 problem and remember we had this Matrix
+00:00:12.240 B this was the unstable version of the
+00:00:15.240 algorithm and it describes how the state
+00:00:17.880 maps from one time to the
+00:00:20.080 next so positions and
+00:00:23.119 velocities remember we said that if we
+00:00:25.359 calculate the igen values of B we can
+00:00:28.039 determine the instability or lack of of
+00:00:30.599 this particular
+00:00:31.920 discretization so um uh a few lectures
+00:00:35.520 ago I showed how if we had 800 particles
+00:00:39.879 then this computation takes a while so
+00:00:42.360 almost 4 seconds here and if n gets even
+00:00:44.960 bigger of course that time scales up
+00:00:47.199 like n cubed which grows rather
+00:00:50.360 rapidly now you know in retrospect is is
+00:00:54.120 4 seconds a long time to wait or not
+00:00:56.800 well you always have to ask compared to
+00:00:58.640 what the whole reason we were doing this
+00:01:01.039 was to figure out whether the um time
+00:01:03.760 stepping iteration in the Dynamics would
+00:01:05.479 be
+00:01:06.520 unstable well it's actually faster to
+00:01:08.680 just go ahead and run the Dynamics
+00:01:10.600 especially if we're sparse aware so um
+00:01:14.000 here is our Syntax for creating the -21
+00:01:18.400 or the 1 -21
+00:01:21.200 Matrix is as a sparse Matrix so that mat
+00:01:24.159 lab is aware it's sparse and reacts
+00:01:28.720 accordingly so so that's
+00:01:31.799 a okay we don't even need the identity
+00:01:34.119 Matrix because we're just working with
+00:01:36.040 the vectors themselves right so we just
+00:01:38.320 go ahead and we evolve the
+00:01:42.560 system evolve The System
+00:01:46.040 Dynamics for 50 time
+00:01:51.960 steps and because we are using a sparse
+00:01:54.600 Matrix for a it's extremely
+00:01:58.119 fast almost to orders of magnitude
+00:02:01.119 faster than the igen value computation
+00:02:03.719 and if we look at the norm of the state
+00:02:07.000 Vector we can see it's
+00:02:12.680 huge and that indicates it's probably
+00:02:19.080 unstable so on the one hand we did gain
+00:02:22.080 sort of an underlying mathematical
+00:02:24.959 explanation um or a way of of
+00:02:28.000 quantifying exactly how it go was
+00:02:30.040 unstable by using igen values but as a
+00:02:32.920 computational tool we kind of failed to
+00:02:34.519 find something that was better than just
+00:02:35.840 running the simulation
+00:02:37.840 itself on the other hand we could turn
+00:02:39.680 it around and say that if what we really
+00:02:42.680 want is the IG value of a matrix the
+00:02:44.680 largest IG value of a matrix then maybe
+00:02:47.760 we can just multiply by The Matrix over
+00:02:50.120 and over again and that's a way to find
+00:02:52.280 out find it so in fact that turns out to
+00:02:54.480 be a successful idea and that's what we
+00:02:56.000 call the power
+00:02:57.239 iteration so here's the setup
+00:03:00.440 a is some diagonalizable n byn Matrix
+00:03:03.319 and X is just some randomly chosen
+00:03:04.959 Vector okay so since a is diagonalizable
+00:03:07.959 we can write it with an IG value
+00:03:11.720 decomposition and then um the vector X
+00:03:15.640 is some combination of the I vectors so
+00:03:19.360 we know that this is you know
+00:03:23.680 possible because if a is diagonalizable
+00:03:27.840 then its IG vectors form a basis so
+00:03:30.120 every Vector X has this kind of
+00:03:32.439 representation and we're going to assume
+00:03:34.239 here that I've chosen the indices if if
+00:03:36.040 I haven't I can just reshuffle them in
+00:03:38.239 such a way that uh Lambda one is largest
+00:03:41.959 in absolute value we're going to call it
+00:03:44.200 the
+00:03:45.840 dominant ion
+00:03:50.360 value and then Lambda 2 Lambda 3 and so
+00:03:53.200 on are smaller um they could be equal to
+00:03:55.959 each other but I really want truly
+00:03:59.840 greater than here not greater than or
+00:04:01.680 equal to in order for this to
+00:04:05.560 work okay so then we observe that if we
+00:04:09.720 multiply this form for x by a on the
+00:04:13.280 left so we just plug in a * X then we
+00:04:17.600 just distribute the a over the
+00:04:20.440 vectors and each of these um can be
+00:04:24.919 rearranged so a scaler can always come
+00:04:27.680 through the product and be put wherever
+00:04:29.199 it likes so we can do the a * V1 first
+00:04:32.600 and a * V1 is the same thing as Lambda 1
+00:04:36.080 V1 by definition of the igen vectors and
+00:04:38.320 IG
+00:04:39.639 values so we turn what's a matrix Vector
+00:04:42.680 multiplication back in just into just a
+00:04:45.320 linear combination of vectors once
+00:04:49.440 again okay now we multiply by a again so
+00:04:54.160 a^ 2 * X is the same thing as a * a x so
+00:04:59.160 you take
+00:05:01.160 a right times all of this so all this
+00:05:05.400 goes in here for a *
+00:05:08.080 X and you play the same game so you
+00:05:11.520 distribute the a over the different
+00:05:12.960 terms you pull the scalar constants
+00:05:15.600 through and you again have a * V1 a *
+00:05:19.560 V2 convert those using the igen value
+00:05:22.880 conditions and we just get that um each
+00:05:25.520 IG value is now squared in that uh
+00:05:28.840 expression
+00:05:30.800 so you can see um inductively how this
+00:05:33.160 is going to work every time we multiply
+00:05:35.560 by power another copy of a we just
+00:05:38.880 increase the exponent on each of those
+00:05:41.039 igen
+00:05:42.479 values and so if we factor
+00:05:46.160 out the dominant igen value term from
+00:05:49.440 the first one then it appears in the
+00:05:52.520 denominator of all the other I value
+00:05:55.039 terms and since Lambda 1 is
+00:05:57.919 dominant then the magnit itude of Lambda
+00:06:02.840 J over Lambda
+00:06:05.880 1 is strictly less than one for all
+00:06:10.039 J not equal to
+00:06:12.680 one and so
+00:06:15.880 therefore when I take the
+00:06:20.319 powers they go to
+00:06:27.520 zero and so all these other term terms
+00:06:29.960 drop out in the
+00:06:31.720 limit so they
+00:06:36.400 vanish as K grows and all that's left is
+00:06:40.599 some scalar multiple of the first IG
+00:06:45.319 Vector so in other
+00:06:47.360 words as K goes to Infinity this Vector
+00:06:50.639 a the K * X
+00:06:53.960 approaches something which is parallel
+00:06:56.160 to the first Dion vector
+00:06:59.759 so that's a useful thing to know now it
+00:07:02.160 would be a bad idea to take the cave
+00:07:04.280 power of a if a is a sparse Matrix then
+00:07:07.039 a to the K will be a lot less sparse as
+00:07:09.560 K goes to Infinity so we don't want to
+00:07:11.759 do that but this idea of repeated
+00:07:14.319 multiplication of a is something we can
+00:07:16.000 do in fact that's exactly what the code
+00:07:18.720 at the beginning of this lecture does
+00:07:20.960 for the um Mass spring
+00:07:24.520 Dynamics now we do have the fact that
+00:07:26.960 that Vector um runs off to Infinity in
+00:07:30.160 Norm if a has an IG value greater than
+00:07:32.960 one and actually if a has all the igen
+00:07:35.919 values less than one the norm would go
+00:07:38.199 to zero okay that could create a problem
+00:07:40.680 for us as K goes to Infinity so the best
+00:07:43.039 idea is what we call the power iteration
+00:07:45.680 where we apply a and then we renormalize
+00:07:48.319 the vector so you know starting from XK
+00:07:51.960 or maybe it would be better to say
+00:07:54.240 inside a loop for k equals 0 1 2 and so
+00:07:58.840 on so we're we're starting from x0
+00:08:01.599 that's some initial
+00:08:08.680 guess okay so we Define a y as a * the
+00:08:11.759 current X we Define an alpha K this is a
+00:08:15.479 normalization
+00:08:20.400 constant and if you read that definition
+00:08:23.080 of a alpha K it's just finding the
+00:08:26.240 largest um element of the vector y
+00:08:32.958 then you renormalize the vector y by the
+00:08:36.039 alpha so that XK +
+00:08:38.760 1 in the infinity
+00:08:43.200 Norm is going to have Norm
+00:08:50.880 one okay and then you repeat that as
+00:08:53.560 long as you
+00:08:55.000 like so because the XK in this algorithm
+00:08:59.959 is just a constant multiple a scalar
+00:09:02.760 multiple of a k * X okay we're just
+00:09:06.279 finding a bunch of normalization
+00:09:07.600 constants as we
+00:09:09.279 go then we find that that Vector XK that
+00:09:12.240 we iterating iterating across um
+00:09:14.839 actually converges to some multiple of
+00:09:18.040 the leading igen
+00:09:20.399 Vector not only that if we go back up
+00:09:22.839 and look at the analysis we wrote
+00:09:26.720 down okay the um
+00:09:35.360 the
+00:09:37.360 uh the terms here that are
+00:09:41.519 left okay beside the ones that are
+00:09:44.399 Vanishing as K goes to
+00:09:52.399 Infinity um of
+00:09:55.839 them this one is as large as any of them
+00:09:58.480 because remember the I values are
+00:09:59.760 ordered from largest to
+00:10:01.399 smallest so that's sort of the largest
+00:10:03.880 error term in the whole expression
+00:10:06.880 there so you can formalize that and
+00:10:09.440 calculate that the difference between
+00:10:12.279 the um Power iteration
+00:10:14.680 vector and the dominant igen Vector is
+00:10:18.160 proportional to Lambda 2 over Lambda 1
+00:10:21.279 to the
+00:10:24.160 K so that means we get um linear
+00:10:27.279 convergence so we can formalize that if
+00:10:29.760 we Define so right the X's are becoming
+00:10:32.240 ion vectors so that means that if x is
+00:10:36.959 close to an igon
+00:10:42.320 Vector then that would mean that
+00:10:46.160 Y is close to Lambda 1
+00:10:53.399 V1 okay so we can get an estimate for
+00:10:55.639 Lambda 1 by taking an entry of Y and
+00:10:58.320 dividing it by an entry of X so that's
+00:11:00.839 what we do here so gamma K is an
+00:11:03.800 estimate of Lambda 1 in fact gamma K or
+00:11:08.160 sorry gamma K converges
+00:11:14.000 to Lambda one as K goes to infinity and
+00:11:18.399 it does so at a linear
+00:11:26.639 rate that's what the statement says the
+00:11:28.839 ratio
+00:11:30.200 of the differences in successive
+00:11:32.560 steps approach is a constant Lambda 2
+00:11:35.360 over Lambda 1 that's our linear
+00:11:37.399 convergence
+00:11:39.320 rate so the smaller that ratio the
+00:11:42.680 faster the convergence remember that's
+00:11:44.160 the ratio by which the errors is reduced
+00:11:46.000 at each
+00:11:47.200 step okay so as an example if we had
+00:11:50.399 this m this 2x two Matrix
+00:11:52.920 a and we chose um 1 Z as our initial
+00:11:56.800 Vector well we put in y
+00:12:01.880 Z so that's the First Column of
+00:12:09.279 a the maximum value is
+00:12:13.800 eight so the next
+00:12:17.360 entry
+00:12:18.920 is 82 / 8 so 1 and
+00:12:23.399 one4 and that has Infinity Norm equal to
+00:12:25.880 one meanwhile we can also do our first
+00:12:29.199 ion Value
+00:12:36.399 Estimate okay this happened in the first
+00:12:38.560 element of
+00:12:40.040 Y so we divide by the first element of X
+00:12:43.079 we get 8 over
+00:12:48.399 one okay so actually this is
+00:12:53.240 um this is a terrible example because
+00:12:55.680 I've picked an igen Vector right so I've
+00:12:58.600 actually picked
+00:12:59.720 um you notice
+00:13:04.320 that this is equal
+00:13:07.040 to um

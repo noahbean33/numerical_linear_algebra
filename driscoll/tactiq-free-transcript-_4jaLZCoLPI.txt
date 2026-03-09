@@ -1,0 +1,325 @@
+# tactiq.io free youtube transcript
+# Singular value decomposition
+# https://www.youtube.com/watch/_4jaLZCoLPI
+
+00:00:06.680 so at this point we've seen the shore
+00:00:09.880 factorization which can always reveal
+00:00:11.840 the IG values of a square
+00:00:13.960 Matrix um if the Matrix happens to be
+00:00:16.119 diagonalizable we can also do the IG
+00:00:17.920 value decomposition which gives not only
+00:00:20.199 the igen values but also the igen
+00:00:21.760 vectors and then once we have that it
+00:00:24.039 becomes particularly easy to talk about
+00:00:25.599 powers of a matrix that's one of the
+00:00:27.039 most important connections with the I
+00:00:29.759 value
+00:00:31.160 decomposition but there's another kind
+00:00:32.840 of decomposition which in a way is just
+00:00:34.879 as fundamental about a matrix um for
+00:00:37.960 other kinds of information about that
+00:00:39.680 Matrix and unlike the igen value
+00:00:42.320 decomposition it exists for every Matrix
+00:00:44.680 not just Square matrices but every
+00:00:46.120 rectangular Matrix as
+00:00:47.760 well now in keeping with the practice uh
+00:00:50.440 that we've had up to this point we're
+00:00:52.600 only going to consider matrices with um
+00:00:55.280 more rows than columns so tall skinny
+00:00:57.960 matrices although just about everything
+00:01:00.440 also applies to matrices with more
+00:01:03.160 columns than rows uh you just have to
+00:01:05.040 change how you write a few of the things
+00:01:07.720 so without any further Ado here it is
+00:01:09.920 it's called the singular value
+00:01:11.600 decomposition or we would just write SVD
+00:01:14.240 for
+00:01:16.520 short and it it's the product of a or a
+00:01:19.560 is expressed as the product of three
+00:01:21.360 matrices USU s and V Star or the hermiss
+00:01:25.360 of V so uh first of all let's draw this
+00:01:28.200 in the form of our little shape card
+00:01:29.920 Tunes so we have a tall skinny
+00:01:33.759 a u is going to be a square Matrix which
+00:01:36.920 has the row dimension in other words
+00:01:38.479 it'll be M by
+00:01:43.439 m s has the S same shape as
+00:01:49.159 a so M by n and V will have
+00:01:55.200 square with the column dimension of a so
+00:01:58.920 n by
+00:02:01.200 n s is also
+00:02:08.520 diagonal okay so I'm trying to show here
+00:02:11.080 that s is a diagonal matrix and we call
+00:02:14.280 the diagonal
+00:02:15.440 entries little
+00:02:18.640 sigmas since there are n columns there
+00:02:21.120 are n of them and then everything
+00:02:22.959 underneath that is
+00:02:27.400 zero and furthermore those numbers are
+00:02:30.720 positive or non-
+00:02:32.879 negative and ordered from largest to
+00:02:41.280 smallest and these are called the
+00:02:43.080 singular
+00:02:48.319 values of
+00:02:57.000 a okay now we still have the U and the V
+00:03:00.920 so u and v are both unitary
+00:03:15.920 matrices if we write out u in terms of
+00:03:19.040 its
+00:03:26.959 columns we call these the left singular
+00:03:29.439 vector
+00:03:41.280 s and if we write out V in terms of its
+00:03:49.000 columns then of course we would call
+00:03:51.040 those right singular
+00:03:58.680 vectors
+00:04:04.200 of
+00:04:08.959 a okay so s is a diagonal matrix with
+00:04:13.640 non- negative entries on the diagonal
+00:04:16.560 and there's in decrease from top to
+00:04:19.759 bottom u and v are unitary matrices of
+00:04:22.639 different
+00:04:24.440 sizes now if a is a real Matrix
+00:04:27.800 originally it turns out of course s is
+00:04:29.960 already real no matter what but if a is
+00:04:32.120 real you can turn out turns out that u
+00:04:33.960 and v can also be real and then that
+00:04:37.000 case they're orthogonal matrices so in
+00:04:39.440 that case we would have U transpose u
+00:04:42.560 and v transpose V are equal to the
+00:04:45.360 identity in the real
+00:04:48.320 case Okay so let's take this apart a
+00:04:50.479 little bit if we look at the
+00:04:54.320 SVD here multiply both sides on the
+00:04:58.680 right by V
+00:05:00.639 so that will cancel out the V Star at
+00:05:02.479 the end and we end up at this equation
+00:05:07.639 here AV is equal to USU so now we do the
+00:05:12.120 uh we do write out V and U in terms of
+00:05:14.240 its
+00:05:24.160 columns and there's
+00:05:26.880 s and what we do is we look at this um
+00:05:30.960 column by column so the First Column of
+00:05:33.080 this product on the left is just a *
+00:05:37.120 V1 and the first column on the right is
+00:05:39.919 the First Column of s *
+00:05:43.080 U so U * the First Column of s well
+00:05:45.880 that's a linear combination of The
+00:05:47.240 Columns of U with Sigma 1 *
+00:05:50.319 U1 and 0 * everything
+00:05:54.240 else and then we look at the second
+00:05:56.199 column on the left it's
+00:05:58.240 av2 the second column on the right is U
+00:06:00.880 * the second column of s which just has
+00:06:03.800 Sigma 2 * U2 and so
+00:06:07.199 on and so if we write out what the SVD
+00:06:10.639 means in some sense or what it
+00:06:12.880 says then we get this equation a VJ is
+00:06:16.360 Sigma J UJ where J goes from 1 to n so
+00:06:20.840 now compare this to the igen value
+00:06:27.680 condition where a a * VJ is lamb J VJ
+00:06:34.400 different
+00:06:36.639 V's okay the difference being that in
+00:06:40.080 the igen value case it's the same Vector
+00:06:43.400 on both sides whereas in the singular
+00:06:46.080 value and singular Vector case it's
+00:06:47.639 different vectors on the two
+00:06:51.319 sides in fact they had to be different
+00:06:53.240 vectors because they may not even have
+00:06:54.599 the same number of
+00:06:57.280 Dimensions okay there's a very simple
+00:06:59.560 interpretation of this in terms of
+00:07:02.160 geometry so recall that a is uh induces
+00:07:06.039 a linear transformation of points in RN
+00:07:09.280 to points in
+00:07:10.759 RM through multiplication on the left by
+00:07:14.360 a the uh M vectors in the U so the left
+00:07:19.319 these are the left singular
+00:07:24.440 vectors they're uh orthonormal because
+00:07:27.039 they're Columns of a unary matrix and
+00:07:29.879 they're a basis of RM because they're M
+00:07:31.759 of
+00:07:33.720 them the v's on the other hand are also
+00:07:36.599 orthonormal to each other because they
+00:07:39.240 come from another unitary
+00:07:41.599 Matrix and um they are basis of our n
+00:07:44.319 because they're n of those so those are
+00:07:45.639 the right singular
+00:07:47.440 vectors okay so um the left singular
+00:07:50.560 vectors parameterize the output
+00:07:58.319 space
+00:08:00.400 or I should say span the output space
+00:08:03.120 the right singular vectors span the
+00:08:04.800 input
+00:08:11.560 space so in terms of the mapping we map
+00:08:13.960 from right from the right basis to the
+00:08:15.639 left
+00:08:17.960 basis and then each VJ is mapped to
+00:08:21.319 Sigma J UJ right again that's the
+00:08:23.400 statement up here map VJ a Maps VJ to
+00:08:27.680 the point Sigma J UJ
+00:08:30.360 and so this is a picture that we saw
+00:08:31.919 experimentally before so um in the input
+00:08:35.200 space we have three
+00:08:37.440 vectors
+00:08:39.679 V1
+00:08:41.839 V2 and
+00:08:44.519 V3 uh they all lie on the unit sphere
+00:08:48.040 okay and they're all mutually
+00:08:50.959 orthogonal and each one of those V1 maps
+00:08:55.519 to
+00:08:57.240 sigma1 U1
+00:09:00.959 okay and that's the longest uh axis
+00:09:03.519 there that's the longest axis because
+00:09:06.200 Sigma one is the largest singular
+00:09:08.760 value V2 maps to the next longest which
+00:09:13.120 is Sigma 2
+00:09:14.839 U2 and V3 maps to the shortest which is
+00:09:17.920 Sigma 3 u3 all right so um every we've
+00:09:23.920 already seen that every Matrix maps that
+00:09:25.600 unit sphere into an
+00:09:28.000 ellipsoid okay okay the axes of that
+00:09:30.160 ellipsoid are just the scaled left
+00:09:32.839 singular vectors they're scaled by the
+00:09:35.079 singular values and then you map those
+00:09:38.240 back onto the left side of the picture
+00:09:40.720 and those form an orthonormal basis that
+00:09:43.279 we call the
+00:09:45.760 v's okay so there's some orthonormal
+00:09:48.120 basis in the input space that maps onto
+00:09:50.560 an orthonormal basis in the output space
+00:09:53.160 with
+00:09:54.000 scalings and that's a complete
+00:09:56.200 description of what every single linear
+00:09:57.680 transformation does
+00:10:02.920 okay we have um a reduced form just as
+00:10:05.959 we had with the QR
+00:10:07.440 factorization so again we have um our
+00:10:10.200 cartoon where
+00:10:13.240 a the full-sized
+00:10:15.640 SBD has a full-sized
+00:10:22.079 U and S which is
+00:10:25.440 rectangular the same size as a the
+00:10:28.480 sigma's zeros
+00:10:31.399 below and then a v which is the column
+00:10:36.399 dimension for V
+00:10:42.480 Star okay well just as we saw with QR if
+00:10:47.120 we look at one column so let's let the V
+00:10:49.320 hang out by
+00:10:51.720 itself if we just look at one column of
+00:10:54.279 this
+00:10:57.639 product okay you * a single column well
+00:11:00.880 it just hits a single value of Sigma and
+00:11:03.480 that Sigma lies above the dotted
+00:11:06.560 line okay because all the numbers down
+00:11:08.800 there are zero well that's true no
+00:11:10.639 matter where I draw the line all the
+00:11:12.639 numbers down there at the bottom are
+00:11:14.000 zero so um
+00:11:18.360 each column
+00:11:21.279 UJ for J greater than
+00:11:24.680 n is multiplied by
+00:11:27.959 zero
+00:11:33.839 exclusively it's never multiplied by
+00:11:35.920 anything other than
+00:11:37.440 zero and so it serves no real purpose to
+00:11:41.519 uh it's not giving us any information
+00:11:43.320 about a it's giving us information about
+00:11:45.240 the rest of the input space RM I'm sorry
+00:11:48.639 the output space
+00:11:51.240 RM but we can throw it away without
+00:11:53.720 changing a at
+00:11:57.959 all
+00:12:00.040 okay so that means that we can write
+00:12:02.480 a in terms of a rectangular
+00:12:07.120 U which I'll call U hat
+00:12:12.079 now okay it's
+00:12:14.800 um M rows by n
+00:12:19.320 columns now we have a
+00:12:22.000 square s
+00:12:25.079 Matrix which is still diagonal and now
+00:12:28.040 we call it s
+00:12:31.519 that and we left the V Star
+00:12:40.680 alone okay so this is our reduced QR
+00:12:43.680 factorization um U hat is no longer a
+00:12:46.920 unitary Matrix because it's not Square
+00:12:50.360 so we couldn't talk about it having an
+00:12:52.880 inverse um it's still true that uat star
+00:12:58.120 U hat produces inner products between
+00:13:01.560 different columns in other words inner
+00:13:03.560 products between different left singular
+00:13:05.880 vectors and those are
+00:13:08.320 all orthonormal vectors so we still get
+00:13:10.920 an identity so in this case it would be
+00:13:14.079 an N byn
+00:13:17.360 identity but it's no longer the case
+00:13:19.680 that U hat U hat
+00:13:22.800 star which is an M bym Matrix is
+00:13:25.440 definitely not the M bym identity
+00:13:35.360 okay so we can write a in terms of a
+00:13:37.199 rectangular U Square s and square
+00:13:43.560 V all right here are some of the major
+00:13:45.920 properties that we can derive from the
+00:13:49.040 SVD for the most part I'll just State
+00:13:51.399 them uh we can write down the pseudo
+00:13:53.519 inverse using the SVD using the reduced
+00:13:56.279 SVD it's very simple so again um just
+00:14:00.000 remind you the reduced SVD says
+00:14:03.680 uat s hat V Star so if you're going to
+00:14:08.759 try to take the inverse of that if you
+00:14:11.120 think about inverse in in quotes not
+00:14:13.920 really because it's not
+00:14:16.000 Square um but you try to reverse the
+00:14:18.279 order and take the inverse quote unquote
+00:14:20.680 of each part while you reverse the order
+00:14:22.880 and take the inverse of V Star you just
+00:14:25.040 get
+00:14:25.959 V you um then you take the inverse of s
+00:14:29.240 hat and that's a square Matrix so you
+00:14:31.000 can take it it's s hat
+00:14:32.920 inverse and then you take the um inverse
+00:14:36.320 of U hat well not really but um U hat
+00:14:39.360 star serves the same role here so that's
+00:14:42.839 a little bit fuzzy it's just kind of a
+00:14:45.079 uh a natural way of seeing why uh a su
+00:14:48.639 inverse looks the way it does it's not
+00:14:50.720 really a proof but you can prove it
+00:14:52.360 easily enough using the formula for the
+00:14:54.120 pseudo inverse that we had
+00:14:56.639 before the rank of a is the the number
+00:14:59.040 of nonzero singular
+00:15:01.639 values and this is another interesting
+00:15:03.920 thing because again getting an exact
+00:15:11.399 zero
+00:15:16.079 numerically is an extremely rare
+00:15:21.480 event so in some sense rank is a concept
+00:15:24.800 which works in exact arithmetic
+00:15:27.600 only so rank is a bit
+00:15:34.600 fuzzy in a floating
+00:15:40.560 point so if your first singular value
+00:15:42.880 was a one and your 11th singular value
+00:15:46.480 is 10us 18 you might say that that 10
+00:15:50.160 Theus 18 is indistinguishable from zero
+00:15:53.600 relative to one on floating Point
+00:15:55.360 arithmetic and so you'd actually say the
+00:15:57.399 rank is 10
+00:15:59.680 so if you look inside the rank command
+00:16:01.399 in mat lab in fact you'll see that
+00:16:03.480 there's a tolerance associated with
+00:16:06.880 rank okay Sigma 1 is the maximum over
+00:16:11.160 all unit vectors um in the torm of the
+00:16:15.560 two Norm of a *
+00:16:17.319 X and sigma n is the
+00:16:19.800 minimum
+00:16:21.360 uh over all unit vectors of two Norm
+00:16:24.560 equal to
+00:16:25.480 one that just comes from this
+00:16:30.279 picture I'm not sure what happened to my
+00:16:32.319 Sigma
+00:16:36.880 here okay if you buy that well then you
+00:16:39.880 have to buy that the two Norm of of a is
+00:16:41.920 equal to Sigma 1 and so now finally we
+00:16:44.720 have a formula for the torm of a matrix
+00:16:48.759 not one that's very easy to calculate
+00:16:51.959 though and then finally the um condition
+00:16:55.519 number of a in the two Norm is the ratio
+00:16:58.880 of Sigma 1 to Sigma
+00:17:04.240 n

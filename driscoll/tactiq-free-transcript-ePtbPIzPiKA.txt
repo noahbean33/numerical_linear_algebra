@@ -1,0 +1,327 @@
+# tactiq.io free youtube transcript
+# MATH426: Conditioning
+# https://www.youtube.com/watch/ePtbPIzPiKA
+
+00:00:01.560 now that we know that floating Point
+00:00:03.959 representation and floating Point
+00:00:05.440 arithmetic are going to make some
+00:00:07.279 changes to our numbers that Define our
+00:00:10.480 problem we have to ask ourselves how
+00:00:13.000 will the result change as as a result of
+00:00:15.839 those perturbations in the numbers and
+00:00:17.640 the
+00:00:18.480 arithmetic and remember at the end of
+00:00:20.480 the last video we had um two
+00:00:23.240 possibilities so uh we had the case of a
+00:00:26.359 quadratic polinomial where we
+00:00:28.679 artificially perturbed the coefficients
+00:00:30.880 by about U an amount which is uh less
+00:00:34.760 than 10us 6 so in other words
+00:00:37.559 maintaining about six significant digits
+00:00:41.000 and we found that the roots also
+00:00:42.960 maintained about six significant digits
+00:00:45.800 of accuracy and so you know answer the
+00:00:50.239 answer in this case was really no worse
+00:00:53.239 than the
+00:00:56.520 perturbation in a relative sense of the
+00:00:59.320 initial data
+00:01:03.600 all right on the other hand we had the
+00:01:04.879 other problem which is seemingly much
+00:01:06.320 simpler of just taking the difference of
+00:01:08.759 two values uh the difference between pi
+00:01:11.200 and a value which is very close to Pi so
+00:01:13.920 those uh two
+00:01:15.759 representations agreed to one another
+00:01:18.439 with one another to about seven
+00:01:20.439 significant
+00:01:21.680 digits um and then when you take the
+00:01:23.600 difference those digits all cancel out
+00:01:25.960 and so we're only left with nine
+00:01:28.840 significant digits
+00:01:33.159 and so seven were we say cancelled due
+00:01:37.600 to subtractive
+00:01:41.240 cancellation so even though you know you
+00:01:43.399 might think well n significant digits is
+00:01:46.079 still a lot and it is we also just about
+00:01:49.320 lost half of them in one operation so
+00:01:51.280 that's probably not so good we'd like to
+00:01:53.399 figure out what's the difference between
+00:01:55.439 these two problems um what can we use to
+00:01:58.280 to analyze them to know when this is
+00:01:59.920 going to happen to
+00:02:01.200 us so let's now think about things more
+00:02:04.000 mathematically so let's define a problem
+00:02:07.200 as a function right so we have some data
+00:02:10.199 and we want to map it to an answer and
+00:02:12.080 different data maps to different answers
+00:02:13.760 well that's a function so keep things
+00:02:16.160 simple let's just suppose we have a a
+00:02:18.000 single valued function of one real
+00:02:20.080 variable for now and we'll call it f ofx
+00:02:22.840 so f is the map from data to
+00:02:27.160 answer all right and then we're going to
+00:02:29.239 perturb the AA from X to x + Delta
+00:02:34.200 X and then we know that the um answer
+00:02:37.200 will be perturbed uh you plug in X Plus
+00:02:39.879 Delta X into the function and then the
+00:02:42.840 solution is also
+00:02:45.200 perturbed I'm sorry the
+00:02:48.840 result is perturbed as a
+00:02:53.319 result okay well Elementary right we we
+00:02:57.239 can find what Delta f is divided by
+00:03:00.120 Delta X is uh or you know we we used to
+00:03:03.080 call this Delta y / Delta X right so
+00:03:05.799 this is how we started off in calculus
+00:03:08.400 with defining a derivative so in the
+00:03:10.799 limit right where Delta X is zero we
+00:03:13.840 know that this approximation becomes an
+00:03:17.319 equality but as long as Delta X is
+00:03:20.519 small this
+00:03:23.599 difference this ratio here which is
+00:03:26.400 sometimes called a finite difference is
+00:03:28.519 pretty close to the derivative
+00:03:31.799 just as a reminder
+00:03:37.200 um as a reminder of something you should
+00:03:40.080 have seen in calculus there's this
+00:03:41.799 concept of linearization so if I want to
+00:03:45.480 approximate a
+00:03:48.080 function f of T we say that F of T is
+00:03:52.040 well approximated by a linear function L
+00:03:54.360 of T and L is defined
+00:03:57.599 by F of some value a a + fime of a * tus
+00:04:04.680 a and it's a good
+00:04:06.760 approximation for T close to
+00:04:11.640 a right so another way is to look at it
+00:04:14.760 graphically so we have some function
+00:04:17.279 which is f of
+00:04:18.478 T and then we have um a value at T is
+00:04:24.520 equal to
+00:04:27.240 a and we take the slope at that that
+00:04:29.960 point from the derivative and we draw a
+00:04:31.520 straight line and we call that L of T
+00:04:35.320 and the straight line stays close to the
+00:04:37.320 function for a little while near the
+00:04:39.039 point
+00:04:40.120 a so it's all the same as what I did
+00:04:43.080 above um where we have instead of um
+00:04:47.960 instead of a we call it
+00:04:51.919 X and instead of Delta X we have T minus
+00:04:57.600 a so it's the same approximation as um
+00:05:02.039 as the one above using the
+00:05:04.160 derivative through
+00:05:06.080 linearization but with all this I've
+00:05:08.639 done an absolute perturbation so I took
+00:05:10.720 X and I just added Delta X to
+00:05:15.280 it in floating Point arithmetic we do
+00:05:18.280 relative perturbations so remember the
+00:05:20.919 floating point value of x for example is
+00:05:23.479 x * 1 plus Epsilon
+00:05:30.840 there might be other reasons that your
+00:05:32.120 data is perturbed but certainly floating
+00:05:34.400 point is
+00:05:35.639 one okay so if we do that we plug in the
+00:05:38.280 new value of x into the function we get
+00:05:40.759 some f plus Delta F so that's the
+00:05:42.919 resulting
+00:05:49.319 change and we compute an approximation
+00:05:52.720 to Delta F through linearization so we
+00:05:55.440 get this quantity when you sub make the
+00:05:57.520 substitutions into the linearization
+00:05:59.319 formula
+00:06:01.280 and then again we're going to be
+00:06:03.120 interested in the relative change in the
+00:06:05.120 answer F so we have to take Delta F and
+00:06:08.000 divide by
+00:06:09.240 F right so um remember
+00:06:13.039 Epsilon is the relative change in
+00:06:20.560 X right so like in the polinomial the
+00:06:23.800 quadratic polinomial root finding
+00:06:25.599 problem uh we perturb things by 10us 6
+00:06:28.639 so we should expect that the answer also
+00:06:30.520 has a factor like 10- 6 in it when it
+00:06:34.120 changes however there's this other stuff
+00:06:36.599 that describes maybe some sort of
+00:06:41.000 possible amplification of the
+00:06:52.800 error and it's that stuff that we're
+00:06:54.840 interested in that that's sort of
+00:06:56.720 telling us when we might run into
+00:06:58.199 trouble uh when we do floating Point
+00:07:00.440 arithmetic so we use these now we take
+00:07:02.720 the approximation part of it out and we
+00:07:05.800 make some
+00:07:06.759 definitions so the condition number is
+00:07:09.199 really what we use to describe the
+00:07:11.319 relative change in the
+00:07:17.440 output divided by the relative change in
+00:07:21.319 input
+00:07:34.680 and we have two cases right so if we
+00:07:36.919 think in terms of absolute changes okay
+00:07:40.680 um so I maybe I got ahead of myself by
+00:07:43.440 saying relative we could Define either
+00:07:45.599 kind of
+00:07:46.599 change most often we're interested in
+00:07:48.759 relative but sometimes we deal with
+00:07:50.240 absolute changes so when we deal with
+00:07:52.919 absolute changes um we just have the
+00:07:55.960 derivative right change in output or
+00:07:58.120 change in input is the derivative in
+00:07:59.919 absolute values because we don't usually
+00:08:01.800 care about the sign of
+00:08:03.560 it on the other hand if we care about
+00:08:05.639 relative changes then we uh look at the
+00:08:08.319 analysis that I did above and we
+00:08:11.440 suggested that that extra term that
+00:08:12.919 multiplies the Epsilon should be our
+00:08:15.520 condition number so one thing to notice
+00:08:17.440 about both of these formulas is that the
+00:08:19.960 condition number depends on the data and
+00:08:22.840 the problem
+00:08:31.320 so uh for a given problem there might be
+00:08:33.839 some data where the answer is very
+00:08:35.719 sensitive and others where it's not so
+00:08:38.919 let's go back and look at the problem of
+00:08:41.360 adding numbers so I did say that we only
+00:08:44.039 had one input value so we have to pick
+00:08:46.399 one of the things to be a constant and
+00:08:48.200 one of them to be the variable X so
+00:08:51.200 imagine um in our example above right
+00:08:53.800 that X is pi and Alpha is the
+00:08:55.640 approximation to Pi uh with a minus sign
+00:08:58.480 in front of it all right so um to do the
+00:09:01.560 relative condition number we just uh
+00:09:03.440 compute the things in this formula so if
+00:09:05.880 f ofx is defined as X+ Alpha then F
+00:09:08.959 Prime is just
+00:09:10.440 one and
+00:09:13.760 Kappa the condition number Kappa is the
+00:09:16.720 absolute value of x *
+00:09:19.839 1
+00:09:22.800 iD f ofx
+00:09:30.680 all right so what we see right is that
+00:09:33.160 the condition number is
+00:09:35.440 large we use this double greater sign to
+00:09:38.040 mean much larger than
+00:09:40.440 one
+00:09:43.920 if the
+00:09:46.240 result is much smaller
+00:09:49.360 than the
+00:09:51.880 input right so this is what I said about
+00:09:54.079 subtractive
+00:09:55.800 cancellation if
+00:09:57.959 you have two two
+00:10:00.480 numbers which subtract to give you a
+00:10:03.440 much smaller result in absolute value uh
+00:10:06.920 then you get subtractive cancellation so
+00:10:09.040 to go back to our uh example for a third
+00:10:11.600 time with pi and the uh approximation to
+00:10:14.680 Pi um what we find right is that Kappa
+00:10:19.079 is about three right that's pi divided
+00:10:23.680 by more or less 3 * 10-
+00:10:26.720 7 so it's about 10 7
+00:10:30.160 so if you take the log in base
+00:10:33.880 10 it's roughly seven and that's the
+00:10:37.320 number of significant digits that we
+00:10:48.639 lost so that's just a mathematical way
+00:10:51.440 to explain what happened to us um with
+00:10:54.120 subtractive
+00:10:55.360 cancellation more involved example is to
+00:10:58.200 look at our polinomial Ro root case Okay
+00:11:01.279 so of course in practice everything is
+00:11:03.720 perturbed right all the coefficients are
+00:11:05.200 perturbed all the arithmetic is
+00:11:06.480 perturbed but let's simplify the problem
+00:11:09.560 um by just identifying one coefficient
+00:11:12.279 and pretend that everything else is done
+00:11:13.800 exactly so I'm going to pick the leading
+00:11:15.760 coefficient and say what happens if a is
+00:11:18.399 altered in a relative sense what does
+00:11:20.480 that do to the root remember the root is
+00:11:22.720 a value R such that P at R is equal to
+00:11:26.440 zero so we start with this fact about R
+00:11:30.480 okay now we perturb a um we could do
+00:11:33.680 this in a perturbation sense but I'm
+00:11:35.079 going to use implicit differentiation
+00:11:38.160 which is a topic from calculus you might
+00:11:40.040 want to go back and remind yourself
+00:11:43.639 of right but what we're saying is that R
+00:11:46.639 is a function of
+00:11:50.720 a right if a changes then the root
+00:11:55.519 changes so that means we can
+00:11:57.279 differentiate both sides of this
+00:11:58.800 equation with respect to
+00:12:10.360 a okay a depends on A and R depends on a
+00:12:14.440 so this first term has a product rule
+00:12:17.279 right it's D a DA * R 2 plus um a oops a
+00:12:25.959 Time Dr 2 Da
+00:12:31.320 the second term B doesn't depend on a b
+00:12:33.959 b is just fixed so we get B *
+00:12:38.760 drda and C doesn't depend on a so we
+00:12:41.360 just get zero and the right hand side is
+00:12:43.680 also
+00:12:46.399 zero okay da da is just one so I have R
+00:12:50.440 2 plus a now R is a function of a so we
+00:12:54.480 have to use the chain rule so I get 2 r
+00:12:58.360 d RDA
+00:13:04.839 plus b * D
+00:13:08.040 RDA equals z solve for Dr
+00:13:13.839 RDA right and we get um minus r
+00:13:19.399 2 divided
+00:13:22.199 by 2 a r +
+00:13:26.440 B and if you go back and look at the
+00:13:28.560 formula for for p of X in fact that
+00:13:31.040 denominator we can rewrite it
+00:13:33.160 as P
+00:13:35.279 Prime of
+00:13:40.040 R okay so all of that tells us um how to
+00:13:43.240 compute the condition number
+00:13:45.000 Kappa relative condition number is the
+00:13:48.399 data okay so now X means the data right
+00:13:50.880 so that's
+00:13:52.759 a time frime of X well that's Dr
+00:13:57.040 da R 2 over
+00:14:00.000 P Prime of
+00:14:01.959 r divided by F ofx right that's the
+00:14:06.480 result which in this case is
+00:14:08.519 R all in absolute
+00:14:12.320 values so we get a * R over P Prime of
+00:14:21.160 R okay so we might find that Kappa is
+00:14:24.560 much larger than one
+00:14:26.639 if T Prime of r
+00:14:30.079 is close to zero right if that
+00:14:32.759 denominator is small then Kappa could
+00:14:35.079 blow up of course it could also blow up
+00:14:36.920 if a is large or if R is large but those
+00:14:39.880 are kind of easy to spot this is a
+00:14:42.079 little bit more
+00:14:44.320 subtle now you might remember about a
+00:14:47.480 polinomial that if P Prime of
+00:14:51.079 R is actually equal to zero that's the
+00:14:54.399 same thing as saying that R is a double
+00:14:57.639 root
+00:15:04.519 right we would just have um Rus or x - R
+00:15:08.399 2 as the
+00:15:11.240 polinomial so if P Prime of R is close
+00:15:14.079 to
+00:15:18.040 zero that's the same thing as saying
+00:15:20.440 that R is nearly a double
+00:15:26.040 root so if you have a polinomial Who
+00:15:29.079 roots are close together you might see a
+00:15:32.079 great deal of sensitivity right a great
+00:15:34.560 deal of amplification in the relative
+00:15:36.560 error in the roots of that polinomial on
+00:15:39.600 the other hand going all the way back to
+00:15:41.319 our
+00:15:43.079 example here's a polinomial with two
+00:15:45.399 roots that are very well separated 2.5
+00:15:48.000 and minus1 2
+00:15:50.279 1.25 that denominator isn't going to be
+00:15:52.360 small at all you can work out the
+00:15:53.600 numbers and you'll see that in this case
+00:15:55.800 Kappa really is um no bigger than
+00:15:59.600 one and so therefore there really was no
+00:16:02.120 possibility of the error getting
+00:16:03.399 Amplified in this problem so you see we
+00:16:05.680 have this tool now of the condition
+00:16:07.720 number um which tells us the amount by
+00:16:10.839 which the change in the output can grow
+00:16:14.360 relative to the change in the input

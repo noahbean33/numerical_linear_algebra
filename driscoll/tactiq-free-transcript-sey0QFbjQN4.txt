@@ -1,0 +1,260 @@
+# tactiq.io free youtube transcript
+# MATH426: Linear system conditioning
+# https://www.youtube.com/watch/sey0QFbjQN4
+
+00:00:01.680 in order to talk about the conditioning
+00:00:03.480 of the linear system problem we need to
+00:00:05.160 identify the data for the problem and
+00:00:07.560 then the solution so when we're solving
+00:00:10.240 axal B the data m is the Matrix a and
+00:00:15.320 the right hand side B and the result is
+00:00:18.560 the vector
+00:00:19.840 X so we want to see what happens to X
+00:00:23.279 how does X Change When A and B are
+00:00:26.760 perturbed all right so it's a little bit
+00:00:28.800 easier if we consider the perturbations
+00:00:30.480 one at a time uh so let's first look at
+00:00:33.520 perturbations of B only with a
+00:00:42.239 fixed so if B is perturbed by an amount
+00:00:46.039 Delta B so this is perturbed
+00:00:52.640 input and a is left alone we know that X
+00:00:56.520 is going to have to
+00:00:58.160 change so this is the curved
+00:01:07.759 output okay so if we multiply out that
+00:01:11.240 equation we have a * X plus a * Delta X
+00:01:17.920 Delta X is one symbol meaning a
+00:01:21.520 vector is equal to B plus Delta
+00:01:27.360 B well we know that X is the solution of
+00:01:30.840 axal B that's the solution of the
+00:01:33.960 unperturbed problem so those two sides
+00:01:36.960 cancel each other
+00:01:41.479 out so what we're left with is a Delta x
+00:01:45.280 equals Delta B and if we take
+00:01:50.240 that and solve for Delta
+00:01:54.159 X it's easy to do so Delta X is just a
+00:01:58.000 inverse time Delta B
+00:02:02.640 so if we want to look at the relative
+00:02:04.920 conditioning of this problem right we
+00:02:07.159 look at the
+00:02:08.318 relative change in
+00:02:14.040 output over the relative change in the
+00:02:21.879 input so this is the first time we've
+00:02:23.920 had to deal with a problem that doesn't
+00:02:25.239 have scalar uh input data and output
+00:02:28.200 data so you have to be little bit care
+00:02:30.800 more careful what what we mean so the
+00:02:33.400 change in the output is Delta
+00:02:36.640 X and the original out output was X so
+00:02:40.879 in the numerator
+00:02:43.080 here we have Delta X overx but we want
+00:02:45.560 to know the size of these things so we
+00:02:47.080 take
+00:02:48.319 Norms right it wouldn't make sense to
+00:02:50.159 divide the vectors themselves what we're
+00:02:51.760 doing is taking the the relative change
+00:02:54.560 as measured by the
+00:02:56.720 Norms similarly the input was B
+00:03:00.480 and the change in the input was Delta B
+00:03:03.440 so that gives us the norm of Delta B
+00:03:06.239 divid by the norm of
+00:03:09.599 B okay so the next step we substitute in
+00:03:14.280 for Delta X from
+00:03:18.480 here okay and we just put things into a
+00:03:21.000 simpler fraction every all other three
+00:03:22.920 terms are the same as
+00:03:25.400 before now we're going to use the fact
+00:03:28.439 here
+00:03:30.280 this is turning into spaghetti I'm
+00:03:32.519 sorry but here we're going to use the
+00:03:34.840 fact that the norm of a inverse time
+00:03:38.400 Delta
+00:03:40.360 B is less than or equal to the norm of a
+00:03:45.200 inverse times the norm of Delta
+00:03:48.200 B okay so again here is why we wanted to
+00:03:51.599 use induced Matrix Norms they what give
+00:03:54.400 us this special property that make it
+00:03:56.439 easy to analyze what's happening
+00:04:00.200 okay with that substitution the Delta BS
+00:04:02.480 in the numerator and denominator
+00:04:04.239 completely
+00:04:06.280 cancel so now we're left with a inverse
+00:04:09.480 Norm of a
+00:04:10.720 inverse times the norm of B over the
+00:04:13.159 norm of
+00:04:14.439 X okay now in The Next Step we're using
+00:04:22.440 that the norm of B well B is the same
+00:04:25.720 thing as ax
+00:04:29.880 and again we use
+00:04:31.520 inequality Norm of a norm of
+00:04:38.199 X so now the norm of X cancels out in
+00:04:41.080 the numerator and denominator and what
+00:04:43.120 we're left with in total is Norm of a
+00:04:47.120 inverse time Norm of a simple beautiful
+00:04:51.039 little formula that is an upper Bound
+00:04:54.800 for the relative change in the output
+00:04:57.199 divided by the relative change in the
+00:04:58.840 input
+00:05:02.919 so that's the full analysis for what
+00:05:04.560 happens when we perturb the vector
+00:05:07.240 B now when we perturb the vector The
+00:05:10.199 Matrix a and do the algebra we get a
+00:05:13.560 similar result the steps are shown in
+00:05:15.440 the book I won't go through them again
+00:05:16.960 here there's a couple of extra steps
+00:05:19.360 there is one key difference which is
+00:05:21.160 that um when we do the perturbation of
+00:05:26.560 a and we have a term like Delta a
+00:05:30.800 time Delta
+00:05:32.919 X okay we have to use a little fanciness
+00:05:36.080 and say that um we're going to make
+00:05:38.800 small perturbations in fact we're going
+00:05:40.240 to make infinite tmal perturbations and
+00:05:43.039 the product of those two really small
+00:05:44.560 things is incredibly small and they're
+00:05:47.280 going to be
+00:05:50.080 neglected so to make that work in a
+00:05:52.440 mathematically rigorous context you have
+00:05:54.919 to talk about taking limits and doing
+00:05:57.280 things the right way uh similar to the
+00:05:59.400 way derivatives are D are uh defined
+00:06:01.919 properly we won't go through all the
+00:06:03.680 steps but suffice it to say that when
+00:06:05.840 you do it properly you get exactly the
+00:06:08.759 same upper bound Norm of a inverse time
+00:06:12.000 Norm of a and so what we conclude is
+00:06:15.880 that the relative condition
+00:06:18.199 number for mapping either b or a to the
+00:06:23.000 solution
+00:06:24.039 X is Norm of a inverse time Norm of a
+00:06:28.479 and that's what we Define as Kappa of a
+00:06:32.360 is a
+00:06:37.520 definition of the condition number of a
+00:06:45.240 matrix so we talk about the condition
+00:06:47.440 number of problems normally but here
+00:06:50.720 we're saying that to every Matrix we can
+00:06:52.360 assign a number Norm of a inverse time
+00:06:54.840 Norm of a which is what we call the
+00:06:57.520 condition number of that Matrix
+00:06:59.840 and that number also serves to be the
+00:07:01.639 condition number of the linear system
+00:07:07.639 problem uh just as a technical point if
+00:07:10.120 a is singular has no inverse so we
+00:07:13.720 defined the um Norm of the inverse to be
+00:07:16.199 infinite in that case it's like taking
+00:07:17.599 one over
+00:07:21.319 zero okay so with all of the above we
+00:07:23.759 have everything that we need to have
+00:07:24.879 proven a
+00:07:25.919 theorem um we've just Rewritten the
+00:07:28.919 change in output over the change in
+00:07:30.840 input by putting the Delta B over B on
+00:07:33.240 the right hand
+00:07:34.919 side so the first line of this theorem
+00:07:37.560 is exactly what we derived
+00:07:41.199 above the second line of the theorem as
+00:07:43.319 I say there's this technicality that we
+00:07:45.599 need to talk about infinitesimal
+00:07:47.199 perturbations
+00:07:51.520 only otherwise it's only
+00:07:54.039 approximate okay but the real story here
+00:07:56.759 is um if the perturbations in the put
+00:08:00.639 right either the Delta B over b or the
+00:08:03.360 Delta a over a if those are due to
+00:08:05.639 floating Point arithmetic and double
+00:08:07.400 Precision
+00:08:08.919 okay we can expect them to be of
+00:08:13.639 size Epsilon
+00:08:16.360 subm roughly
+00:08:18.680 speaking and so as an estimate um the
+00:08:22.599 relative error in our linear system
+00:08:25.280 solution should be bounded by the
+00:08:28.240 condition number of The Matrix
+00:08:30.440 times the accuracy of our
+00:08:34.880 arithmetic and that means that if the
+00:08:37.679 condition number of the Matrix is bigger
+00:08:40.279 than 1 over Epsilon
+00:08:42.440 machine then basically you might expect
+00:08:44.640 the relative error to be 100% in other
+00:08:47.360 words there are no digits correct at
+00:08:51.080 all so really for practical matters a
+00:08:55.560 matrix whose condition number is greater
+00:08:58.680 than or equal to 1/ Epsilon M might as
+00:09:02.079 well be
+00:09:05.680 singular to the
+00:09:11.160 computer so what we see here is that in
+00:09:15.040 exact mathematics Singularity is well
+00:09:18.320 it's a singular property I mean you
+00:09:20.160 either have it or you don't it's binary
+00:09:23.160 um but when you have fuzzy numbers like
+00:09:25.720 we have for floating Point arithmetic
+00:09:28.279 suddenly it's not so binary clearcut
+00:09:30.959 there's such a thing as being singular
+00:09:32.959 but there's also such a thing as being
+00:09:34.640 close to singular and if you're so close
+00:09:36.959 to singular um that the condition number
+00:09:40.160 is greater than one over Epsilon machine
+00:09:42.560 well it's just as bad as being singular
+00:09:44.640 as far as the computer is
+00:09:48.279 concerned even if your condition number
+00:09:50.360 is less than that if your condition
+00:09:51.640 number is 10 the 6th then you would
+00:09:55.000 expect to lose six digits in your answer
+00:09:58.040 as compared to the input
+00:10:04.440 so for example um going back to
+00:10:08.000 polinomial
+00:10:09.560 interpolation uh if we form a vanderman
+00:10:12.640 system to find the coefficients of the
+00:10:14.200 polinomial interpolant remember the vron
+00:10:16.720 system here let's say we have 21 points
+00:10:18.760 in
+00:10:19.640 t that's defined here so we can fit a
+00:10:22.760 polinomial of degree 20 to it so we take
+00:10:25.920 those values of T and stuff them into
+00:10:28.360 the columns of a square of anderon
+00:10:30.079 matrix it's 21 by
+00:10:32.480 21 then that system VC equals y defines
+00:10:36.519 the coefficients of the polinomial um
+00:10:39.040 which interpolates the data
+00:10:41.120 y so here we're going to use Vander in
+00:10:44.000 mat lab to compute The vandon Matrix and
+00:10:47.120 then we're going to fit uh to the data
+00:10:49.880 t^2 well if we're fitting a polinomial
+00:10:52.760 of degree 20 right C20 T 20 and so on
+00:10:57.360 plus C2 T ^2
+00:10:59.760 plus C1 t plus
+00:11:01.920 c0 and if that's supposed to approximate
+00:11:04.839 the polinomial
+00:11:06.760 t^2 well we can do that exactly right we
+00:11:09.760 should get C2 is equal to one and all
+00:11:13.000 other C
+00:11:15.279 subis equals zero that's a perfect
+00:11:19.600 fit so that's the exact
+00:11:23.360 solution but when we actually do it in
+00:11:25.440 mat lab we get this warning The Matrix
+00:11:27.959 is close to Sy
+00:11:32.720 and this r r stands for reciprocal so
+00:11:35.680 this is an
+00:11:39.839 estimate of one over Kappa of a so if
+00:11:43.680 that number is machine Epsilon or
+00:11:45.560 smaller that means the Matrix might as
+00:11:48.200 well be singular and indeed when we look
+00:11:50.399 at the answer you know these CIS are not
+00:11:53.440 anywhere close to
+00:11:55.920 zero all right this one's zero only to
+00:11:58.800 one digit
+00:12:00.360 so
+00:12:03.800 practically no accuracy here at
+00:12:08.600 all if we scroll down to the one that's
+00:12:10.880 supposed to be one it is Apparently one
+00:12:13.279 to at least five digits but probably not
+00:12:16.000 all 16 nevertheless the other ones that
+00:12:18.279 were supposed to be zero aren't really
+00:12:20.440 close to
+00:12:22.600 zero if we want something more accurate
+00:12:24.800 than the estimate from arond the
+00:12:27.320 reciprocal of the condition number
+00:12:29.800 we can use this mat lab function con
+00:12:31.760 which computes the condition number
+00:12:35.800 using Matrix to
+00:12:44.279 Norm and for this case it's just about
+00:12:47.040 10 17th

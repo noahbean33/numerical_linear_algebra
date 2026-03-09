@@ -1,0 +1,291 @@
+# tactiq.io free youtube transcript
+# MATH426: Householder QR
+# https://www.youtube.com/watch/d-yPM-bxREs
+
+00:00:01.560 I've already mentioned the fact that the
+00:00:03.120 uh Graham Schmid process that we use in
+00:00:05.640 theory to derive the QR factorization is
+00:00:08.679 in fact an unstable method if you
+00:00:10.160 implement it in floating Point
+00:00:12.000 arithmetic so the stable alternative to
+00:00:14.759 that um proceeds much like Lu
+00:00:17.039 factorization does except with
+00:00:19.279 orthogonal matrices so remember with lu
+00:00:22.119 we produced a sequence of L matrices
+00:00:24.320 that we multiplied with on the left and
+00:00:27.240 each one was designed to put zeros into
+00:00:29.199 a particular col colum so that by the
+00:00:31.560 time we multiplied through by all the
+00:00:33.480 L's the total Matrix that was left was
+00:00:36.160 upper triangular but now we do the same
+00:00:38.680 thing but instead of L's we have q's and
+00:00:40.440 the q's are orthogonal so here's a
+00:00:42.680 little cartoon of that suppose a starts
+00:00:45.480 out as a 5x3
+00:00:52.000 matrix so I'm just using X is here to
+00:00:54.440 represent numbers they could be anything
+00:00:56.000 it doesn't mean that they're all the
+00:00:56.960 same
+00:00:58.320 number now q1
+00:01:02.760 is going to be designed in such a way
+00:01:04.360 that when we multiply by q1 on the left
+00:01:07.119 we put Zer into the First Column where
+00:01:09.439 we want
+00:01:12.960 them everything else um gets changed but
+00:01:17.520 not in a way that does any zeros
+00:01:19.439 anywhere in
+00:01:21.000 particular okay so after that step we've
+00:01:23.119 got zeros in the First Column now the
+00:01:25.360 second step is going to be to multiply
+00:01:27.200 on the left by Q2
+00:01:33.799 and that's going to be done in such a
+00:01:35.200 way as to put zeros into column two well
+00:01:39.680 to do that we're going to have to be
+00:01:42.439 careful remember we're multiplying on
+00:01:44.360 the left so we're going to recombine the
+00:01:46.079 rows but we don't want to change
+00:01:48.320 anything we don't want to combine the
+00:01:49.719 first row with all the rows below it
+00:01:52.000 because that'll wreck the zeros that
+00:01:53.360 we've already put in so we leave the
+00:01:55.240 first row alone
+00:02:02.200 and then below that we recombine the
+00:02:04.079 rows in such a way that of course
+00:02:06.200 recombining the zeros on the left
+00:02:07.719 doesn't do anything to them but in the
+00:02:09.479 second column things are designed to
+00:02:11.800 give us new
+00:02:13.360 zeros and then in the third column the
+00:02:15.480 numbers change but not to anything
+00:02:18.560 special so you see how this proceeds
+00:02:20.800 after we do um one more multiplication
+00:02:23.239 with Q3 on the
+00:02:28.840 left we want to have zeros in the third
+00:02:31.480 column below the diagonal which means
+00:02:33.959 we're going to have to leave the first
+00:02:35.040 two rows
+00:02:44.319 alone and then the last three rows are
+00:02:48.239 Rec
+00:02:50.400 combined and in the third column we put
+00:02:52.720 in this the last zero that we want and
+00:02:56.000 what's left is what we would call the r
+00:02:57.519 Matrix
+00:03:00.200 of the QR
+00:03:01.440 factorization then you finish the thing
+00:03:03.440 off by saying that well the product of
+00:03:06.680 orthogonal matrices is another
+00:03:08.159 orthogonal Matrix which we would call Q
+00:03:13.920 transpose multiply both sides on the
+00:03:16.200 left and use the fact that Q is an
+00:03:17.720 orthogonal
+00:03:20.360 Matrix and that gives us AAL
+00:03:24.680 QR right because QQ transposes the
+00:03:27.440 identity on the left hand side okay
+00:03:30.519 okay so all that boils down to saying
+00:03:33.920 that um we really want one basic
+00:03:36.959 operation which is to say in each stage
+00:03:39.680 when we multiplied by one of these QJ
+00:03:42.879 matrices we took one column of numbers
+00:03:46.159 and we turned it into a nonzero followed
+00:03:48.599 by a bunch of
+00:03:50.159 zeros so call that Target column Z so in
+00:03:54.480 the case of
+00:03:55.760 Q3 um this was the target column here
+00:04:02.519 okay in the case of uh
+00:04:05.319 q1 this was the target column
+00:04:09.000 here okay so it changes um from one step
+00:04:12.400 to the next but in any case what we want
+00:04:14.760 to do is take that colum multiply by a p
+00:04:17.199 on the left which is
+00:04:20.600 orthogonal and then we uh put zeros
+00:04:23.120 below the diagonal in other words below
+00:04:25.040 the first row of that Vector
+00:04:27.560 Z now remember that orthogonal matrices
+00:04:30.320 can't change the torm so whatever the
+00:04:32.800 torm of Z is right the torm of
+00:04:38.080 pz must be the same
+00:04:43.960 thing that was a theorem we had about
+00:04:46.960 orthogonal
+00:04:50.280 matrices and you know a matrix which or
+00:04:53.080 a vector which has two Norm which is
+00:04:55.560 given and which is non zero only in the
+00:04:57.680 first element well all the first element
+00:05:00.120 has to be either positive Norm Z2 or
+00:05:03.440 negative um the choice does matter a
+00:05:05.520 little bit but here we're just going to
+00:05:06.560 take the positive
+00:05:08.199 one okay so we want to design
+00:05:16.360 P so that pz ends up to being this
+00:05:20.039 Vector here it's nonzero only in the
+00:05:21.919 first
+00:05:23.240 element and we'll write that as Z Plus
+00:05:25.440 another vector v where V is the
+00:05:26.800 difference so this is just a definition
+00:05:34.520 okay so um the picture that goes with
+00:05:37.000 this if we imagine that we're working in
+00:05:39.360 two
+00:05:47.360 Dimensions we have some Vector Z
+00:05:51.880 here that's given to us and we want it
+00:05:54.360 to end up after we multiply by P we want
+00:05:58.400 it to end up on the positive X1
+00:06:02.360 axis the difference between these two
+00:06:07.360 vectors is what we call
+00:06:12.919 V okay now we can do a little GE
+00:06:16.479 geometric analysis here to suggest what
+00:06:19.280 the P what the answer ought to be and
+00:06:20.720 then use algebra to compute it so you
+00:06:23.400 can imagine if we draw a mirror halfway
+00:06:26.479 in between these two points
+00:06:37.400 well what a mirrors do they reflect
+00:06:40.360 Reflections don't change norms and so
+00:06:42.479 our reflection is going to give us an
+00:06:45.000 orthogonal
+00:06:47.440 Matrix all right and if we put the
+00:06:50.440 mirror right halfway in between these
+00:06:53.400 two vectors Z and
+00:06:55.199 pz then um it does the right thing to
+00:06:58.000 the vector Z so
+00:07:00.400 the idea behind the operation P so P
+00:07:03.639 will
+00:07:06.080 mean reflect through this
+00:07:16.080 mirror so whatever point I start with X
+00:07:20.840 PX is the image on the other
+00:07:24.840 side okay so that's the geometry that's
+00:07:27.400 the picture that's kind of the easy part
+00:07:29.919 now we have to figure out the
+00:07:32.879 algebra okay so let's redraw it down
+00:07:35.520 here but with less of the Clutter so
+00:07:38.039 here is our
+00:07:43.800 miror okay and then here is the vector
+00:07:50.400 X let's say the origin is
+00:07:57.280 here okay the image Point well we can
+00:08:01.000 find it by dropping down the
+00:08:05.599 perpendicular and reflecting through
+00:08:07.720 equally onto the other side so that
+00:08:10.080 would be the vector
+00:08:13.599 PX that's where we want to end
+00:08:16.759 up now remember that the mirror is
+00:08:21.479 perpendicular to this vector v that we
+00:08:23.720 defined
+00:08:26.639 earlier so V is some vector
+00:08:33.599 going in this
+00:08:35.719 direction so let's look at the vector
+00:08:38.399 I'll draw it in purple
+00:08:41.919 here okay call this Vector
+00:08:45.680 W okay so if we take X plus W that puts
+00:08:49.040 us onto the
+00:08:52.000 mirror all right well we can do um some
+00:08:55.200 basic trigonometry here to say what is
+00:08:57.800 the length of w
+00:09:04.240 well if we draw in the angle here as
+00:09:08.360 Theta and it's pretty clear that that's
+00:09:12.640 the length of X time the cosine of
+00:09:16.079 theta because we have a right
+00:09:21.480 triangle now how do we get Theta well
+00:09:25.200 Theta is the angle between the vectors
+00:09:33.519 X and
+00:09:42.640 V so we can do this by taking the inner
+00:09:45.880 product of those two
+00:09:48.320 vectors and dividing by the length of
+00:09:52.279 V right the do product is length x *
+00:09:55.760 length V * cosine
+00:09:58.320 Theta so that gives us the length of w
+00:10:01.920 the direction of
+00:10:09.240 w okay it's a unit Vector in the same
+00:10:11.839 direction as
+00:10:19.560 V okay so Al together the vector W then
+00:10:23.839 right is negative uh it's just the
+00:10:27.560 product of these two things so negative
+00:10:28.959 X transpose V / Norm V
+00:10:36.120 ^2 so this is the length of
+00:10:39.480 w the direction of
+00:10:43.040 w so this thing here must
+00:10:46.040 b
+00:10:49.480 w so X plus W gets us to the mirror x +
+00:10:54.200 2
+00:10:57.079 W gets us to the point p X right so if
+00:11:01.480 we add W again we get the
+00:11:05.920 PX and so to get from X to Its
+00:11:08.560 Reflection we add this Vector
+00:11:13.120 here so that gives us a formula for p *
+00:11:16.200 X for any
+00:11:21.160 X and then if you're clever you realize
+00:11:24.320 that you can change the order this
+00:11:27.320 scaler here can be moved
+00:11:29.800 and you can write p in terms of this
+00:11:31.440 outer product so this gives us a formula
+00:11:34.000 for the actual projection the actual um
+00:11:38.000 orthogonal
+00:11:45.200 Matrix so you can check I won't go
+00:11:47.399 through the algebra but you can check
+00:11:48.639 that pposed time p is in fact an
+00:11:50.800 identity Matrix so p is orthogonal you
+00:11:54.399 can also check I won't go through the
+00:11:56.000 derivation that P * Z is the thing we
+00:11:59.480 set out to be it's the norm of Z *
+00:12:02.639 E1 so this kind of Matrix p is called a
+00:12:05.279 householder
+00:12:16.120 reflector it's the basic unit of
+00:12:18.279 operation the same way that a row
+00:12:21.040 operations work in the Gan elimination
+00:12:26.440 algorithm okay so that's an outline
+00:12:29.720 then what we do is we take uh we know
+00:12:32.160 that if we take one Q after another and
+00:12:34.680 apply them on the left we end up with
+00:12:37.240 the Matrix r as I said before call this
+00:12:41.320 product of matrices here Q transpose so
+00:12:44.920 Q transpose a is equal to
+00:12:47.639 R multiply by Q on the left of both
+00:12:52.920 sides and then use the
+00:12:55.480 orthogonality to say that a is equal to
+00:12:57.839 QR
+00:13:00.279 so in other words if we can take this
+00:13:02.639 product of individual Q's then you take
+00:13:05.440 the transpose and you end up with the Q
+00:13:07.279 of the
+00:13:10.199 factorization okay so that's what I'm
+00:13:11.800 showing here if we start with an
+00:13:12.959 identity Matrix of course that doesn't
+00:13:14.440 change the
+00:13:15.760 product right so you start with an
+00:13:17.800 identity you apply each of the
+00:13:19.959 householder steps to that identity
+00:13:21.920 Matrix and then that gives you the Q
+00:13:24.160 transpose so at the end you transpose
+00:13:26.639 back here's the program that does it
+00:13:28.680 it's a little different from the one
+00:13:29.880 that's presented for you in the book
+00:13:31.079 it's a little better than the one in the
+00:13:32.399 book um I won't step through it bit by
+00:13:35.959 bit but basically speaking um it follows
+00:13:38.560 the definitions I used above so here's
+00:13:40.800 the Z which is the target of the
+00:13:43.199 reflection in order to put in zeros this
+00:13:45.959 is the same vector v that was defined
+00:13:49.680 above okay we change things a little bit
+00:13:52.519 we make the formul is a little easier by
+00:13:54.720 taking that v v transpose V that's in
+00:13:56.880 the denominator um we set that equal to
+00:13:59.399 one by rescaling the V Vector so that's
+00:14:02.120 what the next step does it's just a
+00:14:03.480 convenient step and then all we have to
+00:14:06.040 do is going
+00:14:07.959 back right anytime we want to apply the
+00:14:11.320 P to a known uh column of a or of Q we
+00:14:16.920 use this formula here um with the
+00:14:24.320 oops we use this formula here um we just
+00:14:27.920 take the X take this inner product and
+00:14:31.000 multiply by 2v subtract it off so that's
+00:14:33.199 what this line is doing it's taking the
+00:14:35.360 inner product of V with x * 2 * V just
+00:14:39.240 doing it in a particular order and
+00:14:41.120 subtracting that from the original
+00:14:43.160 X at the end you take the transpose of Q
+00:14:47.000 and you get the QR factorization as a
+00:14:49.839 result if you go through all the work
+00:14:51.880 you find out how long this
+00:14:54.279 takes um again M and N are different
+00:14:57.240 numbers so we have to have an ASM totic
+00:14:58.800 term for each one um the highest order
+00:15:01.759 terms are 2 mn^ 2 but you then subtract
+00:15:05.519 off A- 2/3 n cubed in the limit

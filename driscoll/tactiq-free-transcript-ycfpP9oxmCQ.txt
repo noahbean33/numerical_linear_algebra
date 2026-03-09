@@ -1,0 +1,148 @@
+# tactiq.io free youtube transcript
+# SVD compared to EVD
+# https://www.youtube.com/watch/ycfpP9oxmCQ
+
+00:00:06.720 We've had a lot of factorizations go by
+00:00:08.639 lately and it's time to take a look at
+00:00:11.040 uh seeing them in context with each
+00:00:13.120 other and comparing how they're similar
+00:00:15.360 and how they differ. And then there's a
+00:00:17.520 fundamental way in which they are quite
+00:00:19.520 deeply related. So um we had the igen
+00:00:23.840 vector decomposition or the igen value
+00:00:25.840 decomposition
+00:00:28.160 okay which is really a similarity
+00:00:29.760 transformation
+00:00:31.359 and one way of writing this is let's say
+00:00:34.320 we have a vector x which is expressed in
+00:00:38.000 the igen vector basis. So in other
+00:00:40.640 words, it's a linear combination
+00:00:46.480 of the igen vectors.
+00:00:53.360 So if a is diagonalizable, we know the
+00:00:55.600 igen vectors are a basis and we can
+00:00:57.039 always do this in a unique way. Well,
+00:01:00.239 then when you multiply by a, a * x is
+00:01:04.239 the same thing as v d v inverse x,
+00:01:08.560 right? So that's V D V inverse and then
+00:01:13.840 X we said was V * C.
+00:01:17.600 And so the V inverse cancels the V and
+00:01:20.400 we just get V * DC
+00:01:27.200 which we've written out here. Or it's
+00:01:29.119 much simpler to just look at this
+00:01:31.360 expression um of the linear combination
+00:01:35.680 and multiply on the left by a
+00:01:44.320 the constants the scalers can go right
+00:01:46.640 through
+00:01:51.920 and then you apply the igen value
+00:01:53.680 condition you get this formula here.
+00:01:58.960 So what one way to read this equation is
+00:02:01.840 that if we express x in the igen vector
+00:02:04.880 basis
+00:02:07.280 and we express a * x in the igen vector
+00:02:10.160 basis, well then all we did is multiply
+00:02:13.920 each component here
+00:02:17.280 by a lambda. So we took this component
+00:02:22.800 multiplied it by lambda.
+00:02:25.200 uh we took this component multiplied it
+00:02:27.680 by a different lambda lambda n and so
+00:02:29.360 on. So that's how a diagonal matrix
+00:02:31.599 works. So remember a di any diagonal
+00:02:33.920 matrix
+00:02:35.760 if we have d11 down to dn
+00:02:42.959 times any vector z1 to zn.
+00:02:46.879 Right? A diagonal matrix times a vector
+00:02:48.800 is really simple. We just multiply each
+00:02:51.680 element of the z by a single number.
+00:02:59.040 And so we're saying the same thing
+00:03:00.319 happens here. We're just taking each
+00:03:01.760 component and multiplying by a single
+00:03:03.840 lambda, which is about as easy as it
+00:03:06.080 gets.
+00:03:08.480 Now in the SVD,
+00:03:16.319 we express X in the right singular B
+00:03:20.480 basis, that's the input space. and we
+00:03:23.200 express a * x in the left singular basis
+00:03:27.040 because that's the output space.
+00:03:31.360 But given that right all we do is take
+00:03:34.560 each component and yes v changes into a
+00:03:37.440 u because it has to um but we just
+00:03:40.480 multiply by a sigma otherwise
+00:03:44.080 and so that's the diagonal matrix s.
+00:03:47.200 So what that says is if you express uh
+00:03:50.319 the input and the output in the right
+00:03:52.400 bases then you get a diagonal matrix.
+00:03:54.959 Again that's as simple as you can
+00:03:56.560 interpret a matrix to be.
+00:04:00.799 Now in the case where you have a normal
+00:04:02.640 matrix A
+00:04:04.720 then remember that the igen vector the
+00:04:06.799 igen value decomposition is the same as
+00:04:08.640 the shore factorization
+00:04:11.040 um or in other words the igen vector
+00:04:13.120 basis is orthonormal.
+00:04:15.920 Okay. And then we can write A is equal
+00:04:18.079 to V DV star. And that's almost an SVD.
+00:04:23.120 So it's not quite an SVD unless the igen
+00:04:25.759 values of A are all positive numbers. So
+00:04:29.520 if the diagonal entries of D are all
+00:04:31.440 positive, then in fact this matrix would
+00:04:34.400 be the U and this matrix would still be
+00:04:37.040 V and this would be the S. D would be
+00:04:39.120 the S matrix. So um we could really
+00:04:42.639 write this I suppose as
+00:04:45.919 a is equal to v times all the different
+00:04:49.360 signs
+00:04:51.840 of the d entries times the absolute
+00:04:54.639 values the d entries
+00:04:58.000 times v star.
+00:05:00.880 So if you can imagine what that means
+00:05:02.960 right uh this matrix is a diagonal
+00:05:06.080 matrix whose entries are the absolute
+00:05:07.840 values of the diagonal entries of D and
+00:05:11.360 this is also a diagonal matrix with the
+00:05:13.199 signs of those entries on the diagonal
+00:05:16.080 and then if we group things
+00:05:17.280 appropriately
+00:05:18.800 we'd say that this is our U matrix
+00:05:23.600 this is our S matrix now and this is
+00:05:26.880 still V star and so the two
+00:05:30.000 factoriization the igen value and the
+00:05:31.919 singular value factorizations are almost
+00:05:34.320 identical um in the case of a normal
+00:05:37.840 matrix and the singular values are just
+00:05:40.720 the absolute values of the igen values
+00:05:42.880 in that case.
+00:05:45.919 And then finally for any matrix A at
+00:05:47.840 all, if we go to our old friend A* A,
+00:05:53.919 okay, if we write out um if we write
+00:05:57.680 this out in terms of the SVD,
+00:06:05.520 then of course we have to reverse the
+00:06:07.120 order Here
+00:06:15.360 the u star u is just an identity.
+00:06:20.240 Um s is a real matrix. So we can write
+00:06:22.319 it as srpose.
+00:06:28.160 Okay. And if we write out what sranspose
+00:06:31.039 s is,
+00:06:34.800 well sranspose, remember s is m by n. So
+00:06:39.199 srpose is n by m.
+00:06:54.560 And so this is v. We get an n byn matrix
+00:06:59.919 with the squares of the singular values
+00:07:01.840 on the diagonal.
+00:07:06.560 And this is an igen value decomposition
+00:07:11.039 of remember this whole thing started as
+00:07:13.919 a star a.
+00:07:17.599 So the igen values of a star a
+00:07:28.080 are the squares of the singular values
+00:07:37.680 of a
+00:07:40.800 and we also get the right singular
+00:07:42.880 vectors are the igen vectors.
+00:07:47.599 of a star a. Notice that a star a is a
+00:07:49.919 normal matrix no matter what a was
+00:07:52.080 originally. So this is one way you can
+00:07:55.199 compute the singular values and singular
+00:07:57.599 vectors of a matrix. Although it's not
+00:07:59.280 necessarily the best way, but being able
+00:08:02.000 to compute igen values is enough to
+00:08:04.479 being able to compute singular values.
+00:08:06.240 And so we can also even use that to
+00:08:08.000 compute the tuner of a matrix as well.

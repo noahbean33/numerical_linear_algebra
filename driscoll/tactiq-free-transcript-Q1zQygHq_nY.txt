@@ -1,0 +1,229 @@
+# tactiq.io free youtube transcript
+# MATH426: Normal equations
+# https://www.youtube.com/watch/Q1zQygHq_nY
+
+00:00:06.720 okay so let's suppose we have a linear
+00:00:08.400 least squares problem the source might
+00:00:10.559 have been a data fitter pro data fitting
+00:00:12.719 problem
+00:00:13.679 but it doesn't have to be there are
+00:00:14.960 other sources of these problems as well
+00:00:17.600 and we just solve them in the abstract
+00:00:19.680 case now
+00:00:20.800 so the abstract formulation of the
+00:00:22.480 problem is that we're given an m by n
+00:00:24.080 matrix a
+00:00:25.680 and here we're going to emphasize that m
+00:00:28.080 is greater than or equal to n in other
+00:00:29.599 words it has
+00:00:31.439 more rows than columns it's tall
+00:00:34.399 and thin
+00:00:38.800 okay we also have an m by one vector b
+00:00:41.600 so it has the same height as a
+00:00:47.840 and the goal of the problem is to find
+00:00:50.559 an n by one vector x remember n is
+00:00:52.800 smaller
+00:00:54.160 and it fits the number of columns of a
+00:00:56.320 so it's a shorter vector
+00:01:02.000 okay and we want to minimize the
+00:01:03.680 difference between those two vectors
+00:01:05.920 as measured in the two norm
+00:01:09.119 now if we thought about the square case
+00:01:11.520 where we had ax
+00:01:13.119 equals b
+00:01:15.040 right
+00:01:16.479 each line of that equation is one
+00:01:19.119 equation okay and each entry of x is a
+00:01:21.360 variable well we had just as many
+00:01:23.280 equations as variables there
+00:01:25.360 but now we have more equations than we
+00:01:27.280 have variables
+00:01:29.040 and in fact we would call this over
+00:01:30.880 determined
+00:01:42.320 okay so in general when we have more
+00:01:44.400 equations than variables
+00:01:46.479 we can't expect this to happen we can't
+00:01:48.399 expect that we get the difference to be
+00:01:50.079 exactly zero anymore we just try to make
+00:01:52.640 it as small as possible
+00:01:56.079 there is however a simple
+00:01:57.439 characterization of the solution that we
+00:01:59.200 can use algorithmically so there's a
+00:02:02.000 theorem that states that provided we can
+00:02:04.479 satisfy this condition for it with x
+00:02:07.520 then if x satisfies it that condition
+00:02:10.160 then it's a solution of a linear least
+00:02:11.920 squares problem
+00:02:14.800 so the um the overarching
+00:02:17.440 idea of this proof is to say well
+00:02:20.000 if x truly minimizes this thing
+00:02:22.400 that we have here
+00:02:24.400 if x is to minimize this
+00:02:26.800 then
+00:02:27.680 any other vector that we put in here has
+00:02:30.000 to give us at least as large a result
+00:02:32.480 so if v is any vector whatsoever
+00:02:35.120 i should find that that the norm of
+00:02:37.920 a x plus v minus b
+00:02:40.319 is actually at least as large as the one
+00:02:42.319 that we're calling the minimum
+00:02:44.080 if we can prove that then x really is
+00:02:46.080 something that minimizes
+00:02:47.760 the norm overall vectors
+00:02:50.959 and so the rest of the proof is just the
+00:02:52.560 details of the algebra and we are going
+00:02:54.560 to use the fact that this is in the two
+00:02:56.080 norm that turns out to be
+00:02:57.840 critical to making this easy to do
+00:03:00.400 so if we take that
+00:03:04.080 two norm squared while the two norm
+00:03:06.239 squared of any vector
+00:03:08.080 is the inner product of that vector with
+00:03:09.920 itself
+00:03:20.000 okay and now i'm going to rearrange
+00:03:22.239 these pieces so that the
+00:03:24.400 the v part stands on its own
+00:03:26.720 so i'll have ax minus b
+00:03:30.239 plus av
+00:03:34.400 and here i have
+00:03:36.000 ax minus v b
+00:03:38.640 plus av
+00:03:40.959 okay now i'll multiply these out into
+00:03:44.080 four terms
+00:03:46.560 so i have
+00:03:48.080 ax minus b transpose times ax minus b
+00:03:55.680 plus i have a v
+00:03:58.640 all transposed
+00:04:01.200 times ax minus b
+00:04:06.959 plus i have
+00:04:09.920 ax minus b transpose
+00:04:12.560 times av
+00:04:15.360 and then the last term is the av
+00:04:19.600 transpose times av
+00:04:27.759 okay so let's focus for a minute on the
+00:04:30.000 two middle terms
+00:04:38.479 so with linear algebra you always have
+00:04:40.000 to be a little bit careful about what it
+00:04:41.600 is that you're writing and
+00:04:43.520 what it means
+00:04:45.199 so ax minus b
+00:04:48.240 is an m by 1 vector
+00:04:51.360 right
+00:04:52.800 so is
+00:04:54.400 a times v
+00:04:56.400 v is any n vector so a times v
+00:04:59.040 is an m vector
+00:05:00.800 so what we have is the inner product of
+00:05:03.840 m vector with m vector in other words it
+00:05:06.160 has the form of
+00:05:09.520 w transpose z
+00:05:12.080 plus
+00:05:13.919 z transpose w
+00:05:16.080 right so w would be av
+00:05:20.479 and z would be
+00:05:22.000 ax minus b well
+00:05:25.039 an inner product between two vectors is
+00:05:26.960 just a scalar
+00:05:28.960 so it doesn't matter whether i write
+00:05:31.680 w transpose z or z transpose w they're
+00:05:34.240 the same thing they're the same scalar
+00:05:37.360 the inner product result doesn't depend
+00:05:38.960 on the order of the two vectors
+00:05:42.720 so with that in mind
+00:05:45.280 okay the first term is clearly another
+00:05:47.759 norm
+00:05:48.960 ax minus b
+00:05:50.880 two norm squared
+00:05:55.039 the two middle terms are the same thing
+00:05:58.400 so i'll write two
+00:06:02.160 a v transpose a x minus b
+00:06:07.280 and then the last term is clearly a norm
+00:06:09.039 again
+00:06:14.880 okay we're almost there
+00:06:18.880 this is the same thing here
+00:06:21.360 i'm going to rewrite
+00:06:23.360 i'm going to use the fact that
+00:06:25.919 the product or the transpose of a
+00:06:27.840 product is the product of transposes
+00:06:31.440 with the order reversed
+00:06:36.960 okay this is left out the same
+00:06:40.160 and now you see the whole point of doing
+00:06:41.680 things this way
+00:06:43.120 given the assumption of the theorem
+00:06:47.759 here
+00:06:48.880 okay
+00:06:50.160 this term here is exactly zero
+00:07:05.120 so now what we have
+00:07:09.280 a little bit more room
+00:07:12.000 what we have comes down to the two norm
+00:07:14.240 of ax minus b squared
+00:07:17.759 plus
+00:07:19.680 the two norm of av squared
+00:07:22.639 well
+00:07:23.919 the norm of anything is always a
+00:07:25.360 non-negative number
+00:07:26.880 so that's got to be at least as big as
+00:07:30.400 the norm of ax minus b
+00:07:33.520 squared
+00:07:36.479 so you scroll back
+00:07:38.000 from beginning to end we have
+00:07:43.680 this term squared
+00:07:45.759 is greater than or equal to this term
+00:07:47.440 squared well that's what i said at the
+00:07:49.120 beginning if we could prove that
+00:07:51.759 then we've actually proven that x is a
+00:07:53.440 minimizer
+00:07:54.960 so we're done
+00:08:02.000 okay
+00:08:03.599 so this condition from the theorem
+00:08:05.919 that a transposed times the vector ax
+00:08:08.080 minus b is equal is equal to zero
+00:08:10.879 that's actually the same right we can
+00:08:12.560 just rearrange that by multiplying
+00:08:14.319 things out and moving stuff to the other
+00:08:15.759 side
+00:08:16.639 into a transpose ax is equal to a
+00:08:18.879 transpose b
+00:08:21.360 so by associativity
+00:08:23.599 a transpose a
+00:08:25.599 that's n by m
+00:08:30.639 times m by n
+00:08:33.120 so a transpose a is an
+00:08:35.279 n by n matrix
+00:08:42.080 okay x is an n by one vector still
+00:08:45.279 and a transpose b is n by m times m by
+00:08:48.480 one so that's an n by one vector
+00:08:55.360 and so what we have is a
+00:08:57.440 square
+00:08:58.720 linear system for x
+00:09:08.800 and that square linear system let me
+00:09:10.480 write it here again a transpose a x is
+00:09:13.279 equal to a transpose b
+00:09:16.320 is called
+00:09:17.839 the normal equations
+00:09:29.040 so if we can solve the normal equations
+00:09:30.959 we can solve the linear least squares
+00:09:32.720 problem
+00:09:34.080 and in fact mathematically we just take
+00:09:36.160 that matrix inverse
+00:09:38.240 so
+00:09:38.959 this whole matrix here
+00:09:40.880 which if you work it out must be n by m
+00:09:44.240 often has a special symbol a plus or
+00:09:47.120 sometimes it's a dagger it's called
+00:09:49.600 pseudo inverse of a
+00:10:01.279 now
+00:10:02.080 that sounds like a pretty simple story
+00:10:03.600 we know all about solving linear systems
+00:10:05.519 of equations that are square
+00:10:07.519 and so we could just end the story right
+00:10:09.200 there
+00:10:10.320 but the story goes on because
+00:10:12.800 this matrix a transpose a actually has
+00:10:15.040 two very important properties
+00:10:17.600 one's called symmetry one's called
+00:10:19.680 positive definiteness and those two
+00:10:21.839 properties together make this easier to
+00:10:24.079 solve than the average system and so
+00:10:25.680 we're gonna have to go into some of the
+00:10:26.880 details about that

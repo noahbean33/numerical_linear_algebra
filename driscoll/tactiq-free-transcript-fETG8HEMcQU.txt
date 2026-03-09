@@ -1,0 +1,140 @@
+# tactiq.io free youtube transcript
+# MATH426: Symmetry
+# https://www.youtube.com/watch/fETG8HEMcQU
+
+00:00:01.760 symmetry is one of the most important
+00:00:03.879 properties that we can identify for a
+00:00:05.560 matrix both for theoretical reasons and
+00:00:08.400 because of what it tells us about
+00:00:09.960 numerical computations so we're getting
+00:00:12.440 our first taste of it here but it uh
+00:00:14.240 it's actually a pervasive subject um Now
+00:00:17.720 by definition we say that a Matrix S if
+00:00:20.240 it's real is symmetric if it equals its
+00:00:23.960 own transpose so s transpose equals s
+00:00:26.679 that's the
+00:00:28.000 definition of a symmetric Matrix
+00:00:31.679 now we haven't spent a lot of time
+00:00:33.079 talking about complex valued matrices
+00:00:35.200 yet we'll have to get into that pretty
+00:00:37.000 soon um for a complex Matrix the right
+00:00:40.280 analog of symmetry is actually the
+00:00:43.039 hermiss uh so s star is the it's what we
+00:00:46.960 call the Herm mission of a
+00:00:51.039 matrix and that's the conjugate
+00:00:54.079 transpose so not only do you take the
+00:00:55.879 transpose of the Matrix but then you
+00:00:58.320 take the complex conjugate of each entry
+00:01:02.000 remember in the complex conjugate you
+00:01:03.960 replace each every I by a negative
+00:01:06.880 I so the the statements that we're going
+00:01:09.320 to make more or less go through when you
+00:01:10.920 talk about Herm Mission matrices uh in
+00:01:13.360 the complex case but for now we're going
+00:01:15.000 to stick with real
+00:01:16.320 matricies now another way of looking at
+00:01:19.080 symmetry is if you think about the
+00:01:20.600 elements of s the Symmetry condition
+00:01:23.240 means that sji is equal to SI
+00:01:27.159 J or if you think about it in terms of
+00:01:30.040 of just looking at the Matrix you know
+00:01:33.399 we have this main diagonal and symmetry
+00:01:36.000 tells us that if you choose entries that
+00:01:38.720 are symmetric with respect to that
+00:01:40.600 diagonal then they're the same number so
+00:01:44.000 those red numbers would have to be the
+00:01:45.560 same or I'm sorry the green numbers
+00:01:47.119 would have to be the same these two red
+00:01:49.159 numbers would have to be the same and so
+00:01:51.399 on so that's sort of a visual picture of
+00:01:53.880 what symmetry means symmetric matrices
+00:01:55.920 come up a lot in processes that are
+00:01:58.360 themselves symmetric if for example if
+00:02:00.640 you think about gravity um the sun
+00:02:02.920 exerts a gravitational force on the
+00:02:04.479 Earth and the Earth exerts the same
+00:02:06.520 gravitational force on the sun it's a
+00:02:08.639 symmetric situation and a lot of
+00:02:10.239 physical problems are like
+00:02:12.720 that another example where we have a
+00:02:14.840 symmetric Matrix is in the normal
+00:02:17.040 equations so remember we have this
+00:02:19.000 Matrix a transpose a that appears in the
+00:02:20.879 normal equations I'm claiming here that
+00:02:23.319 this is uh symmetric the reason the way
+00:02:26.840 to show this is to just take the
+00:02:29.120 transpose of
+00:02:33.680 s remember that the transpose of the
+00:02:36.440 product is the product of transposes in
+00:02:38.599 the opposite
+00:02:43.120 order and of course the transpose of the
+00:02:46.040 transpose is the original
+00:02:48.599 Matrix so what I've just shown is that s
+00:02:53.120 transpose equals s and that is what we
+00:02:56.879 need to check for symmetry
+00:03:00.640 okay so the Matrix that we get in the
+00:03:01.879 normal equations is an example of a
+00:03:03.640 symmetric Matrix and we're going to
+00:03:05.840 focus in on what that means
+00:03:07.040 computationally now so if forag if for a
+00:03:10.400 minute you imagine that we do gine
+00:03:12.319 elimination or Lu
+00:03:14.480 factorization without
+00:03:18.080 pivoting okay then we just get S is
+00:03:20.840 equal to l *
+00:03:22.560 U well we can always write
+00:03:26.480 U as a diagonal matrix * V so the way we
+00:03:31.760 do this is we just pick off the diagonal
+00:03:36.920 elements from
+00:03:41.040 U and that leaves us with ones on the
+00:03:44.480 main
+00:03:46.200 diagonal plus other stuff up here in the
+00:03:49.480 upper triangle we don't know what those
+00:03:51.480 numbers are I'm not saying anything
+00:03:53.319 about those numbers but it's pretty
+00:03:55.200 clear that if you multiply out these two
+00:03:57.920 matrices together right
+00:04:00.319 we uh in the diagonal you end up with
+00:04:03.400 something which
+00:04:04.599 is
+00:04:06.480 u11 right then we changed the rest of
+00:04:09.120 the first row but we don't care what
+00:04:11.439 that is it's just something in the
+00:04:13.760 second row we have uh zero and Then
+00:04:17.759 u22 followed by other stuff and so
+00:04:21.918 on so all I'm saying here is that
+00:04:25.600 whatever the um original U Matrix was
+00:04:29.919 that we got from my U factorization we
+00:04:32.000 can further factor that U as a
+00:04:34.840 diagonal time a V and V is a unit upper
+00:04:39.720 triangular so remember unit means that
+00:04:41.759 we've put ones on the main diagonal
+00:04:50.000 here
+00:04:51.639 okay so that's just another way of
+00:04:54.560 writing the original Lu factorization
+00:04:57.600 where it gets interesting is that if we
+00:04:59.800 write s in this form of L
+00:05:03.160 DV and S is symmetric then it turns out
+00:05:06.080 that this Matrix V is actually L
+00:05:08.039 transpose and I won't go through the
+00:05:10.000 proof of this
+00:05:12.600 um but we'll just use this as a given
+00:05:15.320 fact now that if s is symmetric we can
+00:05:18.319 write it in the fact in the form l d l
+00:05:20.680 transpose L is
+00:05:22.919 unit lower triangular
+00:05:31.039 and D is
+00:05:35.600 diagonal this is often called an LDL
+00:05:38.000 transpose factorization or just LDL
+00:05:40.759 factorization for
+00:05:42.319 short now remember I did say that we had
+00:05:45.400 to turn off pivoting for this to work
+00:05:47.639 that's not always a good idea as we know
+00:05:49.759 there are a lot of matrices for which
+00:05:51.720 that causes numerical instability or it
+00:05:53.919 even causes the algorithm to
+00:05:55.759 fail in order to get around that
+00:05:58.360 particular limitation we need need one
+00:06:00.160 other property of the Matrix that we get
+00:06:02.240 in normal equations one that's a little
+00:06:04.440 bit more subtle than just symmetry

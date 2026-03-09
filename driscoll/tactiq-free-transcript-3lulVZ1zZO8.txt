@@ -1,0 +1,235 @@
+# tactiq.io free youtube transcript
+# MATH426: Positive definiteness
+# https://www.youtube.com/watch/3lulVZ1zZO8
+
+00:00:02.040 so now we've seen that in the normal
+00:00:04.080 equations this Matrix S equals a
+00:00:06.720 transpose a that we get is a symmetric
+00:00:08.460 Matrix regardless of what a is even
+00:00:11.340 though a is rectangular
+00:00:14.280 and that means remember that s is equal
+00:00:16.859 to LDL transpose we have this
+00:00:19.440 factorization which is really just a
+00:00:21.300 special form of the Lu factorization
+00:00:24.080 with no pivoting so if we turn off
+00:00:27.000 pivoting
+00:00:28.560 in the Lu factorization we can do this
+00:00:31.500 and we don't we know that pivoting is
+00:00:34.559 sometimes necessary so we're going to
+00:00:37.320 have to justify that if we want to use
+00:00:38.700 that the way we do it is another
+00:00:40.379 property of matrices that we call
+00:00:42.120 positive definiteness now this one
+00:00:44.280 definitely looks a little bit weird so
+00:00:46.800 I'm going to give you the punch line
+00:00:47.760 first which is that positive definite
+00:00:49.620 matrices act an awful lot like positive
+00:00:52.140 numbers in the real scalar case and the
+00:00:55.739 most important thing that we know about
+00:00:57.239 positive numbers maybe is that they have
+00:00:59.399 square roots and something similar
+00:01:01.320 happens for positive definite matrices
+00:01:03.059 so
+00:01:05.459 um
+00:01:06.360 if we look at this s where it comes from
+00:01:09.479 is a transpose a
+00:01:11.580 if we look at this special form here
+00:01:15.420 okay so X has to be an N Vector remember
+00:01:19.140 s is n by n
+00:01:21.299 so what we have here is 1 by n
+00:01:25.320 times n by n
+00:01:27.960 times n by one that's what
+00:01:31.380 it's inside this little circle here and
+00:01:33.960 so that's going to be a scalar
+00:01:37.860 just a number
+00:01:39.360 and this special way of doing X
+00:01:41.220 transpose Matrix X
+00:01:43.799 has a name it's called a quadratic form
+00:01:53.460 okay quadratic because X appears twice
+00:01:56.700 as the product in this product
+00:01:59.640 okay so we put in what s is and now we
+00:02:02.340 have X transpose a transpose ax
+00:02:06.119 okay and then in the next step I use the
+00:02:08.940 fact that this is a product of
+00:02:11.520 transposes so if we reverse the order
+00:02:13.819 it's the transpose of the product
+00:02:19.680 and now we recognize that this is a
+00:02:22.440 inner product of the vector ax with
+00:02:25.260 itself
+00:02:26.640 so that's equal to the two Norms squared
+00:02:28.920 of that Vector ax
+00:02:31.319 while the two Norm of any Vector is
+00:02:33.660 always greater than or equal to zero
+00:02:38.040 so we've shown that this quadratic form
+00:02:40.080 X transpose times s times x is a
+00:02:43.620 non-negative number
+00:02:45.840 in the case of this particular
+00:02:48.300 form for s
+00:02:51.540 okay now when can this quadratic form
+00:02:55.379 equal zero
+00:02:57.959 well the only way that X transpose x
+00:03:01.099 equals zero is if the norm of ax is
+00:03:05.459 equal to zero
+00:03:07.200 right so maybe I should write that out
+00:03:09.540 so
+00:03:12.599 if that quadratic form is equal to zero
+00:03:14.940 well we just showed that it's equal to
+00:03:16.500 the square of this guy
+00:03:20.819 and the only way for the two Norm of a
+00:03:23.159 vector to be zero is if the vector
+00:03:25.680 itself
+00:03:26.700 is equal to zero
+00:03:28.920 okay when can that happen well remember
+00:03:32.519 that a times x is a linear combination
+00:03:34.620 of The Columns of a
+00:03:38.220 if
+00:03:40.099 ax is equal to zero
+00:03:42.720 and X is a non-zero Vector then that
+00:03:44.760 would mean that the columns of a are
+00:03:46.140 linearly dependent this goes back to
+00:03:47.760 basic linear algebra
+00:03:50.700 well in that case if The Columns of a
+00:03:52.739 matrix are linearly dependent we know
+00:03:54.420 that its rank is not the same as sort of
+00:03:57.900 the number of columns right the
+00:03:59.400 dimension of the range is less than the
+00:04:02.280 number of columns
+00:04:03.959 so to put that another way if we do know
+00:04:06.959 that this Matrix a which has n columns
+00:04:10.080 if they span an n-dimensional space in
+00:04:12.659 other words if the rank of a is equal to
+00:04:14.400 n then they must be independent
+00:04:17.040 and the only way you can take a linear
+00:04:18.540 combination and get zero is if the
+00:04:21.060 linear combination itself is all zeros
+00:04:23.160 so what we're saying is that this is
+00:04:25.860 just sort of a technical condition that
+00:04:27.720 if the rank of a is equal to n the
+00:04:30.360 number of columns of a
+00:04:32.280 then we know that the only way to get a
+00:04:34.860 quadratic form of zero
+00:04:36.900 for the zero vector
+00:04:39.240 so we put these things together so now
+00:04:41.100 we have an additional assumption about a
+00:04:42.540 which is that the rank of a is equal to
+00:04:44.160 n
+00:04:44.880 okay we do need to make that but it's a
+00:04:46.860 technicality
+00:04:49.740 all right given that assumption let me
+00:04:51.960 know that the quadratic form is positive
+00:04:54.800 every non-zero Vector X
+00:04:58.080 and that's the property that defines
+00:05:01.040 positive definiteness
+00:05:08.040 okay
+00:05:09.780 so positive definition positive
+00:05:11.820 definiteness
+00:05:13.280 means that the quadratic form is
+00:05:15.840 positive for every non-zero vector
+00:05:19.139 okay
+00:05:20.639 here's the significance of that
+00:05:22.800 since we have that s is equal to LDL
+00:05:25.020 transpose
+00:05:26.880 positive definiteness
+00:05:28.919 gives us some extra information
+00:05:33.539 sometimes we write SPD to mean symmetric
+00:05:36.479 positive definite that's a common
+00:05:38.639 abbreviation that you'll see
+00:05:41.639 so a symmetric positive definite Matrix
+00:05:43.680 S
+00:05:45.419 has that the diagonal entries of d
+00:05:56.639 are positive
+00:06:01.680 okay which means we can take a square
+00:06:03.600 root of them
+00:06:06.360 so normally it wouldn't make much sense
+00:06:08.520 to write the square root of a matrix but
+00:06:10.199 maybe
+00:06:11.039 you'll permit me to write the square
+00:06:12.479 root of a diagonal matrix whose entries
+00:06:15.180 are all non-negative
+00:06:16.979 that's not too much to swallow I think
+00:06:25.680 and
+00:06:27.180 then we see that
+00:06:30.180 okay if we reverse the order
+00:06:34.500 take the transpose out a diagonal matrix
+00:06:36.720 is its own transpose already
+00:06:39.060 so that justifies that line and then we
+00:06:42.419 can see that if we call this Matrix now
+00:06:45.240 R transpose
+00:06:47.520 then this Matrix must be r
+00:06:51.720 and we can write that s is equal to R
+00:06:53.759 transpose r
+00:06:55.139 we're now R because L was lower unit
+00:06:57.780 lower triangular
+00:07:00.300 that means that R which is L transposed
+00:07:03.840 times another Matrix is upper triangular
+00:07:17.039 so this can all be stated and proved as
+00:07:18.840 a theorem the details are deeper than we
+00:07:21.180 want to go
+00:07:22.740 um
+00:07:23.520 but given a positive definite Matrix we
+00:07:25.800 can write it in this form R transpose R
+00:07:28.919 where R is upper triangular and this
+00:07:32.520 particular factorization has a special
+00:07:34.139 name
+00:07:36.900 it's called a cholesky factorization
+00:07:48.840 and some extra goodies come along with
+00:07:50.639 it so one of those goodies is that we
+00:07:52.319 can show that pivoting is never needed
+00:07:59.099 in other words you can turn the pivoting
+00:08:01.020 off for these matrices
+00:08:03.240 and it never causes any round off
+00:08:05.280 problems whatsoever
+00:08:06.840 so that's nice the other thing is that
+00:08:09.360 essentially you have half as many unique
+00:08:12.479 numbers defined as an Lu factorization
+00:08:14.460 right in an l and a u in the Lu
+00:08:16.680 factorization you've got to find the
+00:08:18.180 lower triangle of the L and the upper
+00:08:20.580 triangle of the U and they have nothing
+00:08:21.900 to do with you with each other
+00:08:24.120 here the two matrices are transposes of
+00:08:26.520 each other they're copies of each other
+00:08:28.440 this is what I was referring to as sort
+00:08:30.120 of the square root of s
+00:08:31.979 and so therefore since you have half as
+00:08:33.899 many things to find it turns out that
+00:08:35.219 you can do it in about
+00:08:36.599 half as many operations so as compared
+00:08:39.839 to
+00:08:40.740 two-thirds
+00:08:44.940 for the general Lu
+00:08:49.860 that's why we retain these constants in
+00:08:52.019 the asymptotic notation of course
+00:08:53.459 they're both n cubed and then goes to
+00:08:55.680 Infinity they're both proportional to n
+00:08:57.240 cubed
+00:08:58.320 but the chalaski factorization at a
+00:09:00.420 given value of n is about twice as fast
+00:09:02.399 as standard Lu factorization
+00:09:05.880 and that's the main thing we wanted to
+00:09:07.140 come out of this with is that when we
+00:09:08.880 solve for normal equations we can take
+00:09:10.440 advantage of the tolesky factorization
+00:09:12.060 and do it faster in Matlab
+00:09:23.700 we can find the cholesky factorization
+00:09:25.440 of a matrix through the command chawl
+00:09:32.760 now chawl is interesting it assumes that
+00:09:35.880 the Matrix you give it is
+00:09:39.360 symmetric already it doesn't check that
+00:09:41.279 for you
+00:09:43.019 but it does check the positive definite
+00:09:45.120 oops
+00:09:46.440 it does check the positive definiteness
+00:09:48.480 for you
+00:09:51.660 okay so you might be wondering given
+00:09:54.120 that definition we had about quadratic
+00:09:55.680 forms how do you even check whether
+00:09:56.820 something is positive definite for the
+00:09:59.160 normal equations we know it has to be
+00:10:00.600 for another Matrix though the cholesky
+00:10:03.360 factorization process itself tells us
+00:10:05.399 whether the Matrix is positive definite
+00:10:07.380 so you get an error
+00:10:11.220 if s is not
+00:10:15.180 positive definite otherwise you get the
+00:10:17.700 r Matrix in the factorization

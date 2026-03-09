@@ -1,0 +1,257 @@
+# tactiq.io free youtube transcript
+# MATH426: Matrix norms
+# https://www.youtube.com/watch/B0R0RdNhLJA
+
+00:00:01.959 if a is an N byn Matrix then we do have
+00:00:05.359 a very cheap way of computing a norm of
+00:00:07.520 a um it's the same thing as having an MN
+00:00:10.599 by1 Vector right so if I had the Matrix
+00:00:15.199 327
+00:00:16.760 40
+00:00:19.359 1 we could just as easily consider that
+00:00:22.279 to be like the vector
+00:00:25.720 32741 and then we could apply a vector
+00:00:27.760 in order so the only case where this is
+00:00:30.920 sometimes useful is what we call the
+00:00:32.840 fenus norm of a matrix where we take the
+00:00:35.600 two Norm of that Vector
+00:00:37.559 representation so in other words it's
+00:00:39.719 the square root of the sum of the
+00:00:41.600 squares of all the elements of the
+00:00:43.840 Matrix so the frobenius norm does come
+00:00:46.239 in handy sometimes but it turns out to
+00:00:48.120 be not the most useful idea for Matrix
+00:00:51.239 Norms the one that we do use looks
+00:00:53.440 stranger and more complicated but it has
+00:00:56.079 some particularly important
+00:00:58.920 advantages so here's a
+00:01:03.239 definition of the Matrix
+00:01:08.840 Norm The Matrix Norm of a is the maximum
+00:01:13.600 over all unit vectors of the norm of a *
+00:01:17.880 X this is often called an induced Matrix
+00:01:24.680 Norm because it's induced by a vector
+00:01:27.680 Norm you see X and ax are both vectors
+00:01:31.040 so if you have a vector Norm then that
+00:01:33.920 defines a matrix
+00:01:35.799 Norm so that means we can talk
+00:01:39.520 about the two Norm of a matrix the one
+00:01:43.119 Norm of a
+00:01:44.119 matrix and the infinity Norm of a
+00:01:51.079 matrix if we want to visualize what this
+00:01:53.880 Norm is telling us it's about the
+00:01:55.799 actions of a as a linear
+00:01:58.600 transformation so so let's take the
+00:02:01.200 infinity Norm as an example remember
+00:02:04.000 that the unit circle in the infinity
+00:02:07.039 Norm is actually this
+00:02:13.800 square with Corners at one1 and so
+00:02:17.160 on well if these are the vectors then
+00:02:20.640 after we apply a to every single Vector
+00:02:23.120 in that picture what do we get
+00:02:26.760 well each of those four corners will map
+00:02:32.040 somewhere and it's not hard to show that
+00:02:34.200 straight lines will have to map to
+00:02:35.680 straight lines under a linear map so
+00:02:38.319 we'll get a
+00:02:41.760 parallelogram then the infinity Norm of
+00:02:45.440 that parallelogram is the part that
+00:02:48.480 sticks out the most in some Direction so
+00:02:51.800 in this case it would be the y
+00:02:54.400 coordinate of these points an absolute
+00:02:58.760 value
+00:03:04.680 okay so it's all about the action of a
+00:03:07.920 apply to all the different vectors on
+00:03:09.760 the unit circle in whatever Norm you've
+00:03:15.599 picked there's another way of defining
+00:03:17.879 this so instead of just looking at the
+00:03:20.000 maximum over unit vectors we can look at
+00:03:22.720 the maximum over all vectors except for
+00:03:25.319 zero of the ratio of Norm ax to Norm X
+00:03:29.879 and the reason that we can do
+00:03:32.959 this is because the norm of alpha x if
+00:03:38.159 Alpha is a scalar remember is Alpha time
+00:03:41.519 the norm of
+00:03:43.760 X and the norm of a * alpha
+00:03:49.280 x well that's just the norm of alpha
+00:03:52.920 time ax because Alpha is a
+00:03:56.319 scalar and by the properties of norms
+00:03:59.000 that's absolute value of alpha times the
+00:04:02.680 norm of ax and so what that means is if
+00:04:05.360 we take a ratio of
+00:04:08.760 um the norm of a * alpha
+00:04:12.799 x over the norm of alpha
+00:04:16.519 x the alphas canceled out
+00:04:21.839 completely so we could rescale the
+00:04:24.040 vectors that we're considering to be any
+00:04:26.360 particular Norm so the unit Norm seems
+00:04:28.840 the most useful so for instance if you
+00:04:31.960 think about the torm picture right what
+00:04:34.960 we're saying is that there's a unit
+00:04:36.680 circle of
+00:04:38.520 course we might pick vectors on some
+00:04:41.600 other Circle say out
+00:04:44.720 here but in fact in terms of this ratio
+00:04:47.600 Norm ax over Norm of X we get the same
+00:04:51.080 result for every Vector on array like
+00:04:55.080 this it doesn't matter what the norm of
+00:04:56.919 X is it cancels out of the ratio
+00:05:02.800 okay so we have these two definitions
+00:05:04.240 that we can use now uh for the Matrix
+00:05:09.039 norm and there are two main properties
+00:05:12.520 that we're after by using this Norm that
+00:05:14.160 come in these next two theorems so we
+00:05:16.639 going spend just a few minutes on these
+00:05:18.600 theorems um the first is that the norm
+00:05:21.199 of ax is less than or equal to the norm
+00:05:23.120 of a * the norm of X for all vectors X
+00:05:27.600 well this turns out to be incredibly
+00:05:28.919 simple right
+00:05:30.080 by
+00:05:35.840 definition the norm of a is the
+00:05:40.919 maximum over all nonzero
+00:05:45.199 vectors
+00:05:46.960 of Norm of ax / Norm of
+00:05:51.479 X so if you take the maximum over a
+00:05:54.080 whole set right that's greater than or
+00:05:56.840 equal
+00:05:58.479 to
+00:06:02.520 greater than or equal to any particular
+00:06:04.039 member of that
+00:06:18.680 set right that's what it means to take a
+00:06:20.759 Max and so therefore um you have the
+00:06:24.360 norm of
+00:06:25.919 a so therefore the norm of a is greater
+00:06:30.080 than or equal
+00:06:31.479 to Norm of ax divided by Norm of X and
+00:06:35.680 that rearranges into the statement of
+00:06:38.479 the
+00:06:39.280 theorem so that turns out to be just
+00:06:41.400 playing a game with the definition of
+00:06:43.000 Matrix
+00:06:46.599 Norm the slightly be result which is
+00:06:49.919 also extremely useful to us is that for
+00:06:52.479 any two matrices A and B the norm of the
+00:06:55.479 product a is less than or equal to the
+00:06:57.360 product of the Norms Norm a time Norm
+00:07:03.360 B Norm of a
+00:07:06.440 product less than or equal to the
+00:07:08.440 product of the
+00:07:10.319 Norms now when I say all matrices of
+00:07:13.319 course I'm saying when the product a * B
+00:07:15.840 is defined that's implied
+00:07:18.960 here so let's prove this
+00:07:25.599 statement by
+00:07:28.319 definition
+00:07:33.360 the norm of
+00:07:35.440 ab is the
+00:07:39.639 maximum over all nonzero
+00:07:46.479 vectors of the norm of
+00:07:49.000 ABX ID by the norm of
+00:07:55.599 X well we have we can think of ab BX we
+00:08:00.120 can use the associative law to write it
+00:08:03.039 as a * the vector
+00:08:07.520 BX well by the previous
+00:08:18.080 theorem we're going to
+00:08:21.080 rewrite Norm of a * BX is less than or
+00:08:24.720 equal to the norm of a Time the norm of
+00:08:28.759 the vector
+00:08:37.000 BX
+00:08:38.880 well by the previous theorem
+00:08:46.080 again applied now to the vector
+00:08:49.839 BX we can replace
+00:08:53.120 BX less than or equal
+00:08:56.640 to Norm B Norm
+00:09:02.760 X now we have Norm X in the
+00:09:07.839 denominator cancels out now we're taking
+00:09:11.120 the maximum over all the different
+00:09:13.360 possible X of the
+00:09:15.839 quantity
+00:09:20.760 whoops of the
+00:09:23.600 quantity
+00:09:28.120 AB
+00:09:31.519 so the maximum over non zero
+00:09:34.000 X of the quantity Norm a norm B well
+00:09:38.079 there's no dependence on X at all so the
+00:09:40.519 maximum is
+00:09:42.920 just the product of the
+00:09:46.240 norms and so since we started with Norm
+00:09:50.360 a we showed all the way that it's less
+00:09:52.760 than or equal to Norm a * Norm
+00:09:56.880 B we're done
+00:10:03.680 so it's really backing up for a second
+00:10:06.200 it's really these two
+00:10:08.399 inequalities that make ose Norms so
+00:10:11.120 useful to us and we'll be seeing that
+00:10:14.120 very
+00:10:16.800 shortly before we finish um it's worth
+00:10:20.160 pointing out that you know from the
+00:10:22.519 definition it's a big headache to have
+00:10:24.360 to compute what the norm of any
+00:10:26.399 particular Matrix is that's the downside
+00:10:28.519 of an IND Matrix Norm but for two of our
+00:10:32.600 very uh popular Norms it turns out to be
+00:10:35.360 incredibly easy so there's a way of
+00:10:37.440 applying the definition so that we get a
+00:10:39.079 formula for the norm of a matrix and
+00:10:42.000 they're quite similar but they have an
+00:10:43.680 important difference so you have to pay
+00:10:44.880 attention to the details here so um the
+00:10:49.160 one Norm of a matrix a is the maximum
+00:10:52.160 over all
+00:10:53.440 columns for the
+00:10:55.480 sum of
+00:10:57.600 entries in in each column so I can see
+00:11:01.680 there's a mistake here this sum should
+00:11:03.240 be over M so it's an M byn Matrix so
+00:11:07.160 there are M rows okay so what this means
+00:11:10.839 is that you take the row sums of the
+00:11:14.360 Matrix I'm sorry I said it wrong you
+00:11:17.240 take the column sums in this Matrix and
+00:11:19.920 then take a
+00:11:25.519 Max the infinity Norm okay is the
+00:11:28.440 maximum over each
+00:11:30.600 row of the sums across
+00:11:34.680 columns so we take row sums we sum
+00:11:37.240 Across The Columns of the Matrix and
+00:11:39.639 then we take a
+00:11:41.440 Max of that
+00:11:45.920 set so one way of remembering this it's
+00:11:49.320 kind of goofy but the one in the
+00:11:52.200 subscript here is
+00:11:54.399 vertical and the sums go
+00:11:57.959 vertically the infinity kind of sits
+00:12:01.440 horizontally and the sums go
+00:12:03.800 horizontally
+00:12:05.760 here okay so that's just a little memory
+00:12:09.079 device for
+00:12:12.279 example for this particular Matrix a if
+00:12:15.680 we take the um one Norm of the
+00:12:20.959 matrix it's the maximum of the column
+00:12:24.680 sums remember to take absolute values
+00:12:26.920 before you start adding so the First
+00:12:29.440 Column is three the second column is six
+00:12:33.320 the third column is also
+00:12:36.519 six so the answer here is six the
+00:12:39.760 infinity Norm of the M of
+00:12:44.720 a is the maximum row sum so we sum the
+00:12:48.160 rows again after taking absolute
+00:12:50.639 values first row gives us
+00:12:53.040 six second row gives us five the third
+00:12:56.839 row gives us four so so in this case the
+00:12:59.440 answer is six again although for other
+00:13:01.800 matrices the answers are
+00:13:04.320 different now it's probably occur to you
+00:13:07.959 by now that you know the most natural
+00:13:10.920 Vector Norm to work with a lot of the
+00:13:12.639 time is the two Norm that gives us the
+00:13:14.720 ordinary kind of distance that we're
+00:13:16.240 used to the ordinary kind of circles
+00:13:18.000 that we're used to and so on but I
+00:13:20.720 haven't said anything about Computing
+00:13:22.519 The Matrix torm from a formula and the
+00:13:25.279 truth is that there is
+00:13:27.240 no in parenthe
+00:13:29.440 easy
+00:13:34.000 formula for the two Norm of a
+00:13:37.279 matrix turns out that there is a Formula
+00:13:40.560 but it takes a computer to compute it

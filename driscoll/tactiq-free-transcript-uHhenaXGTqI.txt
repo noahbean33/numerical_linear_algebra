@@ -1,0 +1,293 @@
+# tactiq.io free youtube transcript
+# MATH426: PLU factorization
+# https://www.youtube.com/watch/uHhenaXGTqI
+
+00:00:01.760 this is our current paradigm for solving
+00:00:04.080 a linear system
+00:00:05.279 by gaussian elimination so if we're
+00:00:07.520 given a system ax
+00:00:08.720 equals b we first factor a into
+00:00:11.920 l times u and then we saw
+00:00:15.679 two triangular systems we saw one with
+00:00:18.160 forward substitution
+00:00:19.760 and resolve another one with factory
+00:00:21.199 substitution using the u major
+00:00:24.800 but we already know
+00:00:27.920 from simple examples that sometimes the
+00:00:30.320 product process that we've described so
+00:00:32.079 far
+00:00:32.960 is going to fail so as a simple example
+00:00:36.480 here's a matrix
+00:00:37.680 a a two by two example where when we
+00:00:41.120 look at this matrix right
+00:00:42.559 the first thing we want to do is put a
+00:00:44.000 zero here
+00:00:46.160 okay by adding a multiple of the first
+00:00:48.160 row well
+00:00:50.320 the element that's above it is a zero so
+00:00:52.879 no matter what
+00:00:53.840 multiplier we choose for the first row
+00:00:56.399 we can't change the second row at all
+00:00:58.559 so this number zero here that's on the
+00:01:00.320 diagonal
+00:01:01.600 is called the pivot element
+00:01:12.560 and if the pivot element is zero
+00:01:15.280 gaussian elimination
+00:01:16.479 cannot continue
+00:01:27.040 now in this particular matrix there's a
+00:01:28.799 very simple remedy and probably one that
+00:01:30.720 you learned in your
+00:01:31.759 linear algebra class which is that
+00:01:33.759 you're allowed to swap rows
+00:01:36.079 so if we swap the two rows of that
+00:01:37.759 matrix so
+00:01:39.360 um for a two by two matrix this little
+00:01:42.560 guy here
+00:01:43.680 right just swaps the rows of a so the
+00:01:46.079 first uh
+00:01:47.200 the first row of the new matrix is the
+00:01:49.040 second row of a
+00:01:50.479 the second row of the new matrix is the
+00:01:52.079 first row of a and so that just swaps
+00:01:53.920 the two ways
+00:01:55.600 and then that one not only can you do
+00:01:58.000 gaussian elimination but you're done
+00:01:59.920 because it's already at the triangular
+00:02:02.159 and so the
+00:02:03.280 factorization is complete so we know
+00:02:07.360 that we have to swap rows when they get
+00:02:10.000 a zero pivot element
+00:02:12.000 and so all we have to do is just look
+00:02:13.280 for a row down below
+00:02:15.040 right we never want to change the rows
+00:02:16.319 above that would destroy the zeros we've
+00:02:18.160 introduced
+00:02:19.280 so we want to look for a row below the
+00:02:21.040 diagonal that has a non-zero pair
+00:02:24.000 but what's interesting and important is
+00:02:25.840 that sometimes we should swap rows even
+00:02:28.239 when the pivot
+00:02:29.040 is non-zero but a small number and small
+00:02:32.239 here is going to mean
+00:02:35.040 in absolute value
+00:02:42.720 so let's go back to the instability
+00:02:45.920 lecture
+00:02:46.800 so this is all copied from there we have
+00:02:50.239 this problem of the intersection of two
+00:02:52.319 straight lines one of which
+00:02:55.360 has a slope of exactly 45 degrees and
+00:02:58.400 one of which has a very shallow slope
+00:03:01.200 and remember they intersect exactly at
+00:03:03.040 the point
+00:03:04.480 1 1 which is what we're trying to find
+00:03:06.159 for the solution
+00:03:08.560 well if we when we solved for the first
+00:03:12.560 equation and substituted that into the
+00:03:14.319 second equation
+00:03:15.760 then the numerical procedure we got
+00:03:18.159 determined
+00:03:19.280 the exact answer
+00:03:23.519 in floating point horrifically
+00:03:27.519 however if we went the other way around
+00:03:29.360 if we substituted first from the second
+00:03:31.360 equation or solved first the second
+00:03:32.959 equation and substituted into the first
+00:03:35.680 and y was okay
+00:03:38.720 but x right had
+00:03:44.239 lost about eight digits or so
+00:03:48.239 accuracy
+00:03:55.360 so if we look at this example in terms
+00:03:58.400 of factorization
+00:04:01.360 we get another interpretation of what
+00:04:02.879 happened so method one we can think of
+00:04:05.519 writing the
+00:04:06.480 first equation first the second equation
+00:04:09.200 second
+00:04:10.159 and then we just do gaussian elimination
+00:04:12.879 keeping track of the factors and we get
+00:04:14.560 the following
+00:04:16.478 l times u for a on the other hand
+00:04:20.079 if we put the second equation first in
+00:04:22.240 the first equation seconds
+00:04:24.000 we get two different factors l and u
+00:04:28.720 now in order to make l times u equal a
+00:04:32.400 uh look at what happens when we compute
+00:04:35.440 the
+00:04:36.320 2 2 element so in this matrix product
+00:04:39.759 if we take the inner product of that row
+00:04:42.400 with that column we get
+00:04:44.000 minus epsilon inverse that's a big num
+00:04:46.880 big negative number
+00:04:49.520 plus 1 times
+00:04:52.560 epsilon inverse minus
+00:04:57.680 and that's supposed to come equal to
+00:05:01.360 negative 1 which is the value in this
+00:05:04.479 corner element
+00:05:05.440 so mathematically that's correct but
+00:05:08.240 numerically
+00:05:09.520 right what happens is that you have two
+00:05:12.080 very
+00:05:12.639 large numbers with opposite signs
+00:05:16.080 right these numbers are nearly equal
+00:05:22.400 opposite signs
+00:05:26.639 and they cancel
+00:05:29.759 to get a small result
+00:05:35.440 now small in this case is negative one
+00:05:38.080 but compared to epsilon inverse that's
+00:05:39.759 tiny if epsilon was 10 to the minus 10
+00:05:42.240 right you're asking minus 10 to the
+00:05:45.600 minus 10
+00:05:47.440 plus 10 to the minus 10
+00:05:51.199 to approximately cancel out to negative
+00:05:53.120 one and so you're going to lose
+00:05:55.919 a number of significant digits in that
+00:05:58.639 subtractive calculation
+00:06:02.319 so when we factor the matrix according
+00:06:04.400 to method two
+00:06:05.759 we're relying on cancellation error to
+00:06:08.319 produce the matrix a
+00:06:10.880 on the other hand in method one that
+00:06:14.319 doesn't happen so if we look at the same
+00:06:16.479 process for computing the two 2 element
+00:06:19.440 of a
+00:06:20.400 if you go through that you'll see it
+00:06:21.680 does not rely on any particular
+00:06:23.360 subtractive cancellation
+00:06:25.199 of nearby numbers and so that's a key
+00:06:28.800 difference between
+00:06:29.600 between the two approaches and really
+00:06:33.759 a detailed analysis shows that the
+00:06:35.759 problem is
+00:06:36.960 whenever you have a pivot element which
+00:06:39.120 is smaller
+00:06:40.479 than the other elements in its column
+00:06:42.880 this kind of thing can happen
+00:06:44.880 and so what we end up with is a simple
+00:06:47.360 rule that we call the row pivoting rule
+00:06:49.440 or sometimes it's called the partial
+00:06:50.880 pivoting rule
+00:06:52.720 when we do elimination in column number
+00:06:54.880 k
+00:06:56.000 okay so we want to put zeros below the
+00:06:58.160 kk element
+00:07:00.160 we look for the largest possible element
+00:07:02.639 in absolute value
+00:07:04.639 on row k and below and we swap rows
+00:07:07.680 to put that into the pivot spot so
+00:07:10.960 that might sound confusing but in
+00:07:13.840 practice it's quite simple so here's an
+00:07:16.400 example
+00:07:18.720 uh here's our same four by four matrix
+00:07:21.440 that we did the dlu factorization
+00:07:24.160 now in this case we want to start
+00:07:27.840 k equals one we we're gonna put zeros in
+00:07:30.000 row one
+00:07:30.880 column one below the diagonal
+00:07:34.560 well the largest pivot element after
+00:07:37.520 taking an absolute value is negative
+00:07:39.199 four
+00:07:40.080 so this should become the pivot
+00:07:45.919 so that means we need to swap row one
+00:07:48.560 with row two
+00:07:51.520 which is exactly what this line does
+00:08:02.879 okay so now we swap those two rows
+00:08:07.120 and negative four is our pivot now we do
+00:08:10.840 standard
+00:08:15.360 gaussian elimination step
+00:08:19.199 find the row multipliers store them in l
+00:08:22.080 and then apply them to a row operation
+00:08:24.639 and we've done elimination
+00:08:27.840 now we want to do elimination in the
+00:08:29.199 second column
+00:08:33.760 so we look for the largest pivot element
+00:08:36.399 in row two and below
+00:08:38.479 and that's the 16.25 so we want to swap
+00:08:42.159 rows two and three
+00:08:46.240 and that's what we do
+00:08:53.760 do another standard gas elimination step
+00:09:00.880 row operations and a now has zeros in
+00:09:04.480 the first two columns
+00:09:06.839 finally i'm going to do the third column
+00:09:12.320 so the largest possible pivot element is
+00:09:14.720 in the fourth row so we have to do
+00:09:16.160 another swap
+00:09:25.839 do the gaussian elimination and we're
+00:09:27.360 done so this is now our
+00:09:30.880 new matrix upper triangle
+00:09:34.880 now the details are a little bit
+00:09:36.560 complicated there's a little bit more
+00:09:37.839 than here out there to show what
+00:09:39.120 happens in terms of factorizing because
+00:09:41.360 while this is u it's not so clear what's
+00:09:43.120 happened to our l
+00:09:44.720 remember our l before came from some
+00:09:46.959 lucky matrix multiplications working out
+00:09:49.200 just the way we wanted
+00:09:50.880 well it turns out that we get lucky
+00:09:52.240 again and we can express all this in a
+00:09:54.399 very simple way
+00:09:56.080 just by adding what's known as a
+00:09:57.440 permutation matrix
+00:09:59.760 the permutation matrix is an identity
+00:10:02.839 matrix
+00:10:06.800 with reordered rows
+00:10:16.320 and given that permutation matrix p
+00:10:20.560 then the factorization becomes p times a
+00:10:25.200 is equal to l u
+00:10:28.240 so if we now ask matlab to do this this
+00:10:31.279 is a built-in
+00:10:32.800 lu built-in function for doing
+00:10:37.200 row pivoted factorization matlab doesn't
+00:10:40.160 give you one without row pivoting
+00:10:41.440 because
+00:10:42.160 it's useless on matrices where we would
+00:10:46.240 divide by zero so if you ask for three
+00:10:50.000 outputs from the lu function
+00:10:52.079 you get the l the u and the p
+00:10:55.120 okay so you see l is unit
+00:10:59.440 lower triangular
+00:11:04.000 mu is upper triangular
+00:11:07.920 it's the same u that we got when we went
+00:11:09.680 through the process before
+00:11:11.920 okay it's the same a that we ended up
+00:11:14.000 with before here's our u
+00:11:16.560 and here's our permutation
+00:11:23.440 so if we do p times a
+00:11:27.200 that just reorders the rows of a so the
+00:11:30.000 first row of the answer is the second
+00:11:31.760 row of a
+00:11:33.839 the next is the third row of a
+00:11:37.680 and you get the fourth row of a and
+00:11:40.720 finally
+00:11:48.160 and there's that reordering is done in
+00:11:50.320 such a way that
+00:11:51.839 p times a is equal to l times u
+00:11:58.639 is checked
+00:12:01.839 now what does this mean for solving a
+00:12:03.360 linear system of equations
+00:12:05.600 so now if we start with the system
+00:12:09.040 x equals b multiply both sides on the
+00:12:12.639 left by t
+00:12:14.160 we get p a x is equal to p times b
+00:12:17.200 and now we can use the fact that if p a
+00:12:19.440 is equal to l
+00:12:23.680 we u associativity we now have the two
+00:12:26.480 systems
+00:12:28.240 lz is equal to pd
+00:12:31.600 and ux is equal to z
+00:12:35.680 okay so that means that before we do the
+00:12:38.079 forward substitution with l
+00:12:40.079 we have to apply the permutation matrix
+00:12:43.279 p onto the vector v
+00:12:51.600 and that just means reordering the
+00:12:52.880 entries of b so if we want to write it
+00:12:55.440 out of the
+00:12:56.240 algorithm first we factor
+00:13:01.279 b a is equal to l u by doing gauss
+00:13:03.519 elimination with relativity
+00:13:06.959 second step we solve
+00:13:11.040 lg d
+00:13:14.720 by forward substitution
+00:13:27.279 and then finally we solve
+00:13:30.959 u x equals z for x
+00:13:34.160 five factors

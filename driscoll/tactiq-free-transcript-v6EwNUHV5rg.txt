@@ -1,0 +1,224 @@
+# tactiq.io free youtube transcript
+# MATH426: Solving linear systems in matlab
+# https://www.youtube.com/watch/v6EwNUHV5rg
+
+00:00:01.360 so here i'm going to show you some of
+00:00:02.560 the important details about solving
+00:00:04.720 linear systems
+00:00:06.160 in matlab
+00:00:07.600 the details do
+00:00:09.280 depend on matlab in some ways but if
+00:00:11.920 you're using another environment like
+00:00:13.360 python
+00:00:14.639 or fortran or c with particular
+00:00:16.480 numerical libraries the process would
+00:00:18.640 look a lot the same
+00:00:20.160 you'd just be doing it with different
+00:00:21.439 function calls and that sort of thing
+00:00:24.320 so here's our favorite
+00:00:25.920 four by four linear system that we've
+00:00:27.439 been doing over and over again
+00:00:29.439 and again just review
+00:00:31.840 to solve a single linear system
+00:00:34.160 ax is equal to b
+00:00:39.520 well in mathematical terms we would
+00:00:42.239 write x is equal to a inverse b
+00:00:48.000 but in matlab a inverse b is done as a
+00:00:50.719 backslash b
+00:00:52.559 well now we know what that does what
+00:00:54.000 that does is pivoted lu factorization
+00:00:57.120 followed by two triangular solves to
+00:00:59.359 find x
+00:01:01.359 now when you get x
+00:01:03.039 you don't usually know what the exact
+00:01:04.959 solution of the system is
+00:01:06.720 so it's a little hard to say what the
+00:01:08.000 error is but we can always check what's
+00:01:10.400 called the residual so if x is supposed
+00:01:13.040 to solve ax equals b
+00:01:14.880 well we can take the difference between
+00:01:16.320 b and a times x
+00:01:18.000 and you know we should get zero ideally
+00:01:20.159 or at least get something small
+00:01:22.400 here it's small compared to machine
+00:01:24.560 precision
+00:01:26.880 all right now sometimes it happens that
+00:01:28.720 we want to solve multiple
+00:01:30.799 linear systems
+00:01:32.720 all with the same matrix a
+00:01:35.439 but with different right hand side
+00:01:36.960 vectors
+00:01:38.159 and to do that we use a linear algebra
+00:01:39.920 trick
+00:01:41.119 so
+00:01:42.400 if we're trying to solve
+00:01:44.560 ax1 equals b1
+00:01:49.079 ax2 is equal to b2
+00:01:52.159 and so on
+00:01:59.200 so each b is different
+00:02:01.040 and so each x is going to be different
+00:02:03.920 well what we can do is we can define
+00:02:06.640 a matrix x whose columns
+00:02:10.080 are the solutions that we're looking for
+00:02:17.120 and then we know from our
+00:02:19.599 rules of block multiplication
+00:02:22.640 that a times capital x
+00:02:25.440 is just a times x one
+00:02:28.080 followed by a times x two
+00:02:30.560 and so on out to the end
+00:02:39.920 and we know that each one of these is
+00:02:42.319 supposed to equal one of the b's
+00:02:46.959 so we can call this matrix on the right
+00:02:50.560 just capital b
+00:02:53.280 so now we want to solve
+00:02:55.680 a capital x equals capital b
+00:02:58.640 b has k columns here we have six columns
+00:03:01.120 for six different right hand sides
+00:03:04.000 and again
+00:03:05.200 capital x is equal to a inverse times
+00:03:07.280 capital b
+00:03:08.560 which is the same thing as a backslash b
+00:03:11.680 it does lu factorization followed by
+00:03:14.480 triangular solves for each column of b
+00:03:17.840 and in this case when we compute the
+00:03:19.200 residual
+00:03:20.239 it'll have six columns all of which we
+00:03:22.159 hope are small
+00:03:26.159 okay now there's another situation where
+00:03:28.400 we want to solve
+00:03:29.840 multiple linear systems but we don't
+00:03:32.959 know all the different right hand
+00:03:34.239 vectors at once
+00:03:35.920 and so i call these in case of
+00:03:37.680 sequential right hand sides
+00:03:39.680 so for example
+00:03:41.440 here's a loop that actually does
+00:03:42.560 something important we'll find out about
+00:03:44.640 it much later in the course
+00:03:46.560 don't worry for now about what it's
+00:03:48.080 trying to accomplish just look at what
+00:03:50.000 it does so we start with a vector v
+00:03:53.360 okay we loop 10 times
+00:03:55.440 so first we apply a inverse to v
+00:03:58.239 or if you like
+00:03:59.680 we could think of this as
+00:04:01.760 solving
+00:04:04.400 aw equals v
+00:04:09.920 given v solve for w
+00:04:14.319 and then we compute a new version of v
+00:04:17.440 based on the answer that we got for w
+00:04:20.560 okay then we reach the end of the loop
+00:04:22.479 and we start over again well now
+00:04:24.720 we have to solve a new linear
+00:04:26.840 system a backslash v
+00:04:29.840 i didn't know this v now at the
+00:04:32.000 beginning of the loop
+00:04:33.520 so now that k is equal to 2 i know what
+00:04:35.600 v is
+00:04:36.960 i won't know what k what v is for the
+00:04:39.040 next iterational loop until i finish
+00:04:41.360 doing this line again
+00:04:42.960 and so on so it's not as though i can
+00:04:45.040 set up all the right hand sides into one
+00:04:46.800 big matrix at the start
+00:04:48.639 i have to do them one after the other
+00:04:52.720 well if you think about it though this
+00:04:54.160 is kind of wasteful
+00:04:55.680 right so it's the same matrix a every
+00:04:58.000 time through the loop
+00:04:59.520 so we do this pivoted lu factorization
+00:05:02.960 each time through the loop
+00:05:05.440 that's
+00:05:06.479 two-thirds n-cubed flops
+00:05:09.440 each time
+00:05:11.039 but a doesn't change
+00:05:13.360 and so it's plu factors don't change and
+00:05:16.639 so i'm just redoing the same work over
+00:05:18.960 and over again
+00:05:20.720 so instead the smarter thing to do
+00:05:23.120 is to take that computation outside of
+00:05:25.280 the loop do it before
+00:05:27.440 so before you start looping you
+00:05:29.039 pre-compute
+00:05:30.880 the factorization
+00:05:43.600 so once we have the l on the u factors
+00:05:45.759 right then these are the two steps we
+00:05:48.080 first do a forward substitution
+00:05:50.400 we do a backward substitution to find w
+00:05:53.280 and then we find the new v at the end of
+00:05:55.039 the loop
+00:05:56.000 and go back to the beginning again
+00:05:58.400 so now we're solving multiple right hand
+00:06:00.320 sides
+00:06:01.759 but we're only doing the lu
+00:06:03.280 factorization once
+00:06:05.360 and we can show
+00:06:07.120 that these forward and backward
+00:06:08.880 substitution steps actually take on the
+00:06:10.800 order of n squared
+00:06:12.960 flops
+00:06:14.479 so
+00:06:15.280 of course here n is extremely small we
+00:06:17.120 don't care but if n were big
+00:06:19.360 there's a big difference between
+00:06:21.520 two thirds n cubed
+00:06:23.520 and n squared flops
+00:06:31.039 now one last thing is you might be
+00:06:32.639 wondering in this loop
+00:06:35.039 why did i just call lu
+00:06:37.840 why not lup what happened to my row
+00:06:40.160 pivoting
+00:06:41.360 so the answer to this is
+00:06:43.120 kind of complicated but
+00:06:46.479 remember that we had
+00:06:49.759 pa is equal to lu
+00:06:53.280 well that means we can write that a is
+00:06:55.520 equal to
+00:06:58.000 p inverse l
+00:07:00.160 times u
+00:07:02.800 and we can group these two together
+00:07:06.000 so in matlab when you ask for just the l
+00:07:08.960 and the u
+00:07:10.160 in an lu factorization
+00:07:12.240 the l is actually
+00:07:15.680 this whole matrix here
+00:07:18.400 so when we execute this statement
+00:07:23.599 see the u is upper triangular
+00:07:26.160 but the l is not actually lower
+00:07:28.160 triangular
+00:07:29.440 instead we would say that this is
+00:07:31.599 permuted
+00:07:36.160 lower triangular
+00:07:38.400 in fact the inverse of a permutation
+00:07:40.800 matrix p is also another permutation
+00:07:43.199 matrix
+00:07:45.840 and so we're just permuting the rows of
+00:07:48.560 l in a particular way
+00:07:51.840 well
+00:07:52.960 you also might be curious about the fact
+00:07:54.560 that we use backslash in different ways
+00:07:57.599 so
+00:07:58.400 going up to the beginning when we say a
+00:07:59.919 backslash b
+00:08:01.360 it's a general matrix a
+00:08:03.360 matlab does the lu factorization or the
+00:08:05.520 plu factorization
+00:08:07.680 and then does two triangular solves all
+00:08:09.680 at once
+00:08:12.240 but when we when it comes to something
+00:08:14.080 like this last loop
+00:08:16.160 when we have an l backslash or a u
+00:08:18.160 backslash well with u backslash matlab
+00:08:20.879 detects that u is upper triangular
+00:08:23.199 and so it immediately jumps to back
+00:08:25.919 substitution
+00:08:28.000 and when you give l backslash
+00:08:30.319 matlab is able to recognize that it has
+00:08:32.719 this special permuted lower triangular
+00:08:34.958 structure and so it's able to do that
+00:08:37.919 solution with a fast triangular solve as
+00:08:40.320 well
+00:08:41.120 so those two steps in this loop really
+00:08:42.640 are n squared it really does skip the
+00:08:45.040 factorization step
+00:08:46.640 when you give a triangular matrix

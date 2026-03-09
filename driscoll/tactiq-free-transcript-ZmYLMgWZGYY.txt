@@ -1,0 +1,222 @@
+# tactiq.io free youtube transcript
+# Eigenvalues and their properties
+# https://www.youtube.com/watch/ZmYLMgWZGYY
+
+00:00:00.439 so to talk about eigenvalues we have to
+00:00:02.790 talk about square matrices only so these
+00:00:04.799 things only apply when a is n by n and
+00:00:08.849 we say there's an eigenvalue lambda with
+00:00:11.550 associated I can I can vector V if
+00:00:16.350 lambda is a scalar and B is a nonzero
+00:00:18.690 vector satisfying this equation AV is
+00:00:23.189 equal to lambda B so remember a is a
+00:00:26.460 matrix here and lambda is a scalar so
+00:00:29.130 it's important that the vector be
+00:00:30.420 nonzero because of course if V is 0 then
+00:00:32.989 you just have the equation 0 equals 0
+00:00:35.489 which is trivial another way of writing
+00:00:39.329 this equation if we write lambda V as
+00:00:41.780 lambda times the identity matrix times V
+00:00:46.129 we can then write it as the matrix a
+00:00:49.410 minus lambda I all times V is equal to a
+00:00:53.489 0 vector now pretty easy to show from
+00:00:59.579 the definition of an eigenvector and an
+00:01:01.170 eigenvalue that whatever V is if he is
+00:01:05.880 an eigenvector that goes with lambda
+00:01:07.380 then alpha V is also an eigenvector with
+00:01:10.409 the same lambda where alpha is any
+00:01:12.780 scalar other than 0 so the reason is if
+00:01:15.479 you just take a times alpha the since
+00:01:19.560 alpha is a scalar you can bring it
+00:01:21.090 outside and change the order and then
+00:01:25.770 since V is an eigen vector we have
+00:01:28.890 lambda B inside and then you regroup
+00:01:31.650 that into lambda times alpha V again
+00:01:36.540 alpha being a scalar it moves around as
+00:01:38.790 wherever it likes so that shows that a
+00:01:42.119 times alpha V is equal to lambda times
+00:01:44.549 alpha V so it's still an eigen vector so
+00:01:47.939 in other words eigen vectors aren't
+00:01:49.259 determined uniquely there's an entire
+00:01:52.700 subspace
+00:01:58.180 of eigenvectors that goes along with
+00:02:00.990 land
+00:02:09.619 right so the set of all vectors that are
+00:02:12.590 which are multiples of V is a one
+00:02:14.000 dimensional subspace the subspaces that
+00:02:16.670 go along with them that can actually be
+00:02:17.810 higher dimensional as well if you have
+00:02:19.160 repeated eigenvalues now usually when
+00:02:25.370 you start studying eigenvalues they're
+00:02:27.549 computed in terms of the characteristic
+00:02:29.900 polynomial so the idea is given this
+00:02:33.410 equation where alpha minus lambda I
+00:02:37.310 times V is equal to the zero vector and
+00:02:39.290 V is a non zero vector that means that
+00:02:42.920 therefore any minus lambda I is a
+00:02:49.340 singular matrix
+00:02:53.910 so if you have a matrix times a nonzero
+00:02:56.770 vector and you get zero that must be a
+00:02:58.270 singular matrix so if that's a singular
+00:03:01.900 matrix then it's determinant must be
+00:03:03.700 zero so if you take the determinant of
+00:03:08.010 here I've reversed it a instead of a
+00:03:10.480 minus CI of at Zi minus a if you take
+00:03:13.630 that determinant it turns out that
+00:03:14.920 that's always a polynomial of degree N
+00:03:17.850 and therefore every root every solution
+00:03:21.040 of that is an eigenvalue and so there
+00:03:22.720 are n eigen values eigen values or roots
+00:03:25.150 of the characteristic polynomial so as
+00:03:29.230 an example suppose we have this matrix
+00:03:37.350 so we take the Zi minus a so that's Z
+00:03:45.370 minus seven Z minus eight and the
+00:03:48.880 diagonals minus two and minus three and
+00:03:52.210 the other entries take the determinant
+00:04:00.040 and we get quantity Z minus seven times
+00:04:03.370 Z minus eight minus negative two times
+00:04:06.939 negative three so this whole thing is Z
+00:04:11.530 squared minus fifteen Z plus 50 so the
+00:04:22.870 roots of that polynomial just so happens
+00:04:25.180 that factors easily into Z minus ten
+00:04:29.050 times Z minus five so the eigenvalues
+00:04:34.479 are lambda 1 equals 10 lambda 2 equals 5
+00:04:45.180 if we want to we could then go on to
+00:04:47.530 find an eigenvector so for example if we
+00:04:50.830 take lambda 1 I minus a so we put in 10
+00:05:02.620 into that matrix we get 3 negative 2
+00:05:05.740 negative 3
+00:05:07.710 2
+00:05:10.920 and just by inspection you can see that
+00:05:14.430 if we multiply that matrix by the back
+00:05:18.640 by the vector to three then you get 6
+00:05:27.460 minus 6 is 0 and in the bottom you also
+00:05:30.340 get 6 minus 6 0 and so therefore this
+00:05:36.850 would be the vector eigen vector v1 or
+00:05:39.750 any multiple of that would also be v1
+00:05:43.530 and so on okay so because the
+00:05:47.680 eigenvalues are roots of polynomials
+00:05:49.470 they may be complex numbers so please go
+00:05:53.170 ahead and check out the notes on complex
+00:05:55.000 numbers if you're not too comfortable
+00:05:56.170 with them if you haven't seen them for a
+00:05:58.330 while and of course if it's if a is a
+00:06:01.990 real matrix then the polynomial has real
+00:06:03.910 coefficients and any complex roots must
+00:06:06.760 come in conjugate pairs as well so those
+00:06:10.450 facts are just inherited from the
+00:06:11.920 characteristic polynomial another fact
+00:06:15.760 that's inherited from the characteristic
+00:06:17.200 polynomial is that if s is any non
+00:06:20.740 singular matrix then s times a times s
+00:06:25.180 inverse has the same eigen values as a
+00:06:28.360 itself and when this happens we say the
+00:06:31.690 two matrices are similar so similar does
+00:06:34.330 not mean something fuzzy it means
+00:06:36.100 something very specific that the two
+00:06:37.600 matrices have the same eigen values so
+00:06:40.150 the idea is that if you took the
+00:06:41.710 determinant of
+00:06:48.940 this matrix well the identity is equal
+00:06:53.650 to s times I times s inverse and then
+00:07:00.580 you can factor out an S on the left an S
+00:07:07.030 inverse on the right with the
+00:07:09.220 determinant you can break this up into a
+00:07:11.680 product and another determinant property
+00:07:19.360 is that the determinant of s inverse is
+00:07:21.550 1 over the determinant of s so those two
+00:07:24.280 cancel each other out
+00:07:25.510 and we get that the two matrices have
+00:07:27.580 the same characteristic polynomials so
+00:07:31.480 this idea of changing a to a different
+00:07:33.880 matrix through s like this is called a
+00:07:36.280 similarity transformation
+00:07:48.090 okay so now let's suppose we have all n
+00:07:51.840 eigenvalues the lambda J's and we have n
+00:07:57.930 eigenvectors to go with them the V J's
+00:08:02.419 so we're just writing here the
+00:08:04.669 eigenvalue condition a v equals lambda v
+00:08:07.919 for each j well if we put that together
+00:08:14.090 okay for every all the different values
+00:08:16.770 of j we get a times V is equal to V
+00:08:19.650 times D so D is a diagonal matrix of
+00:08:22.650 eigen values and V has the eigenvectors
+00:08:27.960 in its columns why is that well remember
+00:08:31.919 that a times V is defined can be done
+00:08:40.549 block wise
+00:08:47.060 that's the left-hand side of that
+00:08:49.170 equation V times D on the other hand
+00:08:57.529 okay so in the first column of the
+00:09:00.029 answer we get a linear combination of
+00:09:02.639 the columns of V using these
+00:09:05.160 coefficients from D the first column of
+00:09:07.949 D so the first column the result is just
+00:09:09.959 lambda 1 times v1 plus 0 times all the
+00:09:13.560 other columns of D the second column is
+00:09:16.889 0 times lambda
+00:09:18.180 I'm sorry 0 times v1 plus lambda 2 times
+00:09:22.050 v2 plus 0 times v3 and so on all the way
+00:09:26.760 out to the last column in the last
+00:09:29.010 column we take a linear combination of
+00:09:30.690 the columns of B where you have 0 v1
+00:09:32.490 plus 0 p2 all the way up to lambda n
+00:09:35.850 times BN and so if you just compare
+00:09:39.810 these two equations column by column
+00:09:41.310 right each one of those is just a
+00:09:43.740 statement of the eigenvector condition
+00:09:45.389 the eigenvalue condition and so that's
+00:09:47.550 all we're saying with this equation here
+00:09:51.079 so that's true whenever we have n eigen
+00:09:54.690 values and n eigenvectors to go with
+00:09:56.850 them now if these eigenvectors have have
+00:10:02.190 another property if they are linearly
+00:10:03.810 independent okay that means there's no
+00:10:07.890 non-trivial combination of them which is
+00:10:09.810 0 well that means that since there are
+00:10:13.110 the columns of V they span an
+00:10:14.850 n-dimensional space that V is non
+00:10:16.740 singular and therefore we can take a V
+00:10:20.430 equals VD and multiply on the right by
+00:10:25.980 the inverse
+00:10:29.379 I'm sorry I have that wrong no that's
+00:10:32.559 right the the universe and the V times
+00:10:37.539 the V inverse is just the identity so if
+00:10:42.579 V is non singular and V inverse exists
+00:10:44.759 we can do this and this is called an
+00:10:48.819 eigenvalue decomposition which will
+00:10:51.819 abbreviate as EVD okay now not all
+00:11:02.669 matrices square matrices have this kind
+00:11:06.549 of decomposition so the matrix has it we
+00:11:08.559 call it diagonalizable the idea is that
+00:11:11.319 a is similar to a diagonal matrix
+00:11:24.640 right so the times D times V inverse
+00:11:28.750 there's a similarity transformation a is
+00:11:33.430 similar to D and D is similar to a they
+00:11:35.260 have the same eigen values and the eigen
+00:11:36.850 values of D are easy to read off they're
+00:11:38.860 just the diagonal numbers because that's
+00:11:40.870 always true for our diagonal matrix but
+00:11:43.810 this isn't possible for all square
+00:11:45.670 matrices so the famous example would be
+00:11:50.230 this thing here so it's triangular its
+00:11:55.149 eigenvalues are 1 but it has only one
+00:12:02.050 independent eigenvector
+00:12:12.140 or you could say it's subspace of
+00:12:13.940 eigenvectors is dimension one now
+00:12:20.380 diagonalizable has nothing to do with
+00:12:22.329 singularity so this matrix is
+00:12:24.890 non-singular and non diagonalizable but
+00:12:30.500 here's a matrix which
+00:12:38.239 is non-singular and non diagonalizable
+00:12:42.829 and here's a matrix which is singular
+00:12:48.089 and diagonalizable and so on so the two
+00:12:50.879 properties really have nothing to do
+00:12:52.079 with each other okay in MATLAB you can
+00:12:57.779 find eigenvalues just by typing I give a
+00:13:00.569 that gives a vector of the eigenvalues
+00:13:03.599 of a if you asked for two outputs then
+00:13:06.989 it gives you the two matrices vegan D so
+00:13:09.059 as with many commands in MATLAB that
+00:13:11.039 behaves differently depending on whether
+00:13:12.389 you call it with one output argument or
+00:13:15.299 two

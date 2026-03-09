@@ -1,0 +1,319 @@
+# tactiq.io free youtube transcript
+# MATH426: Operation counts
+# https://www.youtube.com/watch/VF5JHzbSYI8
+
+00:00:01.439 one of the first things we want to know
+00:00:03.199 before we run a computer program
+00:00:05.279 actually probably before we write the
+00:00:06.960 computer program is how long is it going
+00:00:09.080 to take to finish well that's an EXT
+00:00:12.080 extremely complicated and difficult
+00:00:13.839 question to answer in general so
+00:00:16.160 computers are incredibly complicated and
+00:00:18.720 introducing new wrinkles all the time
+00:00:20.840 they have multiple cores they have
+00:00:23.199 speculative U
+00:00:24.960 evaluation they have CPUs and gpus and
+00:00:28.480 on and on and on
+00:00:30.519 the computer that you're using now is
+00:00:32.000 going to be different than the computer
+00:00:33.120 you're using six months from now and so
+00:00:36.040 on so if we try to answer that question
+00:00:39.000 in its full complexity we probably get
+00:00:41.800 nowhere at
+00:00:43.280 all so what we're going to do is we're
+00:00:45.079 going to take a page from Einstein's
+00:00:46.760 book um this quote by Einstein is
+00:00:50.239 usually just summarized as things should
+00:00:52.680 be made as simple as possible but no
+00:00:54.960 simpler um we're probably going to make
+00:00:56.680 them even a little bit simpler than
+00:00:58.280 possible um we're only going to count
+00:01:01.399 what we call floating Point operations
+00:01:03.399 or
+00:01:06.119 flops so in other words
+00:01:08.439 arithmetic we're going to
+00:01:11.360 ignore memory
+00:01:14.080 allocation copying things around all
+00:01:17.520 those things which take real time but
+00:01:19.960 don't count as
+00:01:21.320 arithmetic um in part this is just a
+00:01:23.439 relic from the early days of computing
+00:01:25.960 but on these big big scientific kinds of
+00:01:28.200 problems that are solved still tells us
+00:01:30.560 something about um the relative
+00:01:32.240 performance of different
+00:01:35.360 algorithms okay so let's look at this um
+00:01:39.560 Loop that comes from gine elimination
+00:01:41.520 from the previous
+00:01:44.040 lecture this is where all the actual
+00:01:46.119 work is done we have these two nested
+00:01:48.360 loops and then the arithmetic is on
+00:01:50.479 these two lines inside the loop well the
+00:01:52.680 first one is easy the first line here
+00:01:55.240 just has one division so that counts as
+00:01:57.320 one flop
+00:02:01.439 in the next line we actually have a
+00:02:04.680 vector so this is a
+00:02:08.119 vector with nus J + one
+00:02:13.200 element so to find the length of the
+00:02:15.239 vector you take the ending index minus
+00:02:17.800 the starting index and have
+00:02:20.680 one so that means that this
+00:02:22.959 multiplication here is a scalar times a
+00:02:26.599 vector so we have nus J one
+00:02:31.920 multiplications when we count a flop we
+00:02:33.879 count only scalar
+00:02:38.440 operations and then the
+00:02:42.640 subtraction here is the difference of
+00:02:45.599 two vectors so that's nus J + 1
+00:02:54.519 subtractions again in the spirit of
+00:02:56.400 keeping things simple we're going to
+00:02:58.400 count all the arithmetic operations to
+00:03:00.519 take the same amount of time even if
+00:03:02.720 that's not really the case so the only
+00:03:05.319 thing that remains is to deal with these
+00:03:07.519 Loops fortunately Loops themselves tell
+00:03:10.959 us how to accumulate what's going on
+00:03:13.120 over all the different itations so if we
+00:03:15.599 look at this Loop in I okay what we're
+00:03:18.480 saying is that for every different value
+00:03:20.120 of I we have to do this
+00:03:21.840 work I runs from J + one to
+00:03:28.319 n and we have inside that Loop is one
+00:03:34.640 division 2 *
+00:03:37.159 the nus J + one we count for the
+00:03:42.000 multiplications and
+00:03:46.280 subtractions and then sorry I have to
+00:03:49.799 get this out of the
+00:03:53.560 way the loop in J is on the outside of
+00:03:57.720 this
+00:04:00.239 so we get a sum where J ranges from one
+00:04:03.840 to
+00:04:04.840 nus so that's how we deal with these
+00:04:07.000 things we take them from the inside and
+00:04:09.439 work
+00:04:12.079 outwards okay so this is an expression
+00:04:14.680 that we could do Algebra on it's not too
+00:04:17.160 bad certainly we could ask a computer to
+00:04:19.320 do to do it and we get an expression
+00:04:21.680 which has a bunch of things in it but
+00:04:23.919 now we're going to appeal to the fact
+00:04:25.360 that we're kind of only doing things
+00:04:27.680 approximately when you're doing
+00:04:29.199 something that's kind of approximate
+00:04:31.720 it's a little bit nuts to take a whole
+00:04:34.080 bunch of a bunch of pains to get a lot
+00:04:35.800 of precision out of it and in fact the
+00:04:38.199 thinking goes something like this if n
+00:04:40.440 is small if you have a 20x 20 Matrix
+00:04:43.320 everything happens really fast it
+00:04:44.720 doesn't take very long to solve that
+00:04:46.080 problem at all so we don't really care
+00:04:47.840 how long it takes because it's fast it's
+00:04:50.600 only when n gets really large and it
+00:04:52.320 might take a while to grind through all
+00:04:53.960 these different Matrix entries so we're
+00:04:56.280 if we're only concerned about what
+00:04:57.440 happens when n is large maybe we should
+00:04:59.919 drop things that aren't significant
+00:05:01.919 compared to the largest terms in the
+00:05:03.720 expression and that's the idea behind
+00:05:05.840 what's called astoic
+00:05:07.960 notation so we only care about what
+00:05:09.960 happens for large values of N and we're
+00:05:12.280 going to use two symbols to help
+00:05:13.720 simplify the discussion so the first is
+00:05:16.160 this big O symbol so we we would say f
+00:05:20.759 is Big O of
+00:05:27.319 G okay if there's some constant so that
+00:05:30.440 the ratio of f g is bounded by that
+00:05:32.919 constant for all sufficiently large n in
+00:05:35.720 other words after n reaches a certain
+00:05:38.199 point then from Forever from that point
+00:05:40.960 on F over G is always less than
+00:05:44.000 C it's a little simpler to think about
+00:05:47.240 um it's sufficient in the case of Big
+00:05:51.840 O to show
+00:05:54.560 that F over
+00:05:57.639 G approaches a con c as then goes to
+00:06:03.400 Infinity that equivalent I should say
+00:06:07.160 that is enough to prove this big O
+00:06:09.919 statement here and that's usually easier
+00:06:13.319 the reason that we don't do that and we
+00:06:14.800 have this more technical definition is
+00:06:17.039 that if you have something like a sign
+00:06:18.800 function well the sign is clearly bed by
+00:06:21.400 one in absolute value but it never
+00:06:23.680 settles down into a limit and so the
+00:06:26.840 definition is written here to allow for
+00:06:28.479 things that oscillate around without
+00:06:30.080 settling down into a moment but most of
+00:06:32.240 the time if you just have pols and
+00:06:33.880 things like that um you can just test
+00:06:36.560 whether f g approaches a li goes to
+00:06:38.800 infinity and that will show you whether
+00:06:40.639 it's Big
+00:06:42.039 O as a special case of Big O we say f is
+00:06:46.360 Astic to
+00:06:53.039 G if the limit of that ratio is equal to
+00:06:56.160 one
+00:07:00.800 so the idea behind these notations is to
+00:07:02.800 get rid of everything but the most
+00:07:04.240 important term so if we had an
+00:07:07.639 expression like n Cub over 2 plus n
+00:07:11.840 here well if n is really large that n is
+00:07:14.960 insignificant compared to n Cub over two
+00:07:18.039 so the whole thing is really just Big O
+00:07:19.879 of n Cub you can check that if you take
+00:07:22.800 the ratio of NB 2+ n n Cub that ratio
+00:07:27.759 goes to 12 as
+00:07:31.599 now it's also true NB 2+ n
+00:07:36.759 ided 13 n the
+00:07:39.680 7 that is also bounded by a constant in
+00:07:42.919 fact it goes to zero as n goes to
+00:07:45.960 Infinity well it's mathematically true
+00:07:48.520 but it's not the most useful expression
+00:07:50.479 it's not the most informative way to use
+00:07:52.120 big so you you want to avoid statements
+00:07:54.599 like this that are technically true but
+00:07:56.840 are misleading um we really want to say
+00:07:59.240 that thing is Big O of than CU that's
+00:08:01.000 the dominant
+00:08:03.159 power on the other hand if we want to
+00:08:05.120 get even more delicate and more precise
+00:08:07.759 we won't throw away that2 so the N Cub
+00:08:11.039 over 2+ n is astoic to 12
+00:08:15.440 NB half now matters if you use the Astic
+00:08:18.479 notation so it just shows us that
+00:08:20.039 leaving
+00:08:22.319 constant okay so one of the advantages
+00:08:24.960 of using these uh notations particularly
+00:08:28.240 the Astic notation is that these
+00:08:30.360 summations that we get in evaluating
+00:08:32.479 block counts um become quite simple to
+00:08:36.039 simplify so obviously if we have the sum
+00:08:39.120 from IAL 1 to n of one well that doesn't
+00:08:43.240 depend on I at all you just get n you
+00:08:45.480 get n copies of one it's actually
+00:08:48.120 equality not just
+00:08:50.040 ASM but you can also show that the sum
+00:08:52.440 of I from I = 1 to n is 12 n 2 the sum
+00:08:57.959 of I 2 is 1 3 n the sum of I to P is n p
+00:09:03.600 + 1 p + 1 these formulas are exactly
+00:09:07.920 like integration of x to the P right we
+00:09:12.279 have the
+00:09:13.519 integral of x to the
+00:09:17.360 PX X
+00:09:20.360 +/ so we already know these on they're
+00:09:23.800 just sums now instead
+00:09:27.399 of Okay so Here Comes our count from Gan
+00:09:36.360 elimination we want to work our way from
+00:09:38.519 the inside
+00:09:40.720 out the first thing to notice is that
+00:09:45.440 this so let's just look at this part
+00:09:49.160 here the thing inside this sum does not
+00:09:51.959 depend on the sum index
+00:09:59.959 okay the number of of operations we have
+00:10:01.680 to do in this inner loop doesn't
+00:10:04.760 actually depend on the value of
+00:10:07.440 I so it's just this number added to
+00:10:11.560 itself a bunch of times and the number
+00:10:14.240 of times is equal to we take this
+00:10:23.600 number and we're adding it to itself nus
+00:10:27.920 J + 1
+00:10:30.640 plus one so again remember how many
+00:10:32.839 things there are um in a sum or a vector
+00:10:37.800 it's the last minus the first plus
+00:10:43.160 one so that's equal
+00:10:47.360 to
+00:10:55.079 2times nus
+00:11:09.040 okay so now we're left with the
+00:11:11.639 sum J 1
+00:11:18.200 nus here
+00:11:35.040 okay so these are going to look like
+00:11:36.320 those summation form that we had above
+00:11:38.959 but there's a trick to make it a little
+00:11:40.279 bit simpler you notice how we have this
+00:11:42.720 recurrence of n minus J in
+00:11:46.120 here that motivates the change a
+00:11:48.800 variable just like you can change
+00:11:51.440 variables in
+00:11:52.760 intervals you can change variables in
+00:11:55.360 sums so we'll Define k to the nus J
+00:12:04.000 K now we get a
+00:12:07.800 sum where um we
+00:12:10.399 have n minus
+00:12:13.959 K go
+00:12:23.800 from uh nus J is
+00:12:28.160 K 2 * k +
+00:12:36.240 1 okay so this is getting a little bit
+00:12:39.480 simpler so if K is
+00:12:43.199 um what I should
+00:12:46.199 have up here as well right so the
+00:12:48.880 original indices were on the original
+00:12:51.279 limits of the sum were on J now we just
+00:12:54.360 put in what J
+00:12:57.399 is two
+00:13:01.680 so the next step is to
+00:13:04.959 say well from the top limit if nus K =
+00:13:08.920 nus 1 then K is equal to
+00:13:12.000 1 and the bottom limit K is equal to
+00:13:19.360 nus now if this were an integral we
+00:13:21.480 would care about the fact that we're
+00:13:22.720 going from right to left instead of left
+00:13:24.279 to right but for a sum it doesn't matter
+00:13:26.519 it doesn't matter what where we have
+00:13:29.920 let's multiply out what we've got in the
+00:13:31.519 middle here we've got
+00:13:35.279 2k2 we have
+00:13:38.399 um and then inside we have so we have 2K
+00:13:42.880 plus 2 + one so we
+00:13:45.680 have
+00:13:57.000 here okay and now this is
+00:13:59.920 the same thing
+00:14:01.600 as
+00:14:03.399 from to
+00:14:05.560 nus
+00:14:19.600 2K all right so now we're almost
+00:14:27.040 there okay this is going to be the sum
+00:14:30.519 of now I'm going to be incredibly pantic
+00:14:33.720 about this but we'll see how easy this
+00:14:35.440 comes out to be we're going to have what
+00:14:38.240 is this quantity it's um the sum from
+00:14:42.399 one to n minus the N ter right so we
+00:14:47.240 could write this the sum
+00:15:07.600 right so I'm just saying that one of
+00:15:08.800 them was left out at the end I'll put it
+00:15:11.880 back in and take it out
+00:15:14.440 again similarly for the other
+00:15:26.880 term I add I added
+00:15:30.440 in the N term so I would have to
+00:15:33.560 subtract it back out to get to the
+00:15:38.959 original now we can apply these formulas
+00:15:42.079 so K is the index instead of I but that
+00:15:44.399 doesn't matter it's a dummy index just
+00:15:46.160 like the U the DX variable is a dummy in
+00:15:49.319 the
+00:15:52.560 integration and what we have is
+00:15:59.440 sorry very important now we're now
+00:16:02.240 writing ASM totic 2 the ASM totic
+00:16:07.160 formul this quantity is NB
+00:16:12.360 3us the n
+00:16:17.240 2 this one is
+00:16:22.680 n^2 so I've apply those Astic formulas
+00:16:26.759 to get here here
+00:16:29.920 get from here to
+00:16:33.120 here now you see how convenient astics
+00:16:35.759 are everything that isn't an N Cub is
+00:16:39.959 insignificant so it instantly goes away
+00:16:42.920 and we just write ASM totic to
+00:16:47.759 23 that's the Flop
+00:16:52.720 count for either G elimination or Lu
+00:16:56.079 factorization
+00:17:00.560 on an N byn
+00:17:04.720 Matrix very famous and wellknown
+00:17:08.520 result about G
+00:17:13.959 elimination G elimination of an N byn
+00:17:16.839 Matrix takes
+00:17:19.039 tically 2/3 and 3 FL

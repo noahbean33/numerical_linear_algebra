@@ -1,0 +1,210 @@
+# tactiq.io free youtube transcript
+# MATH426: Matrix multiplication
+# https://www.youtube.com/watch/swZICEHn56Y
+
+00:00:02.000 so if we want to multiply together two
+00:00:04.920 matrices A and B the first thing you
+00:00:08.360 have to do is to make sure that their
+00:00:10.360 Dimensions match in a particular way so
+00:00:12.920 the number of columns in a has to be the
+00:00:15.599 same as the number of rows in
+00:00:17.840 B otherwise the product isn't even
+00:00:20.760 defined but if that's true then we can
+00:00:24.000 multiply a * B the result is going to be
+00:00:27.519 an M by P Matrix and the IJ entry of
+00:00:31.840 that Matrix will be given by this sum
+00:00:35.719 we're using a summation notation here it
+00:00:39.079 represents the sum over all possible
+00:00:41.680 values of K from 1 to
+00:00:47.680 n and it's just a lot faster to write
+00:00:50.440 than to try to write out the
+00:00:53.320 product this kind of
+00:00:56.640 way now that um that ter confirm that
+00:01:00.600 sum that we have here is actually what
+00:01:02.879 we call an inner product of vectors or
+00:01:05.360 you might know it as the dot product
+00:01:07.200 from Vector calculus you just take um
+00:01:10.159 the corresponding numbers from the
+00:01:11.799 vectors multiply them together and add
+00:01:14.119 up all the
+00:01:15.200 results so the IJ
+00:01:18.240 entry of the product is the inner
+00:01:21.520 product of row I of a with column J of
+00:01:26.759 B so here it is with numbers if if I
+00:01:30.079 want to find um the product of these two
+00:01:32.600 matrices a is 2x3 B is
+00:01:36.399 3x3 so the product is
+00:01:43.000 defined sorry about that the product is
+00:01:47.520 defined uh and the answer is going to be
+00:01:52.439 2x3 as
+00:01:56.159 well and to get the answer in the first
+00:01:59.920 row First Column I take the first row
+00:02:01.880 First Column and take their dotproduct
+00:02:04.520 so that's 6 + 0 - 2 is
+00:02:10.199 four if I want to find the uh 2 three
+00:02:14.400 entry I take second row third column the
+00:02:18.560 iner product is -1 + 0 + 4 so that's
+00:02:24.319 three and in the same way we can go
+00:02:26.599 ahead and fill in all the other entries
+00:02:28.239 of that product
+00:02:35.480 now a vector is a special kind of Matrix
+00:02:38.560 where one of the two Dimensions has a
+00:02:40.840 length of
+00:02:42.360 one and if you just follow the same
+00:02:44.760 definition we can identify two different
+00:02:47.200 ways to multiply vectors together so one
+00:02:50.200 of those is the inner product which we
+00:02:51.959 just talked about a second ago so if I
+00:02:54.720 have a 1x3 vector time a 3X 1 vector the
+00:03:00.440 threes match the answer is 1 by one okay
+00:03:04.000 the answer is just a number and so in
+00:03:06.239 this case it's four - 4 + 2 so the
+00:03:11.400 answer is just
+00:03:13.080 two a 1 by one value or a number we give
+00:03:16.959 it a special name in linear algebra we
+00:03:19.040 call it a
+00:03:20.760 scalar and because of that we sometimes
+00:03:23.080 call the uh inner product a scalar
+00:03:26.879 product but if we take those two vectors
+00:03:29.400 and put them in the opposite
+00:03:31.159 order now the first one is 3x 1 and the
+00:03:33.959 second one is
+00:03:35.120 1x3 but that's okay the ones match and
+00:03:38.239 so the answer has to be
+00:03:42.480 3x3 and again if you think in terms of
+00:03:45.879 you know the first row and the First
+00:03:48.040 Column well that's just a product of two
+00:03:50.200 numbers first row second column is four
+00:03:53.319 First Row Third column is four and so on
+00:03:56.519 you're actually just taking all possible
+00:03:59.879 pairwise
+00:04:01.239 products from the
+00:04:03.319 two
+00:04:07.000 vectors and that's what we call an outer
+00:04:10.480 product now this is a good time to
+00:04:12.680 remind you of extremely important fact
+00:04:15.040 in learning your algebra that the order
+00:04:18.120 of the multiplication counts it's not
+00:04:20.199 commutative in other words a * B is not
+00:04:23.280 the same thing as B * a in
+00:04:28.600 general okay and that's exactly what we
+00:04:30.960 have here we have an AB and then we do
+00:04:33.039 ba they're not even the same size um but
+00:04:36.720 even if they were the same size they
+00:04:38.240 wouldn't be guaranteed to be the same so
+00:04:40.400 you've always got to keep the order
+00:04:42.120 straight when you're multiplying
+00:04:43.320 matrices together including matrices and
+00:04:47.919 vectors okay another fact about the
+00:04:49.960 inner product is that you can't do it
+00:04:51.639 between every pair of vectors uh so here
+00:04:54.720 I have a a vector which is 1x3 again but
+00:04:58.199 now the second one is 2x1 1 well 3 does
+00:05:01.039 not equal two and so therefore this
+00:05:04.120 product is
+00:05:08.400 undefined however you can always take
+00:05:10.320 the outer product so the outer product
+00:05:12.960 here is 2x 1 and 1X
+00:05:17.280 3 and so in fact that is well defined
+00:05:20.600 and the answer is
+00:05:22.680 2x3 and again we just take all the
+00:05:25.919 possible pairwise products between the
+00:05:28.639 two
+00:05:35.360 vectors very important Matrix to know
+00:05:37.720 about in matrix multiplication is the
+00:05:39.680 identity Matrix so it's a matrix it's
+00:05:42.639 always an N byn
+00:05:46.720 Matrix and it's zero everywhere except
+00:05:49.919 along what we call the main diagonal of
+00:05:51.800 the
+00:05:56.120 Matrix where the entries are all equal
+00:05:58.520 to one
+00:06:02.560 it's customary when there are lots of
+00:06:04.400 zeros in a matrix to not write where the
+00:06:06.240 zeros are anything that's missing is
+00:06:08.360 assumed to be
+00:06:10.919 zero it's also customary to write the
+00:06:13.599 identity Matrix in terms of its
+00:06:16.479 columns so um we use the letter
+00:06:19.440 lowercase e for that uh so the columns
+00:06:22.440 are vectors E1 through
+00:06:25.440 n E2 for example has a one in the second
+00:06:29.919 position
+00:06:33.840 only and these Es are sometimes called
+00:06:37.520 standard basis
+00:06:41.479 vectors we'll be seeing them quite a
+00:06:46.840 bit now it's a consequence of the rules
+00:06:49.919 of matrix multiplication that if you
+00:06:51.800 take a * e what you get back is the J
+00:06:56.000 column of
+00:06:57.280 a and if you take the transpose one of
+00:07:00.240 those columns so that it's 1 by n and
+00:07:02.840 take that times an N by n a and the
+00:07:05.360 result is the jth row of a and you can
+00:07:08.840 check that quickly and furthermore
+00:07:10.840 because of the way the identity is
+00:07:12.319 defined and the way matrix
+00:07:13.680 multiplication
+00:07:14.919 Works uh a * I and I * a is always equal
+00:07:19.759 to
+00:07:20.720 a and that's even true if a is
+00:07:23.039 rectangular as long as I has the proper
+00:07:25.680 size whether it's on the right or the
+00:07:28.319 left
+00:07:30.919 finally I just want to mention um how
+00:07:34.039 these things are done in mat lab so a
+00:07:36.599 matrix product
+00:07:38.879 AB is done just as a star B in mat lab
+00:07:43.120 if the sizes of A and B are compatible
+00:07:45.039 you'll get a * B in The Matrix sense if
+00:07:48.000 not you get an
+00:07:49.879 error there's also the idea of raising a
+00:07:53.159 matrix to a power okay that only works
+00:07:55.599 for square matrices
+00:07:57.319 mathematically um and so that's the only
+00:07:59.400 way it's defined in mat lab so a cubed
+00:08:02.440 for example means a * a * a although it
+00:08:06.560 might be computed quite a bit faster
+00:08:08.199 than
+00:08:09.639 that if you have multiple uh
+00:08:12.159 multiplications in a product a * B * C
+00:08:15.319 well they all have the same precedence
+00:08:17.400 and so that's the same as a *
+00:08:21.479 B * C of course matrix multiplication is
+00:08:26.039 associative so grouping doesn't matter
+00:08:29.360 and in fact this would get you the same
+00:08:31.000 mathematical result although I have to
+00:08:33.719 point out that depending on the sizes of
+00:08:35.399 these matrices one might be a lot faster
+00:08:38.000 than the other and so sometimes you have
+00:08:39.799 to be careful about writing those kinds
+00:08:41.640 of
+00:08:43.839 products uh the identity Matrix in mat
+00:08:47.240 lab is returned by a function called I
+00:08:51.120 so I of four would be the ident the
+00:08:54.519 4x4 identity
+00:08:58.200 Matrix
+00:09:01.120 and then finally I want to alert you to
+00:09:02.560 one other kind of uh multiplication
+00:09:05.399 that's available in matlb it's the
+00:09:07.920 element wise operation so you use a star
+00:09:12.800 for multiplication or a carot for
+00:09:16.399 exponentiation and what that means is to
+00:09:18.440 do things element by element so it's
+00:09:21.360 easiest just to see this by an
+00:09:28.120 example very simple kind of
+00:09:34.200 product where you
+00:09:36.320 just multiply the things that are in the
+00:09:38.800 corresponding
+00:09:47.440 positions and for exponentiation it's
+00:09:49.959 also defined the same way you
+00:09:51.600 exponentiate each element of the matrix
+00:09:54.519 by the number that's not the same thing
+00:09:56.480 as taking the Matrix power uh you have
+00:09:58.800 to be very careful with these operators
+00:10:00.519 too sometimes they're exactly what you
+00:10:02.120 want um but sometimes if you use the
+00:10:04.800 wrong one you'll get a code which
+00:10:07.399 executes but gives you completely the
+00:10:09.440 wrong
+00:10:10.800 answer

@@ -1,0 +1,254 @@
+# tactiq.io free youtube transcript
+# MATH426: Linear system basics
+# https://www.youtube.com/watch/mcB2j5K_vuU
+
+00:00:06.240 let's review some facts from
+00:00:07.919 introductory linear algebra
+00:00:10.240 so a linear system is usually given to
+00:00:12.400 us in matrix form
+00:00:14.880 as ax is equal to b
+00:00:17.279 where b is a given vector in rn
+00:00:20.240 and a is an r by or is an n by n matrix
+00:00:24.400 so given the a and the b you're supposed
+00:00:26.240 to find the x which also has to be an n
+00:00:28.160 vector
+00:00:30.400 and mathematically we solve this problem
+00:00:33.760 if the matrix is non-singular by
+00:00:36.000 multiplying both sides on the left by a
+00:00:38.239 inverse
+00:00:40.719 so this is multiplication on the left
+00:00:45.520 then we reassociate on the left hand
+00:00:47.760 side of the equation
+00:00:52.800 then we use the
+00:00:54.160 property of the
+00:00:55.760 inverse matrix
+00:00:57.280 and then we use the property of the
+00:00:58.640 identity to simplify
+00:01:00.879 and so we see that x is equal to a
+00:01:02.399 inverse times b
+00:01:05.600 now throughout
+00:01:07.439 elementary linear algebra course usually
+00:01:09.520 there's this long theorem that's built
+00:01:11.600 up that has a bunch of equivalent
+00:01:13.439 statements so you might have seen
+00:01:15.680 these before maybe some others as well
+00:01:18.240 so
+00:01:18.960 we know that a a square matrix a is
+00:01:21.759 non-singular
+00:01:23.360 that's equivalent to saying that the
+00:01:25.360 linear system a x equals b
+00:01:27.840 has one unique solution x for every
+00:01:30.479 different b
+00:01:33.439 and that includes the case when
+00:01:35.520 b is zero
+00:01:37.119 then x equals zero is the only solution
+00:01:42.640 so i'll add that one on to this list
+00:01:51.119 it is equivalent to the others as well
+00:01:56.720 we also have that the determinant of a
+00:01:58.479 is non-zero if and only if a is a
+00:02:00.640 non-singular matrix
+00:02:02.479 we have that the columns of a are
+00:02:03.840 linearly independent
+00:02:06.320 if a is non-singular we could say that
+00:02:08.878 the rank of a is equal to n that's the
+00:02:10.639 dimension of the column space
+00:02:13.360 and we have that the null space of a
+00:02:15.840 is simply the zero vector that's the
+00:02:17.599 same as
+00:02:19.280 it's just exactly the same as this
+00:02:21.440 statement in red
+00:02:23.200 only using different words in the
+00:02:24.879 definition of a null space
+00:02:29.200 so
+00:02:30.480 mathematically speaking the problem is
+00:02:31.920 solved once you find the inverse of the
+00:02:33.360 matrix then you can solve the problem
+00:02:36.160 but
+00:02:37.040 that doesn't actually help us too much
+00:02:38.560 computationally because
+00:02:40.239 um finding the inverse matrix is also
+00:02:42.959 um
+00:02:43.760 not something that's which is so obvious
+00:02:46.080 so in fact when you look at it there are
+00:02:48.640 systems that we can solve individual
+00:02:50.480 linear systems that we can solve without
+00:02:52.160 ever finding
+00:02:53.519 the inverse of the matrix
+00:02:55.920 so here's an example of a four by four
+00:02:57.840 system four equations with four unknowns
+00:03:02.000 and you see that the system has a
+00:03:03.599 triangular structure so we would call
+00:03:05.840 this a lower triangular matrix
+00:03:12.560 outside of that triangular shape
+00:03:15.040 or above the main diagonal
+00:03:17.120 everything is zero
+00:03:20.159 okay lower triangular matrices have a
+00:03:22.239 special structure so if we look at the
+00:03:23.599 first row
+00:03:25.040 first equation remember each row is a
+00:03:26.959 different equation
+00:03:35.760 we have four times x one
+00:03:39.040 plus zero x two plus zero x three plus
+00:03:41.599 zero x four
+00:03:43.840 is equal to eight
+00:03:45.360 in other words there's only one variable
+00:03:46.799 that appears in that first equation so
+00:03:49.040 we can solve it to say that
+00:03:51.440 x1 must equal 8 over 4
+00:03:54.000 which is 2.
+00:03:57.439 now in the second row
+00:04:03.439 we get three x one
+00:04:06.080 minus one x two
+00:04:08.480 plus zero plus zero
+00:04:10.560 equals five
+00:04:13.439 but now that we know
+00:04:15.120 x1
+00:04:17.519 we can substitute it in
+00:04:21.519 so
+00:04:22.320 x1 we said was equal to 2.
+00:04:26.479 and so this is equal to negative 1 on
+00:04:29.120 the right hand side
+00:04:31.120 and so from negative x 2 equals negative
+00:04:33.520 1 we have that x 2 is equal to 1.
+00:04:38.240 okay third row
+00:04:44.720 we have
+00:04:45.759 i'm going to rearrange this system from
+00:04:47.360 the start
+00:04:48.400 so i'm just going to put the 3 times x3
+00:04:51.759 down here on the left side
+00:04:54.000 i also have a minus 1 times x1
+00:04:56.720 but i'm going to move that to the other
+00:04:58.240 side
+00:05:04.160 and i have
+00:05:06.160 0x2
+00:05:07.759 as well
+00:05:08.880 which i moved to the right hand side of
+00:05:10.560 that equation
+00:05:14.560 well i already know x1
+00:05:16.479 and x2
+00:05:17.919 so x1 is equal to 2 so this whole side
+00:05:20.800 is equal to 2 here
+00:05:22.880 so that tells us that
+00:05:25.520 x3 is equal to two-thirds
+00:05:32.800 and then finally
+00:05:34.240 the last row
+00:05:38.960 again i'm going to just write down
+00:05:42.240 a single unknown that's left
+00:05:44.400 x4
+00:05:45.759 on the left hand side
+00:05:47.360 and then put everything else on the
+00:05:48.639 right so i have minus 1 times x1
+00:05:52.560 plus 1
+00:05:57.120 times x2
+00:06:00.160 plus 1 times x3
+00:06:02.639 all carried over from the left hand side
+00:06:04.479 to the right
+00:06:08.560 so i have one
+00:06:10.240 minus two is negative one
+00:06:13.600 plus one is zero
+00:06:16.240 plus two-thirds is two-thirds
+00:06:20.319 and so that tells us that x4 must be
+00:06:22.319 equal to one-third
+00:06:25.360 and so there we have a complete solution
+00:06:32.720 for the four unknowns
+00:06:36.639 so we could write
+00:06:38.560 x as the vector
+00:06:42.880 remind myself 2
+00:06:45.759 1
+00:06:47.280 two thirds
+00:06:48.960 one third
+00:06:52.319 and that is in fact the unique solution
+00:06:56.560 which you can easily check
+00:07:02.319 so that's the solution of a lower
+00:07:04.319 triangular system
+00:07:06.560 here's another system four by four which
+00:07:08.560 is upper triangular
+00:07:19.440 okay upper triangular can be solved
+00:07:21.840 pretty much the same way the only
+00:07:23.840 difference is that we have to start from
+00:07:25.599 the bottom and work our way up
+00:07:28.240 so i should have said in the
+00:07:30.960 in the lower triangular case
+00:07:33.440 we call this method of solution
+00:07:37.039 forward substitution
+00:07:49.360 for an upper triangular system we use
+00:07:51.120 what's called backward substitution
+00:07:56.319 now this
+00:07:57.280 look this upper triangular system has
+00:07:59.039 been written
+00:08:00.720 in a style that
+00:08:02.800 um now instead of numbers we just use
+00:08:05.120 generic
+00:08:06.240 matrix elements
+00:08:07.759 and that pushes us towards something
+00:08:09.280 which is more of an algorithm
+00:08:12.080 so if we started at the last row and
+00:08:14.080 worked our way up well the last equation
+00:08:16.000 involves only x4
+00:08:18.240 so the last row of this system
+00:08:21.919 can be solved for x4 by just taking b4
+00:08:24.800 divided by u4
+00:08:28.639 okay
+00:08:30.319 third row of the system
+00:08:33.200 has an equation with just x3 and x4
+00:08:36.320 but now x4 is known
+00:08:38.399 so we rearrange so this
+00:08:40.880 this equation should have been or starts
+00:08:43.039 out as
+00:08:44.240 u 3 3 x 3
+00:08:47.680 plus u 3 4
+00:08:49.839 x 4
+00:08:51.279 equals b 3
+00:08:52.959 which then rearranges into
+00:08:55.279 what you see here
+00:08:56.800 solved for x3
+00:09:02.080 second row of the system
+00:09:06.640 right if we write that out
+00:09:09.519 it becomes u 2 2 x 2
+00:09:13.200 plus u 2 3 x 3
+00:09:16.560 plus u 2 4 x 4
+00:09:19.680 equals b 2.
+00:09:21.600 rearrange that to solve for x2 because
+00:09:24.080 at this point
+00:09:25.279 x3 and x4 have both been found
+00:09:27.920 and then we can solve for x2 and so on
+00:09:31.680 so now this is written very much in the
+00:09:33.200 style of something that we could program
+00:09:35.839 but we would have to use n instead of 4
+00:09:38.160 and i and j to get all of the
+00:09:40.480 indices right there's a code like that
+00:09:42.560 in the book for forward substitution
+00:09:44.160 already
+00:09:47.360 so triangular systems we can solve
+00:09:49.200 without finding an explicit inverse
+00:09:53.279 also just as a side note about matlab
+00:09:56.480 matlab is smart enough to figure out
+00:09:58.320 when you have a triangular system and
+00:10:00.800 apply the correct kind of substitution
+00:10:02.399 automatically
+00:10:03.600 so here you see
+00:10:05.279 the
+00:10:07.200 same system the same lower triangular
+00:10:09.200 system as above
+00:10:10.640 so the i called the matrix l instead of
+00:10:12.959 a
+00:10:14.160 because it's lower triangular
+00:10:15.920 but they're the same as in the example
+00:10:17.920 above
+00:10:25.839 so remember mathematically or to solve a
+00:10:27.839 linear system we say l backslash b
+00:10:30.160 that's the synonym for l inverse b
+00:10:34.240 so this is
+00:10:36.000 matlab for
+00:10:38.959 l inverse times b
+00:10:40.640 mathematically but what really happens
+00:10:42.720 now is that matlab detects that it's a
+00:10:44.320 triangular matrix which is really easy
+00:10:46.959 and applies forward substitution
+00:10:52.640 without any further prompting
+00:10:55.279 and gets the same answer that we have
+00:10:56.800 above
+00:10:58.160 that's true of upper triangular systems
+00:10:59.760 as well matlab detects them and applies
+00:11:02.480 the appropriate type of substitution to
+00:11:04.320 solve

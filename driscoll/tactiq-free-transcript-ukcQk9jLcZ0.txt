@@ -1,0 +1,272 @@
+# tactiq.io free youtube transcript
+# MATH426: Orthogonality
+# https://www.youtube.com/watch/ukcQk9jLcZ0
+
+00:00:01.480 orthogonality is another subject that
+00:00:03.360 comes up very widely in numerical
+00:00:05.279 Computing uh here we're going to talk
+00:00:06.919 about it in the context of the normal
+00:00:08.200 equations but it's much broader so uh
+00:00:10.960 again here we have our minimum or sorry
+00:00:13.519 our linear least squares problem and I
+00:00:17.119 want you to recall a definition from
+00:00:18.480 linear algebra the set of all possible
+00:00:20.920 vectors
+00:00:21.960 ax okay or all possible linear
+00:00:24.720 combinations of a Columns of a is called
+00:00:27.640 the range of a or many many times this
+00:00:30.400 will be called the column space it's the
+00:00:32.840 same
+00:00:39.079 thing okay so that's a Subspace of the
+00:00:42.960 um RM in this case the the output space
+00:00:46.199 of a okay so what we're saying with the
+00:00:50.120 linear lead squares problem is that
+00:00:52.719 we're finding the vector y in the range
+00:00:55.199 of a right Y is equal to a * x uh that
+00:00:58.600 minimizes the difference between Y and B
+00:01:01.920 in the
+00:01:02.800 torm and another way of seeing what does
+00:01:06.360 that is is easy from a little cartoon so
+00:01:10.360 imagine it's two-dimensional but the
+00:01:11.799 same picture would hold in multiple
+00:01:13.200 Dimensions if we knew how to draw it so
+00:01:16.240 the range of a is some Subspace which
+00:01:20.000 means it has to be a straight line or a
+00:01:22.159 plane that goes through the
+00:01:24.640 origin that's the set of all
+00:01:28.840 vectors
+00:01:31.360 ax okay and then
+00:01:34.399 somewhere uh out in this space is the
+00:01:36.759 vector
+00:01:40.000 B which we like to be able to reach but
+00:01:42.680 in general we can't reach it so if we
+00:01:45.320 could if we if B were in the range of a
+00:01:47.680 then of course we would have an actual
+00:01:49.360 solution to ax equals B um but it's
+00:01:52.399 pretty clear that among all vectors in
+00:01:54.759 this green space the one that comes
+00:01:57.360 closest to B is the one you get by
+00:02:00.439 dropping down a
+00:02:04.560 perpendicular okay this would be the
+00:02:07.960 difference
+00:02:09.160 between B and
+00:02:13.720 Y this Vector that's in the space that's
+00:02:17.239 closest is y or a *
+00:02:22.280 X at the linearly squar
+00:02:28.760 solution so um this perpendicular um
+00:02:34.200 property mathematically we call it
+00:02:37.519 orthogonality um that's the term that we
+00:02:39.360 use in higher Dimensions sometimes you
+00:02:41.360 see the term normal used to mean
+00:02:42.959 perpendicular as
+00:02:44.640 well all right so the natural
+00:02:48.480 definition um that follows from Vector
+00:02:51.560 calculus is that two vectors in RN or
+00:02:54.400 orthogonal if their inner product is
+00:02:56.879 equal to
+00:02:58.760 zero
+00:03:00.680 right so you might remember
+00:03:03.000 from Vector Cal that the dotproduct of
+00:03:07.040 two vectors is equal to the length of
+00:03:10.000 each one times the cosine of the angle
+00:03:13.159 between them so if that dot product is
+00:03:15.440 zero we say the angle is
+00:03:18.400 90° now very important property of
+00:03:21.959 orthogonality is that if two vectors are
+00:03:23.959 orthogonal then the norm of U plus v^2
+00:03:27.200 is the sum of the squares of u and v and
+00:03:29.799 norm and that's really basic
+00:03:33.239 algebra
+00:03:35.680 so we use the definition of the two Norm
+00:03:38.879 in terms of the inner product of a
+00:03:40.319 vector with itself you write
+00:03:45.159 out what
+00:03:48.080 the inner product must
+00:03:53.079 be if the two vectors are zero are
+00:03:55.720 orthogonal then these two inner products
+00:03:57.599 are both
+00:03:58.680 zero
+00:04:00.599 and all that's left is Norm of
+00:04:06.200 u^2 plus the norm of
+00:04:10.760 v^2 so that's real simple to check um of
+00:04:15.040 course this is another statement of the
+00:04:16.959 first theorem you learned probably ever
+00:04:19.639 which is the Pythagorean theorem right
+00:04:21.160 it says
+00:04:23.440 that you have a right triangle then you
+00:04:26.080 can compute the hypotenuse as sum of
+00:04:28.919 squares of the two
+00:04:35.800 sides well why am I making a fuss about
+00:04:38.199 this well um we do know with Norms that
+00:04:41.919 we have a triangle inequality in general
+00:04:44.080 for any
+00:04:47.440 Norm the norm of the sum is less than or
+00:04:50.400 equal to the sum of the
+00:04:53.720 Norms now if you have um the two norm
+00:04:57.160 and you square both sides in the right
+00:04:58.639 way you get equality
+00:05:00.479 um but if you don't have
+00:05:03.880 orthogonality then you this less than or
+00:05:06.479 equal to might really be much less than
+00:05:09.280 and so simple picture of that would be
+00:05:12.080 if U let's say is this
+00:05:14.880 vector and V is a vector which is almost
+00:05:18.199 exactly anti-parallel to it right of
+00:05:21.000 course we could exaggerate this drawing
+00:05:22.800 as much as we lik then U plus
+00:05:26.280 v would just be this little guy here
+00:05:32.400 much smaller in Norm than either of the
+00:05:34.440 original two
+00:05:41.520 vectors well that's a recipe for
+00:05:43.639 numerical
+00:05:48.280 cancellation when we add two
+00:05:50.800 things and get a result which is much
+00:05:52.960 smaller than either one we should expect
+00:05:55.639 to have cancellation of significant
+00:05:57.440 digits it's just as true for vectors as
+00:05:59.639 it is for
+00:06:00.880 numbers and so that's why we're really
+00:06:02.800 interested in orthogonality
+00:06:04.280 orthogonality prevents this situation
+00:06:06.280 when you add vectors that are orthogonal
+00:06:08.639 or subtract them then you're guaranteed
+00:06:11.319 not to encounter cancellation
+00:06:14.919 errors and so now we have another reason
+00:06:17.080 for the name of the normal equations so
+00:06:20.360 the normal equations State uh the
+00:06:23.120 following so we can write them this
+00:06:25.840 way okay which means that if you take
+00:06:29.120 any Vector Z which is in the range of
+00:06:32.520 a okay then it is orthogonal to the
+00:06:36.240 difference between B and ax remember
+00:06:38.319 this is what we called B minus y or it's
+00:06:41.759 also what we just called a residual
+00:06:43.919 R so the normal equations are solved
+00:06:47.400 when you find um that the
+00:06:52.880 residual of the problem is orthogonal to
+00:06:55.479 the range of
+00:06:56.759 a again I'll go back up to the picture
+00:07:00.840 okay the range of a is the green line
+00:07:03.919 the residual is the normal to it okay
+00:07:06.639 the best you can do is to make the
+00:07:08.720 residual orthogonal to the range and
+00:07:11.400 that makes that distance as short as
+00:07:13.560 possible for the red
+00:07:15.720 Vector
+00:07:18.360 okay now um if we want to go from two
+00:07:21.560 vectors in RN to more vectors in
+00:07:24.520 RN uh let's say we have K vectors well
+00:07:27.879 we say that the vectors as a set or
+00:07:30.080 orthogonal if they are
+00:07:32.759 pairwise
+00:07:37.319 orthogonal so the inner product between
+00:07:39.599 any two of them is zero if you pick two
+00:07:41.240 different
+00:07:43.400 ones okay so a simpler way of stating
+00:07:46.400 this is using matrices so as usual we'll
+00:07:50.120 stack those vectors that were given into
+00:07:52.440 Columns of a matrix capital Q and then
+00:07:55.759 if you write out what the algebra tells
+00:07:57.680 you for Q transpose Q using using the
+00:07:59.639 block form for the
+00:08:01.800 multiplication um you just find that Q
+00:08:04.000 transpose Q is a matrix of inner
+00:08:06.800 products between the
+00:08:11.280 vectors that's more or less a definition
+00:08:14.280 of Matrix products and here the two
+00:08:17.520 matrices are transposes of each
+00:08:21.759 other and so that means that the only
+00:08:23.919 ones that can be nonzero if the vectors
+00:08:26.360 are orthogonal the only ones that can be
+00:08:28.479 nonzero are the ones that are on the
+00:08:29.919 diagonal okay those are equal to
+00:08:33.240 Norms all the others would have to be
+00:08:35.159 Zero by orthogonality so saying that the
+00:08:37.519 set of vectors is orthogonal is the same
+00:08:39.760 thing as saying that Q transpose Q is a
+00:08:42.440 diagonal
+00:08:47.440 matrix okay so now we can take that a
+00:08:49.800 little bit
+00:08:51.959 further so now we say that if Q
+00:08:54.800 transpose Q is not just diagonal but a
+00:08:57.640 special diagonal matrix the identity
+00:09:00.839 Matrix okay remember that Q is n by K
+00:09:06.440 and Q transpose is K
+00:09:09.519 byn so it's a k byk Matrix if you
+00:09:13.399 actually have the K byk identity Matrix
+00:09:16.160 then what we say is that the original
+00:09:18.000 vectors q1 to q
+00:09:22.440 k are called an orthonormal set of
+00:09:25.200 vectors so normal means that they're
+00:09:27.279 normalized in this case
+00:09:31.399 right because that's telling us
+00:09:34.480 that Qi transpose Qi is equal to one for
+00:09:40.480 all
+00:09:41.680 I in other words the two Norm of each of
+00:09:44.480 these
+00:09:46.079 vectors is also equal to one the square
+00:09:48.600 root of
+00:09:52.640 one okay so that's what we would say
+00:09:55.399 about the vectors they're an orthonormal
+00:09:57.200 set of vectors and then finally if you
+00:09:59.760 have a set of n orthonormal vectors in
+00:10:03.000 other words if Q is
+00:10:10.399 square
+00:10:13.079 and its columns are
+00:10:16.360 orthonormal then we say that the Matrix
+00:10:18.880 itself is orthogonal so this is terrible
+00:10:21.480 notation terrible nomenclature right
+00:10:24.040 we're saying that vectors can be
+00:10:25.600 orthogonal which says nothing about
+00:10:27.079 their lengths if you do say something
+00:10:29.279 about the lengths of each Vector then
+00:10:31.120 they're orthonormal and orthonormal
+00:10:33.640 vectors can make up an orthogonal Matrix
+00:10:37.079 I wish I could change it but it wasn't
+00:10:38.519 up to
+00:10:39.720 me okay so here we have an interesting
+00:10:42.399 thing so we're saying that Q is a square
+00:10:44.399 Matrix and Q transpose Q is not one it's
+00:10:46.959 the
+00:10:48.839 identity n by n so in other
+00:10:54.399 words the inverse of Q is the transpose
+00:10:57.600 of Q
+00:11:02.440 so orthogonal matrices are the easiest
+00:11:04.600 ones in the world to find oops to find
+00:11:07.680 the inverses
+00:11:10.040 of just take the
+00:11:15.920 transpose okay now we can prove a lot of
+00:11:18.680 things about orthogonal matrices here's
+00:11:20.279 two
+00:11:21.519 facts so first of all the product of two
+00:11:24.200 orthogonal matrices is also
+00:11:27.240 orthogonal so let's
+00:11:30.560 suppose u and
+00:11:33.240 v are orthogonal
+00:11:45.920 matrices let Q equal
+00:11:50.160 UV then Q transpose
+00:11:53.839 Q is UV transpose
+00:11:57.959 UV
+00:12:00.480 which is V transpose U
+00:12:02.600 transpose time
+00:12:06.120 UV which we can then
+00:12:09.880 reassociate using the fact that U is
+00:12:14.199 orthogonal and then using the fact that
+00:12:16.399 V is
+00:12:19.399 orthogonal that we've proven that Q
+00:12:21.440 transpose Q is the identity so Q is
+00:12:27.880 orthogonal
+00:12:33.000 that's relatively
+00:12:34.760 simple here's another one which I won't
+00:12:36.959 go into the proof of um one of the two
+00:12:39.560 statements is easy the other one's a
+00:12:40.839 little harder so we say that uh we have
+00:12:43.480 a fact that Q is an orthogonal Matrix if
+00:12:46.160 and only if it leaves the two Norm of
+00:12:48.160 all vectors
+00:12:50.120 unchanged so if the torm of QX is equal
+00:12:53.480 to the two Norm of X for all vectors X
+00:12:56.320 that can happen only when Q is an
+00:12:58.440 orthogonal Matrix and always when Q is
+00:13:00.800 an orthogonal
+00:13:02.240 Matrix

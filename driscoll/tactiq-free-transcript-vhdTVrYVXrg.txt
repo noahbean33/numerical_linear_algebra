@@ -1,0 +1,193 @@
+# tactiq.io free youtube transcript
+# MATH426: Martrix inverses
+# https://www.youtube.com/watch/vhdTVrYVXrg
+
+00:00:01.839 okay so remember how we have the
+00:00:04.080 identity Matrix which is an N byn
+00:00:08.880 Matrix with ones only on the main
+00:00:12.679 diagonal and it has the special property
+00:00:15.200 that as long as the Matrix Sciences are
+00:00:17.960 correct a * the Identity or the identity
+00:00:21.240 time a are both equal to a
+00:00:24.599 itself so now we're going to take that
+00:00:26.840 idea and turn it into the multiplicative
+00:00:29.199 inverse as well
+00:00:31.320 so let a be an N byn Matrix this only
+00:00:34.680 works for square
+00:00:36.320 matrices if Z is some other Square
+00:00:38.680 Matrix of the same size and it satisfies
+00:00:42.280 the property that Za and a z are both
+00:00:45.480 equal to I the identity Matrix then we
+00:00:49.120 call Z the inverse of a and what we'll
+00:00:51.680 do is we'll write
+00:00:53.359 z is equal to
+00:00:55.800 aus1
+00:00:58.920 power
+00:01:02.039 so technically speaking um the first
+00:01:06.159 property here we would say that this
+00:01:07.920 means that Z is a left inverse and this
+00:01:09.960 one we would say Z is a right inverse it
+00:01:12.439 turns out that they go together if you
+00:01:14.080 have one then you always have the other
+00:01:15.479 one so we don't really worry about that
+00:01:17.439 too
+00:01:19.000 much now more importantly it's true that
+00:01:22.479 not every Matrix has a multiplicative
+00:01:24.520 inverse and we call those matrices that
+00:01:27.079 don't have an inverse singular matrices
+00:01:30.799 so for example obviously the zero Matrix
+00:01:34.840 doesn't have an inverse anything that
+00:01:36.360 you multiply by the zero Matrix is still
+00:01:38.799 a zero Matrix so you could never
+00:01:40.960 multiply that by something and get the
+00:01:42.640 identity Matrix you always get zero
+00:01:44.719 instead so that's kind of expected but
+00:01:48.960 there are also nonzero matrices that
+00:01:51.000 don't have an inverse and that are
+00:01:52.320 singular so for example the second one
+00:01:55.719 here right if we were to have this uh if
+00:01:58.920 this Matrix were to have an inverse then
+00:02:00.840 we would have
+00:02:02.600 that 0 0 0 1 times some other 2 by two
+00:02:08.160 Matrix call it a b c d whatever they
+00:02:12.400 are that is going to have to equal the
+00:02:14.760 identity well if you look at this matrix
+00:02:18.160 product you take the first row here
+00:02:21.480 times this column you get
+00:02:23.360 zero and the first row times the second
+00:02:26.040 column you again get
+00:02:28.160 zero and then in the Bott botom you get
+00:02:30.840 uh C and
+00:02:32.920 D but the whole point is
+00:02:35.879 that because of this zero
+00:02:40.280 here we can't ever get
+00:02:45.400 one so you can never get the identity
+00:02:50.800 Matrix so it's straightforward to show
+00:02:54.000 that this second Matrix here is singular
+00:02:56.920 this third Matrix is also singular it
+00:02:58.720 takes a little bit more work to show
+00:03:00.280 that um but for now we'll just take that
+00:03:02.560 as given so there are matrices that
+00:03:05.599 don't have an
+00:03:09.040 inverse if you want to show that a
+00:03:11.000 matrix does have an inverse well there
+00:03:13.400 are uh multiple ways you can do that
+00:03:15.720 we'll get into more of those details in
+00:03:17.560 a bit um but for now um the the strategy
+00:03:22.680 we have to show that a matrix is non-
+00:03:24.879 singular is to find its inverse so if
+00:03:28.159 you can find a z that satis ifies a z is
+00:03:31.200 equal to I then you know that Z is the
+00:03:33.560 inverse and then you also know that a
+00:03:35.439 must be non- singular because it has an
+00:03:38.159 inverse so here's one way to use that uh
+00:03:41.879 simple fact if a and b are non- singular
+00:03:44.879 matrices that are the same size then
+00:03:47.319 their product is also non singular and
+00:03:49.879 in fact we have a formula for the
+00:03:51.599 inverse so we can State this as a
+00:03:53.840 theorem and the proof of the
+00:03:56.840 theorem goes like this so what we'll do
+00:04:00.239 is we'll Define we'll let
+00:04:02.959 Z be the Matrix that appears here in the
+00:04:06.920 statement of the
+00:04:10.000 theor we know Z exists and is well
+00:04:12.680 defined A and B are non- singular so
+00:04:15.280 therefore they have inverses so we know
+00:04:17.600 that b inverse and a inverse both exist
+00:04:20.238 and they're the same size so we can
+00:04:21.600 multiply them
+00:04:24.360 together okay so
+00:04:27.360 then all we have to do is just take
+00:04:31.919 AB time
+00:04:36.759 Z substitute in what Z
+00:04:41.039 is by definition of
+00:04:44.600 Z use the associative property of matrix
+00:04:52.320 multiplication to write it this way B *
+00:04:55.919 B inverse is the
+00:04:58.160 identity by Def definition of the
+00:05:02.720 inverse I'm being real technical here we
+00:05:06.039 use associativity
+00:05:08.840 again any Matrix times the identity is
+00:05:12.800 itself and any Matrix times its inverse
+00:05:15.440 is the
+00:05:17.720 identity so if you go from beginning to
+00:05:20.240 end of this argument right we found that
+00:05:23.600 AB * Z is equal to I
+00:05:28.479 therefore
+00:05:32.440 Z is in fact the inverse of
+00:05:35.160 ab and since we found the
+00:05:39.039 inverse we know it's non-
+00:05:48.440 singular and that's the end of this
+00:05:56.160 proof all right let me just briefly
+00:05:58.400 mention Matrix in inverses in mat lab
+00:06:01.960 there is a way to get the inverse of a
+00:06:04.080 matrix directly you would just type I NV
+00:06:08.840 of a to get the inverse of
+00:06:10.759 a it turns out that we hardly ever do
+00:06:13.360 that we actually don't need to and there
+00:06:14.960 are good reasons not to we'll get into
+00:06:17.280 that later um but it's more common that
+00:06:19.759 you have to multiply one matrix by the
+00:06:21.720 inverse of another Matrix and there's a
+00:06:24.120 special Syntax for doing that that
+00:06:25.759 doesn't use this inverse at all
+00:06:30.400 so if I want to find what is
+00:06:33.599 mathematically a * B inverse in mat lab
+00:06:37.599 we do that by
+00:06:39.520 A/B so think of when you want to write a
+00:06:42.319 fraction right if we have the fraction 2
+00:06:44.800 over3 3 is in the denominator well when
+00:06:47.919 you're writing that let's say on an
+00:06:49.560 oldfashioned typewriter you would do
+00:06:52.800 23 right so that's sort of where this
+00:06:55.960 syntax comes
+00:06:58.400 from so you think of b as being in the
+00:07:00.960 denominator even though we can't really
+00:07:03.000 write fractions of
+00:07:05.240 matrices the trickier case is a inverse
+00:07:10.039 time B where a now the inverse Matrix is
+00:07:12.599 on the left see we have a problem here
+00:07:15.440 we can't do b/ a by to put a in the
+00:07:19.160 denominator because the uh order of
+00:07:22.280 matrix multiplication matters you can't
+00:07:24.120 just switch uh B onto the left and put a
+00:07:26.800 onto the right that's a different
+00:07:29.720 product so we have to keep a inverse on
+00:07:32.080 the left of B but we still want to put
+00:07:33.639 it in the denominator and so what mat
+00:07:35.759 lab chose to do is to use the back slash
+00:07:38.360 so a back SLB now a is the Matrix which
+00:07:42.000 is being inverted in this product okay
+00:07:44.639 so it's very important in mat lab to
+00:07:46.360 keep this straight the difference
+00:07:48.479 between
+00:07:50.520 slash and
+00:07:54.479 backslash a lot of people get those two
+00:07:56.599 symbols confused but you absolutely have
+00:07:59.360 have to get them right to get the right
+00:08:01.080 result in that lab also these operators
+00:08:03.639 are more General they actually work on
+00:08:05.680 matrices which are not Square we'll get
+00:08:08.280 into that quite a bit later on in the
+00:08:10.319 course um so it's possible to have
+00:08:13.280 things that are uh executing statements
+00:08:16.800 because they're valid statements but
+00:08:18.759 that are completely not what you want or
+00:08:21.360 expect also I just wanted to point out
+00:08:23.879 that this operator is also evaluated
+00:08:26.720 from left to right so if you do it twice
+00:08:29.280 either slash or back slash a back SLB
+00:08:32.399 back SL C is the same thing
+00:08:34.679 as a back SLB first and then back SL C
+00:08:39.279 well because of the way Matrix inverses
+00:08:41.479 work in fact because of that theorem
+00:08:43.159 above this is not the same
+00:08:46.080 thing as a inverse time B inverse * C so
+00:08:50.600 you have to be careful again the left or
+00:08:52.440 right may not be exactly what you mean
+00:08:54.839 just remember that if you do put any
+00:08:57.360 Matrix X
+00:08:59.720 backs slash right that's the same thing
+00:09:02.480 as X inverse on the
+00:09:12.440 left

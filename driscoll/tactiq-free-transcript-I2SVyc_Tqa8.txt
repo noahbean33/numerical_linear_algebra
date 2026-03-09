@@ -1,0 +1,284 @@
+# tactiq.io free youtube transcript
+# MATH426: LU factorization
+# https://www.youtube.com/watch/I2SVyc_Tqa8
+
+00:00:01.520 it turns out that if we organize the
+00:00:04.319 gine elimination computation in a
+00:00:06.279 particular way then we can actually
+00:00:08.599 write down a factorization of the Matrix
+00:00:11.840 in terms of two terms which are easier
+00:00:14.320 to deal with than the original Matrix so
+00:00:17.080 that's what we're going to show you here
+00:00:19.240 we start here with the
+00:00:23.039 um same Matrix as in the previous video
+00:00:27.240 that we did gine elimination on so it's
+00:00:29.240 a 4x4 system we're not even going to pay
+00:00:31.800 any attention to the B Vector for now
+00:00:33.399 it'll just be the a matrix that we're
+00:00:35.480 going to deal with so when we did the
+00:00:38.440 row operations that represented Gan
+00:00:40.640 elimination remember we produced these
+00:00:43.079 three unit lower
+00:00:46.360 triangular
+00:00:48.559 matrices so the first one L is what we
+00:00:52.000 use to put zeros into the First Column
+00:00:53.960 of
+00:00:54.800 a and then we multiply by m to put zeros
+00:00:58.000 into the second column and then
+00:01:00.160 multiplies by n to put zero in the third
+00:01:02.440 column and what was left was upper
+00:01:04.959 triangular right that was the whole
+00:01:06.760 point of doing the guas in elimination
+00:01:09.200 was to end up with an upper triangular
+00:01:11.439 system so we have to first apply L on
+00:01:14.799 the Left Right doing row operation so
+00:01:17.640 multiply the left then M then n and the
+00:01:21.920 result must be U
+00:01:31.840 okay now it turns out that um we're
+00:01:37.079 getting a little bit of luck here so if
+00:01:39.479 we write out of course we can
+00:01:42.720 do use the associative law of matrix
+00:01:46.880 multiplication right to group those
+00:01:49.520 matrices this way and then we could
+00:01:52.280 write that a is the product of two
+00:01:55.840 matrices so we multiply by the inverse
+00:01:58.840 of that product
+00:02:00.799 F time
+00:02:03.759 U right so if we take the line above we
+00:02:06.320 multiply by nnl inverse on the left side
+00:02:10.000 of both sides of that equation this is
+00:02:12.480 what we
+00:02:14.480 get and that should
+00:02:17.560 mean that a is equal to and this is um
+00:02:21.840 this goes back to a property of Matrix
+00:02:23.959 inverses the inverse of a product is the
+00:02:27.480 product of the inverses in the opposite
+00:02:31.640 order okay which you can check just by
+00:02:34.800 multiplying them together and getting
+00:02:36.760 the identity
+00:02:41.080 Matrix all right so
+00:02:44.159 now our first bit of good news is that
+00:02:48.080 if we look at these individual matrices
+00:02:49.920 L inverse M inverse and N
+00:02:52.800 inverse here's L again but turns out
+00:02:56.360 that the inverse of L is incredibly
+00:02:58.519 simple just take the entries below the
+00:03:01.200 diagonal and turn them into
+00:03:04.120 negatives so 2 became
+00:03:07.840 -2 half half one became one and that's
+00:03:15.840 it same is true of
+00:03:18.440 M take the inverse of M you see all we
+00:03:21.920 had to do was take the negative of these
+00:03:25.319 entries below the
+00:03:27.840 diagonal and the same is true for as
+00:03:31.799 well now this really isn't an accident
+00:03:35.519 um there's a good reason for it so if we
+00:03:38.480 look at a matrix like let's take M for
+00:03:41.200 example so
+00:03:43.319 M almost an identity
+00:03:46.080 Matrix plus we have a matrix which is
+00:03:49.640 zero everywhere but in one spot
+00:04:00.439 like
+00:04:01.720 that well it turns out that we can
+00:04:06.799 write this Matrix as an outer product of
+00:04:11.000 two
+00:04:12.879 vectors so we can do that by uh
+00:04:21.199 using
+00:04:24.479 0
+00:04:26.280 Time 1
+00:04:32.960 so if you compare the outer product of
+00:04:34.840 those two it's pretty clear right 0
+00:04:38.360 times that row 0 time that row3 times
+00:04:41.479 that row gives us the3 and then 0 time
+00:04:45.240 that
+00:04:48.960 row and now we can just write that as I
+00:04:53.360 plus some Vector I'll call it V and then
+00:04:56.280 this is a column of the identity Matrix
+00:04:59.080 the second column of the 4x4 identity
+00:05:06.840 transpose okay so it's pretty easy to
+00:05:10.560 check that if you
+00:05:12.600 take I minus
+00:05:17.759 V2 i
+00:05:24.400 v well we get four
+00:05:27.600 terms just by multiply this
+00:05:36.160 so remember that we can't just change
+00:05:38.840 the
+00:05:44.680 order in
+00:05:49.000 order okay so that's just multiplying
+00:05:51.280 out the four terms then we use the
+00:05:54.720 associative law
+00:05:57.240 here okay E2 transpose * V that's an
+00:06:01.120 inner product of the two vectors up
+00:06:11.039 here well the inner product of
+00:06:14.039 V2 with v is just 0 * 0 + 1 * 0+ 0 * -3
+00:06:21.199 plus 0 * 0 in other words it's just
+00:06:24.599 completely
+00:06:28.560 zero and of course these two
+00:06:31.680 terms caner each other out and so the
+00:06:34.840 whole thing is just equal to the
+00:06:36.039 identity in other words right this guy
+00:06:40.120 which is
+00:06:42.080 m space here so M remember is I plus V2
+00:06:48.360 transpose and so therefore n inverse
+00:06:51.199 must be IUS
+00:06:54.319 Vose and that explains why when we take
+00:06:58.280 the inverse of n all we have to do is
+00:07:00.560 turn that entry in V from a negative3
+00:07:03.840 into a
+00:07:07.120 three all right so that's true of all of
+00:07:10.000 the particular matrices that we get when
+00:07:11.680 we're doing ging elimination I should
+00:07:14.120 emphasize that this property is not true
+00:07:16.960 for every triangular matrix it's not
+00:07:20.240 even true for every unit L triangular
+00:07:22.879 Matrix these matrices are special they
+00:07:25.160 have nonzeros or I should say they
+00:07:27.360 differ from the identity in only one
+00:07:29.240 column
+00:07:30.360 and that's key to making this property
+00:07:33.720 work okay so to rewind a little bit
+00:07:38.000 remember we have from gaum elimination
+00:07:40.039 that a is the product of these three
+00:07:42.520 matrices times an upper triangular
+00:07:44.800 Matrix and now we know that these three
+00:07:47.360 inverse matrices are really easy to
+00:07:50.000 write down the numbers that we're
+00:07:51.759 talking about in the lower triangle are
+00:07:54.080 the row multipliers so all we have to do
+00:07:56.319 is just take the negatives of our row
+00:07:58.159 multipliers and can uh easily produce
+00:08:00.800 those three
+00:08:02.199 matrices the second surprise happens
+00:08:04.560 when we multiply those three matrices
+00:08:06.479 together so remember the inverse of L
+00:08:09.479 the inverse of M and the inverse of n
+00:08:12.280 are each very simple with their um not
+00:08:16.479 they're differing from the identity in
+00:08:18.400 just one column
+00:08:20.520 each when we multiply them together all
+00:08:23.680 we do is put those triangular elements
+00:08:26.159 together in other
+00:08:27.520 words the elements that below the
+00:08:30.159 diagonal here are just exactly the ones
+00:08:33.360 that
+00:08:35.679 appeared in
+00:08:39.000 L or in I'm sorry L
+00:08:42.958 inverse M
+00:08:47.680 inverse and
+00:09:00.440 okay they're exactly the
+00:09:02.519 same as these
+00:09:06.800 numbers that's really easy to explain
+00:09:09.079 with the linear algebra 2 I won't go
+00:09:11.160 through it but it is in the
+00:09:14.880 book so now what that tells us is that
+00:09:19.160 a is equal to this
+00:09:21.560 Matrix which I'm now going to
+00:09:24.120 recr as
+00:09:26.519 L time U so Lal to our old um n inverse
+00:09:32.800 n inverse L
+00:09:37.279 inverse L is a
+00:09:40.680 unit lower triangular
+00:09:46.279 Matrix its entries are the row
+00:09:49.040 multiplier
+00:10:01.560 U is upper
+00:10:09.399 triangle its entries are the result of
+00:10:12.040 doing all the
+00:10:15.120 eliminations so here we can write our
+00:10:17.399 first mat lab function for the
+00:10:20.399 course okay a function is very much like
+00:10:22.920 a script um in that it's a sequence of
+00:10:27.600 commands that's processed by matlb but
+00:10:29.399 but it always starts with this word
+00:10:31.200 function on the first
+00:10:33.519 line then you have one or more actually
+00:10:37.399 zero or more output
+00:10:43.920 arguments whenever here you designate
+00:10:46.839 zero or more
+00:10:51.839 input okay so what this says is that
+00:10:54.079 when this function Lu fact is
+00:10:57.600 called a will be provided by whoever is
+00:11:00.639 calling it so what the Matrix that we
+00:11:03.519 call a in this function was provided to
+00:11:05.320 us from
+00:11:06.959 outside okay once we're done a
+00:11:10.000 disappears it's only a local definition
+00:11:12.200 of a it's called variable
+00:11:15.000 scoping meanwhile we will construct two
+00:11:18.000 matrices L and U which will then be
+00:11:21.680 returned to whoever called us to do with
+00:11:24.480 whatever they
+00:11:27.839 please it's an nice idea when you write
+00:11:30.320 functions to give a quick description of
+00:11:32.959 what it does and what the inputs and
+00:11:35.800 outputs mean always good for reminding
+00:11:38.399 yourself
+00:11:40.440 later okay and here's the algorithm so
+00:11:43.680 uh again with the Matrix a we're going
+00:11:45.519 to assume that it was Square when it was
+00:11:47.560 passed to us a better program would
+00:11:51.120 check that for us but to keep things
+00:11:52.639 short we don't do those kinds of checks
+00:11:54.440 in this course for the most part so
+00:11:57.160 we're just going to look at the length
+00:11:58.560 of a which just the longest size uh the
+00:12:01.360 largest Dimension which should be the
+00:12:02.680 same in both
+00:12:03.839 dimensions so n is the number of rows
+00:12:06.120 and the number of columns okay we're
+00:12:09.240 going to start off L which will be our
+00:12:11.040 lower triangular unit lower triangular
+00:12:13.399 Matrix as an identity and they'll just
+00:12:15.519 fill in the lower triangle from here on
+00:12:18.639 out so now we
+00:12:21.279 do the elimination so we we uh loop over
+00:12:25.639 J that's the column where we're
+00:12:27.639 introducing zeros
+00:12:29.880 okay in each column in column J we have
+00:12:32.360 to put zeros below the diagonal so those
+00:12:34.320 are rows J + one to
+00:12:37.680 n we come up with the row multiplier
+00:12:40.440 that we're going to use so this is
+00:12:42.880 what's going to multiply um row
+00:12:49.600 I in order to do the elimination I'm
+00:12:52.480 sorry it's what going to multiply row J
+00:12:54.160 in order to do the elimination in row
+00:12:57.800 I and store that in the Matrix
+00:13:02.399 L and then we do the row
+00:13:05.399 operation in the next
+00:13:12.199 line which
+00:13:14.639 makes the um proper element equal to
+00:13:18.240 zero so it makes the i j
+00:13:21.920 element equal
+00:13:31.920 at the very end of the function after
+00:13:33.399 we've done all the loop through all the
+00:13:35.120 rows and columns um we then just do this
+00:13:39.040 last uh command here which forces all of
+00:13:43.120 the elements in the uh lower triangle of
+00:13:45.680 a to be zero so if some of them were not
+00:13:48.040 quite zero due to roundoff errors this
+00:13:50.279 will just make them exactly zero
+00:14:12.880 all right so this function will then
+00:14:14.880 take a square Matrix a and return L and
+00:14:18.120 U triangular matrices so that L * u isal
+00:14:22.839 a now to go back to the linear system
+00:14:26.720 then if we do have a linear system a x =
+00:14:30.440 b how does this help us solve it uh well
+00:14:34.519 a is equal to Lu so we can
+00:14:36.720 substitute for a here and then we can
+00:14:40.199 use the associative
+00:14:43.399 property right say that this is actually
+00:14:46.279 two U equivalent statements L * some
+00:14:50.199 Vector Z is equal to B where we' Define
+00:14:52.759 Z as U *
+00:14:54.199 X it's pretty clear to see the
+00:14:56.120 mathematical equivalence there so
+00:14:57.959 algorithmically we start start with
+00:15:00.399 B so we're given a and
+00:15:06.199 b
+00:15:07.759 find L and U factor
+00:15:11.360 a and you
+00:15:14.519 solve LZ equals B for
+00:15:18.000 Z you know L and Z or you know L and B
+00:15:21.240 you can find Z that's a forward
+00:15:25.160 substitution and then you solve = Z
+00:15:30.639 for x and that's a backward substitution
