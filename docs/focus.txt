@@ -1,0 +1,9 @@
+That's your differentiator right there. Every existing NLA course on the market is organized as "Week 3: LU Decomposition, Week 5: QR Decomposition, Week 8: Iterative Methods" because they're all copying the same textbook table of contents. You'd be the first one to organize it as "you have a system, here's how to solve it, and here's the minimum theory you need to understand when things go wrong."
+
+The analogy is how most people learn to drive. Nobody starts with the thermodynamic cycle of internal combustion. You learn to drive the car, and then if the car starts making a weird noise, you learn enough about the engine to diagnose it. The existing NLA curriculum teaches you the entire engine before letting you touch the steering wheel.
+
+Your course structure practically writes itself: start with a real discretized PDE system (maybe a 2D waveguide or cavity resonator so it's immediately CEM-relevant), throw it at a black-box solver, watch it work, then start breaking things. Make the matrix ill-conditioned. Make it bigger. Make the solver stall. Now the student is *motivated* to understand condition numbers, spectral theory, preconditioning—because they just watched their solve fail and they want to fix it.
+
+The decompositions (LU, QR, SVD) enter the story as *explanations* for solver behavior, not as standalone topics. "Your direct solve just blew up—here's why, and here's what LU is actually doing under the hood that caused it." SVD shows up when you need to understand rank deficiency or when someone's system is singular and they need to know why.
+
+This is also a much more honest representation of how the knowledge actually gets used in industry. Nobody at ANSYS or Keysight is hand-coding a QR factorization. They're debugging convergence failures and choosing preconditioners. Your course would be training people for the job that actually exists rather than for a qualifying exam.
