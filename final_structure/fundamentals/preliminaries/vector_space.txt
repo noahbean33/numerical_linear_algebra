@@ -1,0 +1,13 @@
+A vector space is a nonempty set V of objects, called vectors, on which are defined two operations, called addition and multiplication by scalars(real numbers),
+subject to the ten axioms (or rules) listed below.1 The axioms must hold for all
+vectors u, v, and w in V and for all scalars c and d.
+1. The sum of u and v, denoted by u C v, is in V .
+2. u C v D v C u.
+3. .u C v/ C w D u C .v C w/.
+4. There is a zero vector 0 in V such that u C 0 D u.
+5. For each u in V , there is a vector u in V such that u C .u/ D 0.
+6. The scalar multiple of u by c, denoted by cu, is in V .
+7. c.u C v/ D cu C cv.
+8. .c C d /u D cu C du.
+9. c.du/ D .cd /u.
+10. 1u D u.

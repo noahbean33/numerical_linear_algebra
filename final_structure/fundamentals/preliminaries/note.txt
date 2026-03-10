@@ -1,0 +1,11 @@
+Vector spaces and subspaces — not just the definition, but fluency with the four fundamental subspaces (column space, null space, row space, left null space) and how they relate via the rank-nullity theorem. You need to instantly see a matrix as a map between spaces, not just a grid of numbers.
+Linear independence, span, basis, dimension — the conceptual core. Everything in NLA is ultimately about bases: changing them, finding good ones, understanding what spans what.
+Linear maps and their matrix representations — the key insight that a matrix is a linear map and the representation depends on your choice of basis. This sets up the entire eigenvalue/SVD story.
+Inner products and norms — this is where NLA diverges from pure LA. You need the 2-norm, Frobenius norm, induced matrix norms, and the geometric intuition of orthogonality. Without this, QR factorization and least squares are just symbol manipulation.
+Projections — orthogonal projectors specifically. The formula P=QQTP = QQ^T
+P=QQT and why P2=PP^2 = P
+P2=P, PT=PP^T = P
+PT=P. This is the geometric engine behind least squares, Gram-Schmidt, and Krylov methods.
+
+Eigenvalues and eigenvectors — the spectral theorem for symmetric matrices in particular. The fact that symmetric matrices have real eigenvalues and orthogonal eigenvectors is used constantly.
+Rank — not just the definition but rank as a diagnostic: rank deficiency, near-rank-deficiency, and why that's numerically catastrophic.

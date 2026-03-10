@@ -1,0 +1,29 @@
+Wendland opens with three canonical motivating examples: a **network/circuit linear system** (Ax = b), a **least squares data fitting** problem, and a **symmetric eigenvalue problem** (discretized vibration or similar). For each you want two scales, not one.
+
+**Pencil scale (n = 4 or 5)**
+
+This is the size you put on the board and trace through by hand. 4×4 is the sweet spot: non-trivial enough that the structure is visible (pivoting matters, the normal equations aren't obvious), small enough that students can verify intermediate steps without losing the thread. 3×3 is too small — the interesting failure modes disappear. 6×6 starts to feel like arithmetic homework.
+
+**Demo/timing scale**
+
+This is where the C++ capacity question gets interesting. You want a size where:
+
+- Naive O(n³) vs blocked/LAPACK differences are *measurable* but not so large that you're waiting around in lecture
+- Cache effects are visible (matrix stops fitting in L1 around n ≈ 100–150, L2 around n ≈ 500–700 for doubles)
+- The demo runs in under a second even for the bad algorithm
+
+That points to **n = 256 or 512** as the primary demo size. At n = 512, naive row-major Gaussian elimination vs column-major (or BLAS-backed) gives a 3–10× timing difference that lands the point cleanly. You can also run n = 64, 128, 256, 512, 1024 in a loop and plot the scaling — the O(n³) slope becomes obvious by n = 512 and the constant factor differences are visible without requiring 30 seconds of computation.
+
+For the eigenvalue example specifically, **n = 256 symmetric** is ideal because you can show power iteration converging, then contrast with the full symmetric QR algorithm, and the iteration count story is legible.
+
+**Why not larger?** At n = 2048+ you start running into compile-time and memory allocation issues that distract from the NLA content — students start debugging stack overflows from `double A[2048][2048]` rather than thinking about conditioning. If you want to show the wall where naive breaks down, n = 4096 is a good single demonstration point, but as a heap-allocated benchmark, not the pedagogical working size.
+
+**Concrete recommendation per example:**
+
+| Example | Whiteboard | C++ demo | "Here's why this matters" benchmark |
+|---|---|---|---|
+| Network (Ax = b) | n = 4 | n = 512 | n = 4096 (LU vs CG on sparse structure) |
+| Least squares | m = 8, n = 3 | m = 1024, n = 64 | m = 10⁵, n = 500 |
+| Eigenvalue | n = 4 | n = 256 | n = 1024 (power iter vs QR) |
+
+The least squares dimensions are intentionally rectangular — keeping n small (number of parameters) while making m large (number of observations) maps naturally onto the normal equations vs QR factorization discussion, which is one of the more important practical points in that chapter.

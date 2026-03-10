@@ -1,0 +1,108 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.linalg import null_space, orth
+
+# Setting seed for reproducibility
+np.random.seed(42)
+
+def plot_subspaces_and_geometry():
+    """
+    Demonstrates the Fundamental Subspaces, Projections, and Norms.
+    """
+    # 1. The Matrix as a Map
+    # Let's define a rank-deficient matrix A (3x2)
+    # This maps R^2 -> R^3
+    A = np.array([[1, 2],
+                  [2, 4],
+                  [3, 1]])
+    
+    # 2. Fundamental Subspaces
+    col_space = orth(A) # Orthonormal basis for C(A)
+    n_space = null_space(A) # Basis for N(A)
+    
+    # 3. Orthogonal Projection
+    # Projecting a random vector 'b' onto the Column Space C(A)
+    b = np.array([5, 2, 8])
+    # P = Q @ Q.T (where Q is orthonormal basis of the subspace)
+    Q = col_space
+    P = Q @ Q.T
+    p = P @ b  # The projection
+    
+    # 4. Visualization
+    fig = plt.figure(figsize=(12, 8))
+    ax = fig.add_subplot(111, projection='3d')
+    
+    # Plotting the Column Space (a plane in R^3)
+    xx, yy = np.meshgrid(np.linspace(-5, 5, 10), np.linspace(-5, 5, 10))
+    # Plane equation derived from the normal to C(A) which is Left Null Space N(A^T)
+    ln_space = null_space(A.T).flatten()
+    zz = (-ln_space[0]*xx - ln_space[1]*yy) / ln_space[2]
+    ax.plot_surface(xx, yy, zz, alpha=0.2, color='cyan', label='Column Space C(A)')
+
+    # Plot Vector b and its projection p
+    ax.quiver(0, 0, 0, b[0], b[1], b[2], color='red', label='Vector b (Original)')
+    ax.quiver(0, 0, 0, p[0], p[1], p[2], color='blue', label='Vector p (Projection)')
+    
+    # Plot the error vector e = b - p (Orthogonal to C(A))
+    e = b - p
+    ax.quiver(p[0], p[1], p[2], e[0], e[1], e[2], color='green', linestyle='--', label='Error e (b - p)')
+
+    ax.set_title("Geometry of Projections & Subspaces")
+    ax.legend()
+    plt.show()
+
+    # Numerical Rigor: Verifying P^2 = P and P^T = P
+    print(f"Is P symmetric (P^T = P)? {np.allclose(P, P.T)}")
+    print(f"Is P idempotent (P^2 = P)? {np.allclose(P, P @ P)}")
+    print(f"Is error e orthogonal to C(A)? {np.allclose(Q.T @ e, 0)}")
+
+def demonstrate_rank_and_conditioning():
+    """
+    Visualizes why near-rank-deficiency is numerically catastrophic.
+    """
+    # Create a singular matrix and a 'nearly' singular matrix
+    A_good = np.array([[1, 1], [1, 1.0001]])
+    A_bad  = np.array([[1, 1], [1, 1.00000000001]])
+    
+    # The Matrix Norm and Condition Number
+    # Cond(A) = ||A|| * ||A^-1||
+    cond_good = np.linalg.cond(A_good)
+    cond_bad = np.linalg.cond(A_bad)
+    
+    print(f"Condition Number (Stable): {cond_good:.2e}")
+    print(f"Condition Number (Catastrophic): {cond_bad:.2e}")
+    
+    # Solving Ax = b with a tiny perturbation
+    b = np.array([2, 2])
+    b_perturbed = np.array([2, 2.00000000001])
+    
+    x_stable = np.linalg.solve(A_good, b)
+    x_unstable = np.linalg.solve(A_bad, b)
+    x_unstable_perturbed = np.linalg.solve(A_bad, b_perturbed)
+    
+    print("\n--- Sensitivity Analysis ---")
+    print(f"True solution (Bad Matrix): {x_unstable}")
+    print(f"Perturbed solution (Bad Matrix): {x_unstable_perturbed}")
+    # Small change in b led to massive change in x
+
+def spectral_decomposition_demo():
+    """
+    Demonstrates the Spectral Theorem for Symmetric Matrices.
+    """
+    # Create a symmetric matrix S
+    A = np.random.randn(3, 3)
+    S = A.T @ A 
+    
+    # Eigen-decomposition
+    evals, evecs = np.linalg.eigh(S) # eigh is optimized for symmetric matrices
+    
+    print("\n--- Spectral Theorem ---")
+    print(f"Eigenvalues (all real): {evals}")
+    # Verify Orthogonality of Eigenvectors (V^T V = I)
+    print(f"V^T V = I? \n{np.round(evecs.T @ evecs, 5)}")
+
+# Execution
+plot_subspaces_and_geometry()
+demonstrate_rank_and_conditioning()
+spectral_decomposition_demo()
+1. The Fundamental Subspaces & Rank-NullityIn NLA, a matrix $A \in \mathbb{R}^{m \times n}$ is a transformation.Column Space $C(A)$: Where $b$ must live for $Ax=b$ to have a solution.Null Space $N(A)$: The "invisible" vectors that $A$ squashes to zero.Rank-Nullity: $\text{rank}(A) + \text{dim}(N(A)) = n$. In numerical contexts, we use the SVD to find the "effective rank" because small non-zero eigenvalues are often just noise.2. Norms and GeometryWhile standard LA focuses on whether vectors are independent, NLA focuses on how independent they are.$L_2$ Norm: Measures length.Frobenius Norm: $\|A\|_F = \sqrt{\sum \sum |a_{ij}|^2}$, the "size" of the matrix.Induced 2-norm: $\|A\|_2 = \sigma_{\max}(A)$, the maximum stretch factor.3. The Power of ProjectionsThe projector $P = Q(Q^T Q)^{-1} Q^T$ simplifies to $P = QQ^T$ when $Q$ has orthonormal columns.Geometry: $P$ takes any vector $b$ and finds the closest point in a subspace.Algebra: $P^2 = P$ (projecting twice does nothing new) and $P^T = P$ (orthogonal projection).This is the backbone of the QR Factorization, where we iteratively project vectors to create an orthonormal basis.4. Why "Near-Rank-Deficiency" is CatastrophicIn the code above, notice the Condition Number $\kappa(A)$.$$\kappa(A) = \frac{\sigma_{\max}}{\sigma_{\min}}$$If a matrix is nearly rank-deficient, $\sigma_{\min}$ is tiny, making $\kappa(A)$ huge. This magnifies rounding errors exponentially. In NLA, a "singular" matrix isn't just one with determinant 0; it's any matrix where the noise floor is larger than the smallest singular value.5. The Spectral TheoremFor symmetric matrices ($A = A^T$):All eigenvalues are real.Eigenvectors are orthogonal.$A$ can be decomposed as $VDV^T$.This is the "ideal" scenario in NLA. Many algorithms (like Conjugate Gradient) perform best when the system is symmetric positive definite (SPD).

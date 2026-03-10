@@ -1,0 +1,6 @@
+A subspace of Rn
+is any set H in Rn
+that has three properties:
+a. The zero vector is in H.
+b. For each u and v in H, the sum u C v is in H.
+c. For each u in H and each scalar c, the vector cu is in H.
