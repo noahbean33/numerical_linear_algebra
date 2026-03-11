@@ -1,0 +1,61 @@
+% ══════════════════════════════════════════════════════════════════════════
+% §4  The Direct Hammer: SVD
+% ══════════════════════════════════════════════════════════════════════════
+\section{The Direct Hammer: SVD (The ``Small'' Problem)}
+\label{sec:svd}
+
+\subsection{When to Use It}
+
+If your matrix fits comfortably in RAM---say $n \le 10{,}000$---the
+\textbf{Singular Value Decomposition} is the most robust solver available.
+
+Every $m \times n$ matrix $A$ (real) admits the factorisation
+\[
+    A = U \Sigma V^T,
+\]
+where $U \in \mathbb{R}^{m \times m}$ and $V \in \mathbb{R}^{n \times n}$
+are orthogonal, and $\Sigma = \operatorname{diag}(\sigma_1, \dots,
+\sigma_{\min(m,n)})$ with $\sigma_1 \ge \sigma_2 \ge \cdots \ge 0$.
+
+\subsection{Why SVD?}
+
+\begin{itemize}[nosep]
+    \item \textbf{Rank-deficient systems.}  If $A$ is rank-deficient or
+          nearly so, LU and Cholesky will amplify noise.  SVD reveals the
+          rank through the singular values and silently discards the
+          noise subspace.
+    \item \textbf{Rectangular systems.}  Least-squares ($m > n$) and
+          minimum-norm ($m < n$) solutions fall out of SVD with no extra
+          code.
+    \item \textbf{Conditioning at a glance.}  The condition number is
+          $\kappa(A) = \sigma_1 / \sigma_{\min}$.  If $\kappa \approx
+          1/\varepsilon_{\mathrm{mach}}$, you know immediately that
+          \emph{no} algorithm can give you accurate digits.
+\end{itemize}
+
+\begin{tipbox}
+SVD costs $O(\min(m,n)^2 \cdot \max(m,n))$ flops.  For $n = 10{,}000$
+that is $\sim 10^{12}$ flops---a few seconds on a modern CPU.
+For $n = 100{,}000$ it becomes minutes; for $n = 10^6$ it is
+infeasible.  That is when you switch to sparse/iterative methods
+(\S\ref{sec:sparse}--\ref{sec:gmres}).
+\end{tipbox}
+
+\subsection{The Eigen One-Liner}
+
+\begin{lstlisting}
+// Robust solver for any dense matrix
+Eigen::VectorXd x = A.bdcSvd(Eigen::ComputeThinU
+                            | Eigen::ComputeThinV).solve(b);
+\end{lstlisting}
+
+\texttt{bdcSvd} stands for \emph{Bidiagonal Divide-and-Conquer} SVD,
+which is Eigen's fastest dense SVD implementation.
+\texttt{ComputeThinU/V} tells it to compute only the first
+$\min(m,n)$ columns of $U$ and $V$, saving memory and time.
+
+\subsection{Full Example}
+
+\lstinputlisting[caption={Dense SVD solve with rank and condition number reporting.},
+                 label={lst:svd}]
+                {code/svd_solve.cpp}

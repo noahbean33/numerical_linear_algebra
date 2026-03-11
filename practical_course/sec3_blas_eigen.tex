@@ -1,0 +1,99 @@
+% ══════════════════════════════════════════════════════════════════════════
+% §3  The Library Layer: BLAS & Eigen
+% ══════════════════════════════════════════════════════════════════════════
+\section{The Library Layer: BLAS \& Eigen}
+\label{sec:blas}
+
+\subsection{Why Libraries Beat Hand-Written Loops}
+
+The \textbf{Basic Linear Algebra Subprograms (BLAS)} specification defines
+three levels of operations:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}clcc@{}}
+\toprule
+\textbf{Level} & \textbf{Operation} & \textbf{FLOPs} & \textbf{Data} \\
+\midrule
+1 & $\alpha x + y$ \quad (AXPY)       & $O(n)$   & $O(n)$ \\
+2 & $Ax + y$ \quad (GEMV)             & $O(n^2)$ & $O(n^2)$ \\
+3 & $\alpha AB + \beta C$ \quad (GEMM) & $O(n^3)$ & $O(n^2)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{tipbox}
+Level~3 (GEMM) is the ``Gold Standard'' because its arithmetic intensity
+is $O(n^3)/O(n^2) = O(n)$: the CPU reuses each cache line many times before
+evicting it.  This is why matrix--matrix multiply runs close to peak FLOP/s,
+while matrix--vector multiply is memory-bound.
+\end{tipbox}
+
+Optimised BLAS implementations---\textbf{Intel MKL}, \textbf{OpenBLAS},
+\textbf{BLIS}---apply cache-blocking, SIMD, and multi-threading
+automatically.  A na\"ive triple loop achieves $<5\%$ of peak;
+a tuned GEMM reaches $>90\%$.
+
+\subsection{The SpMV Speed Trap}
+
+Engineers often assume that because they are using a ``fast'' library like
+Eigen or MKL, their sparse solver will hit peak FLOP/s.
+\textbf{It will not.}
+
+When you solve a sparse system iteratively (e.g.\ GMRES on the
+$10^6 \times 10^6$ heat rod), the inner loop is a \emph{Sparse
+Matrix--Vector multiply} (SpMV)---a Level~2 operation.  Its arithmetic
+intensity is $O(\text{nnz})/O(\text{nnz}) = O(1)$: each non-zero is
+loaded from RAM, multiplied once, and never reused.
+
+\begin{warningbox}
+SpMV is \textbf{memory-bandwidth bound}, not compute-bound.
+No amount of SIMD or MKL magic can fix a slow RAM bus if you are
+just streaming a million doubles once per iteration.  On a typical
+desktop with 40~GB/s bandwidth, SpMV on a tridiagonal $10^6$ system
+peaks at $\sim\!3$~GFLOP/s---less than $5\%$ of the CPU's
+theoretical throughput.
+\end{warningbox}
+
+This is why \emph{preconditioning} (\S\ref{sec:gmres}) matters so much:
+reducing the iteration count by $100\times$ is worth far more than any
+micro-optimisation of the SpMV kernel itself.
+
+\subsection{Eigen as a BLAS Wrapper}
+
+When you write
+\begin{lstlisting}
+Eigen::MatrixXd C = A * B;
+\end{lstlisting}
+Eigen's \emph{expression templates} detect this is a GEMM and dispatch to
+whichever BLAS backend is linked at compile time.  The cascade is:
+
+\begin{enumerate}[nosep]
+    \item \textbf{MKL linked?} $\rightarrow$ calls \texttt{cblas\_dgemm}
+          (fastest on Intel hardware).
+    \item \textbf{OpenBLAS linked?} $\rightarrow$ calls its GEMM
+          (good cross-platform default).
+    \item \textbf{Neither?} $\rightarrow$ Eigen's built-in blocked GEMM
+          (decent, but slower than the above).
+\end{enumerate}
+
+\begin{warningbox}
+If you install Eigen but never link a BLAS library, you are leaving
+a $2$--$5\times$ speedup on the table for every dense multiply.
+\end{warningbox}
+
+\subsection{Linking MKL in Practice}
+
+With CMake and Intel oneAPI installed:
+\begin{lstlisting}[language=bash,morekeywords={find_package,target_link_libraries}]
+# CMakeLists.txt
+find_package(MKL REQUIRED)
+target_link_libraries(my_app PRIVATE MKL::MKL)
+add_definitions(-DEIGEN_USE_MKL_ALL)
+\end{lstlisting}
+
+The following snippet benchmarks na\"ive loops against Eigen's GEMM:
+
+\lstinputlisting[caption={BLAS-level GEMM: na\"ive loop vs.\ Eigen.},
+                 label={lst:gemm}]
+                {code/gemm_benchmark.cpp}

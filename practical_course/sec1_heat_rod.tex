@@ -1,0 +1,79 @@
+% ══════════════════════════════════════════════════════════════════════════
+% §1  The Concrete Problem: The 1-D Heat Rod
+% ══════════════════════════════════════════════════════════════════════════
+\section{The Concrete Problem: The 1-D Heat Rod}
+
+\subsection{The Physics}
+
+We have a metal rod of length $L$.  Both ends are held at $0^\circ$C.  A heat
+source $f(x)$ is applied along the rod.  We want the \textbf{steady-state}
+temperature $u(x)$, which satisfies the Poisson equation
+\[
+    -u''(x) = f(x), \qquad u(0) = u(L) = 0.
+\]
+Discretise the rod into $n$ interior points with spacing $h = L/(n+1)$.
+Replacing $u''$ with the second-order central difference gives
+\[
+    \frac{-u_{i-1} + 2u_i - u_{i+1}}{h^2} = f_i,
+    \qquad i = 1,\dots,n.
+\]
+This is a linear system $Au = h^2 f$ with the \textbf{tridiagonal} matrix
+\begin{equation}\label{eq:tridiag}
+    A = \begin{bmatrix}
+         2 & -1 &        &        \\
+        -1 &  2 & -1     &        \\
+           & \ddots & \ddots & \ddots \\
+           &        & -1     &  2
+    \end{bmatrix}
+    \in \mathbb{R}^{n\times n}.
+\end{equation}
+
+% ── Case A ────────────────────────────────────────────────────────────────
+\subsection{Case A: The $3\times 3$ Problem (By Hand)}
+
+Set $n=3$ and $f_i=1$ for all~$i$.  Then $b = h^2[1,1,1]^T$ and
+\[
+    A = \begin{bmatrix} 2 & -1 & 0 \\ -1 & 2 & -1 \\ 0 & -1 & 2 \end{bmatrix}.
+\]
+You can solve this by Gaussian elimination in a few lines.
+The exact solution is $u = \tfrac{1}{4}[1, \tfrac{3}{2}, 1]^T$ (after scaling
+by $h^2$).  Computing $A^{-1}$ directly already requires tracking nine entries
+and two row-reduction passes---even a single rounding mistake
+in one pivot cascades through every subsequent row.
+
+\begin{remark}
+For a \emph{tridiagonal} system, Gaussian elimination is $O(n)$.
+General $LU$ is $O(n^3)$.  Structure \emph{always} matters.
+\end{remark}
+
+The following C++ snippet solves Case~A with Eigen:
+
+\lstinputlisting[caption={Case A: $3\times 3$ heat rod (dense).},
+                 label={lst:heat3}]
+                {code/heat_rod_3x3.cpp}
+
+% ── Case B ────────────────────────────────────────────────────────────────
+\subsection{Case B: The $1{,}000{,}000 \times 1{,}000{,}000$ Problem}
+
+Now the rod has $n = 10^6$ interior points.
+
+\begin{itemize}[nosep]
+    \item A \textbf{dense} $10^6 \times 10^6$ matrix of doubles needs
+          $10^{12} \times 8\;\text{B} = 8\;\text{TB}$ of RAM.
+    \item The tridiagonal $A$ has only $\approx 3n$ non-zeros---about
+          $24\;\text{MB}$.
+\end{itemize}
+
+\begin{warningbox}
+If you try to allocate a dense $10^6 \times 10^6$ matrix,
+your program will be killed by the OS before it prints ``Hello.''
+\end{warningbox}
+
+This single observation motivates every topic that follows:
+\emph{sparse storage} (\S\ref{sec:sparse}),
+\emph{iterative solvers} (\S\ref{sec:gmres}),
+and \emph{hardware awareness} (\S\ref{sec:hardware}).
+
+\lstinputlisting[caption={Case B: $10^6$ heat rod (sparse, direct solve).},
+                 label={lst:heat1M}]
+                {code/heat_rod_1M.cpp}

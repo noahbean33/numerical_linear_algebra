@@ -1,0 +1,151 @@
+% ══════════════════════════════════════════════════════════════════════════
+% §7  The "Don't Do This" Checklist
+% ══════════════════════════════════════════════════════════════════════════
+\section{The ``Don't Do This'' Checklist}
+\label{sec:pitfalls}
+
+Every bug below has crashed a real simulation at least once.
+They are ordered from ``most silent'' to ``most spectacular.''
+
+% ── Pitfall 1 ─────────────────────────────────────────────────────────
+\subsection{Silent Failure: Ignoring Solver Status}
+
+\begin{warningbox}
+Just because a solver function \emph{returns} does not mean it
+\emph{succeeded}.  Eigen solvers set an \texttt{info()} flag.
+If you never check it, you will silently propagate garbage.
+\end{warningbox}
+
+\begin{lstlisting}
+// BAD: no error check
+Eigen::VectorXd x = solver.solve(b);
+use(x);  // x might be nonsense
+
+// GOOD: always check
+Eigen::VectorXd x = solver.solve(b);
+if (solver.info() != Eigen::Success) {
+    std::cerr << "Solver failed: " << solver.info() << "\n";
+    return EXIT_FAILURE;
+}
+\end{lstlisting}
+
+% ── Pitfall 2 ─────────────────────────────────────────────────────────
+\subsection{Comparing Floating-Point Values to Zero}
+
+Floating-point arithmetic is \emph{approximate}.  After a chain of
+operations, a value that should be exactly zero will instead be
+$\sim 10^{-16}$.
+
+\begin{lstlisting}
+// BAD: will almost never trigger
+if (determinant == 0.0) { /* singular */ }
+
+// ALSO BAD: 1e-12 is an arbitrary "magic number".
+// If matrix entries are ~1e-20, then det = 1e-15 is "huge".
+// If entries are ~1e+10, then det = 1e-12 is effectively zero.
+if (std::abs(determinant) < 1e-12) { /* fragile */ }
+
+// GOOD: use a *relative* tolerance
+double scale = A.norm();  // or max entry magnitude
+if (std::abs(val) < epsilon * scale) { /* effectively zero */ }
+\end{lstlisting}
+
+\begin{tipbox}
+Absolute tolerances like \texttt{1e-12} are \textbf{scale-dependent}
+and will silently give wrong answers when your matrix entries are
+very large or very small.  The most robust check for singularity is the
+\emph{condition number} $\kappa(A) = \sigma_1 / \sigma_{\min}$,
+which is scale-invariant.
+If $\kappa > 1/\varepsilon_{\mathrm{mach}} \approx 10^{16}$,
+the matrix is numerically singular regardless of its determinant.
+\end{tipbox}
+
+% ── Pitfall 3 ─────────────────────────────────────────────────────────
+\subsection{Allocation Inside Hot Loops}
+
+\texttt{Eigen::MatrixXd} dynamically allocates heap memory.
+Allocating and freeing inside a tight loop is orders of magnitude
+slower than the actual arithmetic.
+
+\begin{lstlisting}
+// BAD: allocates n x n on every iteration
+while (running) {
+    Eigen::MatrixXd A(n, n);   // malloc + free every loop
+    fill(A);
+    solve(A, b);
+}
+
+// GOOD: allocate once, reuse
+Eigen::MatrixXd A(n, n);
+while (running) {
+    fill(A);
+    solve(A, b);
+}
+\end{lstlisting}
+
+For fixed-size small matrices ($n \le 4$), use \texttt{Eigen::Matrix3d}
+or \texttt{Eigen::Matrix4d}---they live on the stack and cost zero
+allocation overhead.
+
+% ── Pitfall 4 ─────────────────────────────────────────────────────────
+\subsection{Skipping the Residual Check}
+
+This is the single most important engineering habit in numerical
+computing.  After every solve, compute:
+\[
+    \text{relative residual} = \frac{\|Ax - b\|}{\|b\|}.
+\]
+
+\begin{lstlisting}
+Eigen::VectorXd x = solver.solve(b);
+double rel_res = (A * x - b).norm() / b.norm();
+if (rel_res > 1e-8) {
+    std::cerr << "WARNING: residual = " << rel_res
+              << " -- solution may be inaccurate\n";
+}
+\end{lstlisting}
+
+\begin{warningbox}
+A small residual does \emph{not} guarantee a small error in~$x$.
+If $\kappa(A)$ is large, even a tiny residual can correspond to
+a wildly wrong solution.  Always pair the residual check with
+a condition number estimate when possible.
+\end{warningbox}
+
+% ── Pitfall 5 ─────────────────────────────────────────────────────────
+\subsection{Aliasing in Eigen Expressions}
+
+Eigen uses lazy evaluation.  The classic ``silent killer'' is
+\texttt{A = A * A}: the same matrix appears on both sides of the
+assignment, and without intervention Eigen would read and write
+the same memory simultaneously, producing garbage.
+
+In modern Eigen ($\ge 3.3$), the library detects \emph{some}
+aliasing patterns automatically---for example,
+\texttt{A = A * B} (where \texttt{B} is a \emph{different} matrix)
+is handled correctly.  However, \texttt{A = A * A} remains the
+classic case that requires explicit intervention.
+
+\begin{lstlisting}
+// DANGEROUS: same matrix on both sides
+A = A * A;   // Eigen 3.3+ may catch this, but don't rely on it
+
+// SAFE: .eval() is cheap insurance for any self-referencing expression
+A = (A * A).eval();
+// or equivalently:
+Eigen::MatrixXd temp = A * A;
+A = temp;
+\end{lstlisting}
+
+\begin{tipbox}
+Rule of thumb: if the \textbf{same matrix name appears on both sides}
+of the equals sign, add \texttt{.eval()}.  The cost is one temporary
+allocation---trivial compared to the hours you will spend debugging
+silent corruption.
+\end{tipbox}
+
+\subsection{Complete Pitfall Demonstration}
+
+\lstinputlisting[caption={All five pitfalls demonstrated and fixed.},
+                 label={lst:pitfalls}]
+                {code/pitfalls_demo.cpp}

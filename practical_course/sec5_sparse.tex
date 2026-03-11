@@ -1,0 +1,112 @@
+% ══════════════════════════════════════════════════════════════════════════
+% §5  Sparse Systems & The "Triplet" Rule
+% ══════════════════════════════════════════════════════════════════════════
+\section{Sparse Systems \& The ``Triplet'' Rule}
+\label{sec:sparse}
+
+\subsection{Why Sparse?}
+
+Most matrices that arise from discretising PDEs are \emph{sparse}: the
+fraction of non-zero entries is $O(1/n)$ or smaller.  Our heat-rod
+tridiagonal has $\sim 3n$ non-zeros out of $n^2$ entries.  A 2-D finite
+element mesh on $n$ nodes typically produces $\sim 7n$ non-zeros
+(depending on element connectivity).
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+& \textbf{Dense} & \textbf{Sparse (CSR)} \\
+\midrule
+Storage for $10^6 \times 10^6$ & $8\;\text{TB}$ & $\sim 24\;\text{MB}$ \\
+Matrix--vector multiply & $O(n^2)$ & $O(\text{nnz})$ \\
+Direct solve & $O(n^3)$ & depends on fill-in \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{The CSR Format}
+
+\textbf{Compressed Sparse Row (CSR)} stores three arrays:
+\begin{itemize}[nosep]
+    \item \texttt{values[]}: all non-zero entries, row by row.
+    \item \texttt{col\_indices[]}: the column index of each entry.
+    \item \texttt{row\_ptr[]}: for each row~$i$, the index into
+          \texttt{values} where row~$i$ starts.
+\end{itemize}
+
+\begin{example}
+For the $3\times 3$ tridiagonal matrix from \S1:
+\[
+    A = \begin{bmatrix} 2 & -1 & 0 \\ -1 & 2 & -1 \\ 0 & -1 & 2 \end{bmatrix}
+\]
+\begin{center}
+\texttt{values = [2, -1, -1, 2, -1, -1, 2]} \\
+\texttt{col\_indices = [0, 1, 0, 1, 2, 1, 2]} \\
+\texttt{row\_ptr = [0, 2, 5, 7]}
+\end{center}
+Total storage: 7 doubles + 7 ints + 4 ints = 100 bytes, versus
+72 bytes for the full dense matrix.  The savings become dramatic
+when $n > 1000$.
+\end{example}
+
+\subsection{The Golden Rule of Assembly}
+
+\begin{warningbox}
+\textbf{Never} insert entries one at a time into a compressed sparse matrix:
+\begin{lstlisting}
+// BAD: O(n^2) total cost -- shifts memory on every insert
+for (int i = 0; i < n; ++i)
+    A.insert(i, i) = 2.0;
+\end{lstlisting}
+Each \texttt{insert} may need to shift all subsequent entries to make room.
+Over $n$ insertions, this is $O(n^2)$.
+\end{warningbox}
+
+\textbf{The Triplet Method:} collect all $(i, j, v)$ entries into a flat
+\texttt{std::vector<Triplet>}, then compress once.
+
+\begin{lstlisting}
+std::vector<Eigen::Triplet<double>> triplets;
+triplets.reserve(3 * n);  // pre-allocate
+
+for (int i = 0; i < n; ++i) {
+    triplets.push_back({i, i, 2.0});
+    if (i > 0)     triplets.push_back({i, i-1, -1.0});
+    if (i < n - 1) triplets.push_back({i, i+1, -1.0});
+}
+
+Eigen::SparseMatrix<double> A(n, n);
+A.setFromTriplets(triplets.begin(), triplets.end());
+\end{lstlisting}
+
+\texttt{setFromTriplets} sorts and compresses in $O(\text{nnz}\log\text{nnz})$.
+If duplicate $(i,j)$ pairs exist, their values are \emph{summed} by default---this is exactly what finite element assembly needs.
+
+\subsection{The Triplet Memory Trap}
+
+Each \texttt{Eigen::Triplet<double>} stores three values (row, column,
+value)---typically 24~bytes.  For a 1-D rod with $n = 10^6$ and $3n$
+non-zeros, that is $\sim\!72$~MB just for the temporary vector.
+For a 3-D finite element mesh, the triplet vector can easily exceed the
+memory of the final compressed sparse matrix itself.
+
+\begin{tipbox}
+Two rules to keep triplet memory under control:
+\begin{enumerate}[nosep]
+    \item \textbf{Always} call \texttt{triplets.reserve(expected\_nnz)}
+          before the assembly loop.  Without it, \texttt{std::vector}
+          will re-allocate and copy the entire buffer multiple times,
+          temporarily tripling your memory footprint.
+    \item \textbf{Free immediately} after compression.  Either scope the
+          vector in a block, or call
+          \texttt{triplets.clear(); triplets.shrink\_to\_fit();}
+          right after \texttt{setFromTriplets}.
+\end{enumerate}
+\end{tipbox}
+
+\subsection{Full Example: 2-D Poisson on a Grid}
+
+\lstinputlisting[caption={Sparse assembly with triplets for a 2-D Poisson problem.},
+                 label={lst:sparse2d}]
+                {code/sparse_poisson_2d.cpp}

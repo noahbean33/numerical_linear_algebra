@@ -1,0 +1,134 @@
+\documentclass[11pt,letterpaper]{article}
+
+% ── Packages ──────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{tcolorbox}
+
+% ── Colors ────────────────────────────────────────────────────────────────
+\definecolor{codeblue}{RGB}{46,134,171}
+\definecolor{codegray}{RGB}{100,100,100}
+\definecolor{codegreen}{RGB}{68,187,164}
+\definecolor{codebg}{RGB}{248,248,248}
+\definecolor{warnred}{RGB}{232,72,85}
+
+% ── Listings style for C++ ────────────────────────────────────────────────
+\lstdefinestyle{cpp}{
+    language=C++,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{codeblue}\bfseries,
+    commentstyle=\color{codegray}\itshape,
+    stringstyle=\color{codegreen},
+    backgroundcolor=\color{codebg},
+    frame=single,
+    rulecolor=\color{codegray!30},
+    numbers=left,
+    numberstyle=\tiny\color{codegray},
+    numbersep=8pt,
+    breaklines=true,
+    tabsize=4,
+    showstringspaces=false,
+    columns=flexible,
+    morekeywords={Eigen,MatrixXd,VectorXd,SparseMatrix,Triplet,
+                  SparseLU,BiCGSTAB,IncompleteLUT,ComputeThinU,
+                  ComputeThinV,Success}
+}
+\lstset{style=cpp}
+
+% ── Theorem-like environments ─────────────────────────────────────────────
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+
+% ── Warning box ───────────────────────────────────────────────────────────
+\newtcolorbox{warningbox}{
+    colback=warnred!5,
+    colframe=warnred!70,
+    fonttitle=\bfseries,
+    title={Warning}
+}
+
+% ── Tip box ───────────────────────────────────────────────────────────────
+\newtcolorbox{tipbox}{
+    colback=codegreen!5,
+    colframe=codegreen!70,
+    fonttitle=\bfseries,
+    title={Engineer's Tip}
+}
+
+% ── Header / Footer ──────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textsc{Practical NLA}}
+\rhead{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ── Title ─────────────────────────────────────────────────────────────────
+\title{\textbf{Numerical Linear Algebra for Engineers}\\[6pt]
+       \large The Combat Medic Guide:\\
+       Physics $\rightarrow$ Code $\rightarrow$ Result}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\begin{abstract}
+This is not a math textbook. This is a field manual. We cut the proofs, keep the
+tools, and show you how to solve real linear systems in C++ using Eigen. Every
+section follows the same arc: \textbf{here is the physics}, \textbf{here is why
+the naive approach fails}, and \textbf{here is the code that works}.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\input{sec1_heat_rod}
+\input{sec2_hardware}
+\input{sec3_blas_eigen}
+\input{sec4_svd}
+\input{sec5_sparse}
+\input{sec6_gmres}
+\input{sec7_pitfalls}
+
+% ── Summary ───────────────────────────────────────────────────────────────
+\section{Summary for Busy Engineers}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Situation} & \textbf{Tool} & \textbf{Eigen One-Liner} \\
+\midrule
+Small dense system ($n < 10{,}000$)
+    & SVD
+    & \texttt{A.bdcSvd(\ldots).solve(b)} \\
+Huge sparse system ($n > 100{,}000$)
+    & GMRES + ILU
+    & \texttt{BiCGSTAB<\ldots,IncompleteLUT>} \\
+Slow performance
+    & Check memory layout
+    & Link to Intel MKL / OpenBLAS \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{tipbox}
+After \emph{every} solve, compute the relative residual
+$\|Ax - b\| / \|b\|$. If it is not small, your answer is fiction.
+\end{tipbox}
+
+\end{document}

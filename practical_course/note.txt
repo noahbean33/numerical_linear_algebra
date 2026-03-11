@@ -1,0 +1,103 @@
+This is the "Combat Medic" guide to Numerical Linear Algebra for engineers. We are cutting the fluff and focusing on the path from **Physics $\rightarrow$ Code $\rightarrow$ Result.**
+
+---
+
+## 1. The Concrete Problem: The 1D Heat Rod
+
+To keep a single throughline, we use the **Poisson Equation** (Heat Equation).
+
+* **The Physics:** We have a metal rod. The ends are fixed at $0^\circ\text{C}$. We apply a heat source along the rod. We want to find the steady-state temperature $u(x)$.
+* **The Math:** This discretizes into the classic "Tridiagonal" matrix $A$:
+
+$$A = \begin{bmatrix} 2 & -1 & 0 \\ -1 & 2 & -1 \\ 0 & -1 & 2 \end{bmatrix}$$
+
+
+
+### Case A: The $3 \times 3$ (By Hand)
+
+Solve $Ax = b$ where $b = [1, 1, 1]^T$. We walk through why $A^{-1}$ is painful to calculate manually and how even a small mistake in precision cascades.
+
+### Case B: The $1,000,000 \times 1,000,000$ (The C++ Reality)
+
+Now the rod has a million sensors. You cannot store this as a dense matrix (it would take **8 Terabytes** of RAM). This motivates everything that follows.
+
+---
+
+## 2. Hardware Reality: Why Your $O(n^3)$ is Slow
+
+In C++, **memory is the bottleneck, not math.**
+
+* **Cache Locality:** We show two code snippets. One traverses a matrix by row, the other by column.
+* **Row-major (C++ default):** `A[i][j]` visits neighbors in memory. Fast.
+* **Column-major (Eigen default):** If you access `A[i][j]` in a row-loop, you jump across memory, causing "cache misses."
+
+
+* **SIMD (Single Instruction, Multiple Data):** Modern CPUs (AVX-512) can multiply 8 doubles at once. If your data isn't aligned and contiguous, the CPU idles while waiting for RAM.
+
+---
+
+## 3. The Library Layer: BLAS & Eigen
+
+Don't write loops. Use **BLAS (Basic Linear Algebra Subprograms)**.
+
+* **Level 3 (GEMM):** Matrix-Matrix multiply. It’s the "Gold Standard" because it reuses data already in the cache.
+* **The Eigen Wrapper:** Explain that when you write `C = A * B;` in Eigen, it’s actually looking for an optimized BLAS library (like **Intel MKL** or **OpenBLAS**) to do the heavy lifting.
+
+---
+
+## 4. The Direct Hammer: SVD (The "Small" Problem)
+
+If your matrix fits in memory (e.g., $10,000 \times 10,000$), use the **Singular Value Decomposition**.
+
+* **Why?** It is indestructible. It handles redundant equations and noise.
+* **The Eigen Command:**
+
+```cpp
+// Robust solver for any dense matrix
+Eigen::VectorXd x = A.bdcSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
+
+```
+
+---
+
+## 5. Sparse Systems & The "Triplet" Rule
+
+For our $1,000,000 \times 1,000,000$ heat rod, we use **Sparse Matrices**.
+
+* **The CSR Format:** Only store the non-zero values and their indices.
+* **The Golden Rule of Assembly:** Never use `A.insert(i, j) = val` in a loop. It’s $O(n^2)$ because it has to shift memory every time.
+* **The Triplet Method:** Push into a `std::vector`, then "compress" once.
+
+```cpp
+std::vector<Eigen::Triplet<double>> components;
+for(...) { components.push_back({i, j, val}); }
+A.setFromTriplets(components.begin(), components.end());
+
+```
+
+---
+
+## 6. The Iterative Hammer: GMRES (The "Big" Problem)
+
+When the matrix is too big for SVD, we use **GMRES**.
+
+* **The Logic:** It doesn't "solve" the matrix; it guesses, checks the error (residual), and improves the guess.
+* **The Universal Choice:** Unlike other methods, GMRES works even if your matrix isn't symmetric.
+* **Preconditioning (The Secret Sauce):** We solve $M^{-1}Ax = M^{-1}b$. Without $M$, GMRES might take 5,000 steps. With a simple **Incomplete LU (ILU)** preconditioner, it might take 50.
+
+---
+
+## 7. The "Don't Do This" Checklist
+
+* **Silent Failure:** Always check `if(solver.info() != Eigen::Success)`. Just because a function returns doesn't mean it solved the problem.
+* **Comparing to Zero:** Never use `if (val == 0.0)`. Use `if (val < 1e-12)`.
+* **Allocation Sins:** Never define `Eigen::MatrixXd A` inside a high-frequency `while` loop. Memory allocation is expensive; do it once outside.
+* **Residual Checks:** After solving $Ax=b$, always compute $\|Ax - b\| / \|b\|$. If this is large, your answer is fiction.
+
+---
+
+### Summary for Busy Engineers
+
+1. **Is it small?** Use **SVD**.
+2. **Is it huge/sparse?** Use **GMRES** with **ILU Preconditioning**.
+3. **Is it slow?** Check your memory layout and link to **Intel MKL**.

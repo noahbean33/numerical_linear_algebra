@@ -1,0 +1,125 @@
+% ══════════════════════════════════════════════════════════════════════════
+% §6  The Iterative Hammer: GMRES
+% ══════════════════════════════════════════════════════════════════════════
+\section{The Iterative Hammer: GMRES (The ``Big'' Problem)}
+\label{sec:gmres}
+
+\subsection{When Direct Solvers Break Down}
+
+Sparse direct solvers (SparseLU, Cholesky) work beautifully up to
+$n \sim 10^5$--$10^6$ in 2-D.  In 3-D, however, the factorisation
+produces \emph{fill-in}: entries that were zero in $A$ become non-zero
+in $L$ and $U$.  For a 3-D mesh with $n$ unknowns, fill-in can grow
+as $O(n^{4/3})$, quickly exhausting memory.
+
+Iterative solvers avoid this entirely: they never form $L$ or $U$.
+They only need the ability to compute $Ax$ for a given~$x$.
+
+\subsection{How GMRES Works (The 60-Second Version)}
+
+\textbf{Generalised Minimal Residual (GMRES)} builds an orthonormal
+basis $\{q_1, q_2, \dots, q_k\}$ for the \emph{Krylov subspace}
+\[
+    \mathcal{K}_k(A, r_0) = \operatorname{span}\{r_0,\; Ar_0,\;
+    A^2 r_0,\; \dots,\; A^{k-1} r_0\},
+\]
+where $r_0 = b - Ax_0$ is the initial residual.  At step~$k$, it
+picks the vector in $x_0 + \mathcal{K}_k$ that minimises the
+residual $\|b - Ax\|_2$.
+
+\begin{itemize}[nosep]
+    \item \textbf{Convergence:} GMRES converges in at most $n$ steps
+          (in exact arithmetic).  In practice it converges much
+          sooner if the eigenvalues of $A$ are clustered.
+    \item \textbf{Universality:} Unlike Conjugate Gradient (CG),
+          GMRES works for \emph{any} non-singular matrix---symmetric
+          or not.
+    \item \textbf{Memory:} Each iteration stores one new Krylov vector.
+          For very large $n$, use \emph{restarted} GMRES($m$),
+          which restarts after $m$ vectors.
+\end{itemize}
+
+\subsection{Preconditioning: The Secret Sauce}
+
+Without preconditioning, GMRES may need thousands of iterations.
+A \textbf{preconditioner} $M \approx A$ transforms the system to
+\[
+    M^{-1}A\,x = M^{-1}b.
+\]
+If $M^{-1}A \approx I$, the eigenvalues cluster near~1 and GMRES
+converges in very few steps.  The art is choosing $M$ so that:
+
+\begin{enumerate}[nosep]
+    \item $M^{-1}v$ is cheap to apply (much cheaper than solving $Ax = v$).
+    \item $M^{-1}A$ has clustered eigenvalues.
+\end{enumerate}
+
+\begin{definition}[Incomplete LU (ILU)]
+Perform LU factorisation of $A$ but \textbf{drop} fill-in entries
+below a threshold.  The result $M = \tilde{L}\tilde{U} \approx A$
+is cheap to store and apply.  Eigen provides this as
+\texttt{IncompleteLUT}.
+\end{definition}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Configuration} & \textbf{Typical iterations} & \textbf{Total time} \\
+\midrule
+No preconditioner      & $1{,}000$--$10{,}000$   & Slow \\
+Jacobi (diagonal)      & $500$--$5{,}000$        & Moderate \\
+ILU(0)                 & $50$--$200$             & Fast \\
+ILU with threshold     & $10$--$50$              & Fastest \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{warningbox}
+A preconditioner that is too aggressive (dropping too many fill-in entries)
+can actually \emph{slow down} convergence or cause divergence.
+Monitor the residual history; if it stalls or oscillates, tighten the
+drop tolerance.
+\end{warningbox}
+
+\subsection{GMRES vs.\ BiCGSTAB: Choosing Your Hammer}
+
+Eigen provides two main Krylov solvers.  They are \emph{not}
+interchangeable:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+& \textbf{GMRES} & \textbf{BiCGSTAB} \\
+\midrule
+Robustness        & Indestructible      & Can stall or diverge \\
+Memory per iter   & $O(n)$ (stores $q_k$) & $O(n)$ (fixed) \\
+Iterations/solve  & Monotone decrease   & Non-monotone (``jittery'') \\
+Best for          & Any matrix          & Mildly non-symmetric \\
+Failure mode      & Slow, never wrong   & Fast, sometimes explodes \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{warningbox}
+If the matrix is \textbf{highly non-symmetric} or has
+\textbf{eigenvalues near the origin}, BiCGSTAB can stagnate or
+diverge where GMRES would slowly grind to a correct result.
+If you need a ``Magic Hammer'' that never fails, use GMRES.
+If you have a deadline and can verify convergence, BiCGSTAB is
+often faster per iteration.
+\end{warningbox}
+
+\subsection{Eigen Implementation}
+
+Eigen ships \texttt{BiCGSTAB} in the core module and \texttt{GMRES}
+in the unsupported module (\texttt{<Eigen/IterativeSolvers>}).
+Both accept any preconditioner as a template parameter.  The code
+below demonstrates all three configurations---unpreconditioned BiCGSTAB,
+ILU-preconditioned BiCGSTAB, and ILU-preconditioned GMRES---on the
+same problem so you can compare iteration counts and timing directly.
+
+\lstinputlisting[caption={Iterative solve: BiCGSTAB vs.\ GMRES with ILU preconditioning.},
+                 label={lst:gmres}]
+                {code/iterative_solve.cpp}

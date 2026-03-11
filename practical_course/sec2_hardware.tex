@@ -1,0 +1,69 @@
+% ══════════════════════════════════════════════════════════════════════════
+% §2  Hardware Reality: Why Your O(n³) is Slow
+% ══════════════════════════════════════════════════════════════════════════
+\section{Hardware Reality: Why Your \texorpdfstring{$O(n^3)$}{O(n³)} is Slow}
+\label{sec:hardware}
+
+In C++, \textbf{memory is the bottleneck, not arithmetic}.
+A modern CPU can execute $\sim\!10^{10}$ floating-point operations per second,
+but fetching a cache line from main RAM takes $\sim\!100$ ns---long enough
+for $\sim\!200$ multiplies to have completed.
+
+\subsection{Cache Locality}
+
+CPUs load data in \emph{cache lines} (typically 64 bytes = 8 doubles).
+If your next access is a neighbour in memory, it is already in cache
+(\textbf{cache hit}).  If you jump across rows or columns, the CPU stalls
+while fetching a new line (\textbf{cache miss}).
+
+\begin{definition}[Row-major vs.\ Column-major]
+In \textbf{row-major} layout (C/C++ default), the element
+$A_{i,j}$ is stored at offset $i \cdot n + j$.
+Incrementing $j$ visits contiguous memory.
+
+In \textbf{column-major} layout (Fortran, MATLAB, \textbf{Eigen default}),
+the element $A_{i,j}$ is stored at offset $j \cdot m + i$.
+Incrementing $i$ visits contiguous memory.
+\end{definition}
+
+\begin{warningbox}
+Eigen stores matrices in \textbf{column-major} order by default.
+If you write a row-traversal loop \texttt{for(i) for(j) A(i,j)},
+every inner-loop access jumps by $m$ doubles---a cache miss every time.
+Swap the loop order, or use \texttt{Eigen::RowMajor}.
+\end{warningbox}
+
+The following benchmark makes the difference concrete:
+
+\lstinputlisting[caption={Cache locality: row-major vs.\ column-major traversal.},
+                 label={lst:cache}]
+                {code/cache_locality.cpp}
+
+\subsection{SIMD: Single Instruction, Multiple Data}
+
+Modern x86 CPUs have \textbf{AVX-2} (4 doubles/cycle) or \textbf{AVX-512}
+(8 doubles/cycle) vector units.  When your data is \emph{contiguous and
+aligned}, the compiler auto-vectorises your loop and processes 4--8 elements
+per instruction.  When data is scattered, the vector unit idles.
+
+\begin{tipbox}
+You almost never write SIMD intrinsics by hand.
+The rule is simpler: \textbf{keep your data contiguous}, and the
+compiler (with \texttt{-O2 -march=native}) will vectorise for you.
+Libraries like Eigen and MKL are already written to exploit this.
+\end{tipbox}
+
+\subsection{The Takeaway}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Access pattern} & \textbf{Cache behaviour} & \textbf{Relative speed} \\
+\midrule
+Contiguous (correct order) & Hits    & $1\times$ \\
+Stride-$n$ (wrong order)   & Misses  & $3$--$10\times$ slower \\
+Random access              & Misses  & $10$--$50\times$ slower \\
+\bottomrule
+\end{tabular}
+\end{center}
