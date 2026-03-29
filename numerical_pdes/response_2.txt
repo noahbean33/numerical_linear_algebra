@@ -1,0 +1,98 @@
+Welcome. Since we only have 120 minutes to move you from "math on a whiteboard" to "high-performance C++ binaries," we are going to skip the proofs and focus on the **mechanics of stability** and the **ecosystem of tools**.
+
+Numerical PDEs are 10% calculus and 90% linear algebra and data structures. Here is your 2-hour survival curriculum.
+
+---
+
+## Block 1: The PDE Taxonomy (30 Minutes)
+*Stop trying to solve every problem with the same algorithm.*
+
+To solve a PDE, you must first identify its "personality." Using the wrong method is the #1 cause of "NaN" outputs and divergent simulations.
+
+* **Elliptic (Steady State):** Think Poisson equation ($-\nabla^2 u = f$). Information propagates infinitely fast. You need global solvers (Sparse LU, Conjugate Gradient).
+* **Parabolic (Diffusion):** Think Heat equation ($u_t = \alpha \nabla^2 u$). Information spreads. You need time-stepping (Implicit is usually safer).
+* **Hyperbolic (Advection/Waves):** Think Wave equation or Fluid flow ($u_t + c u_x = 0$). Information travels at finite speeds along "characteristics."
+    * **The Gotcha:** The **CFL Condition** ($C = \frac{u \Delta t}{\Delta x} \le C_{max}$). If your time step is too large relative to your grid size, your simulation *will* explode.
+
+
+
+---
+
+## Block 2: The Modern C++ Stack (30 Minutes)
+*Don't hand-roll your own matrix classes.*
+
+In industry, we stand on the shoulders of giants. You should be using these three tiers of libraries:
+
+| Tier | Library | Purpose |
+| :--- | :--- | :--- |
+| **Linear Algebra** | **Eigen** | The gold standard. Header-only, fast, and handles sparse matrices beautifully. |
+| **PDE Framework** | **MFEM** / **deal.II** | High-order Finite Element libraries. They handle the "bookkeeping" of meshes and basis functions. |
+| **Solvers** | **PETSc** / **Trilinos** | If you are running on 1,000+ CPU cores, you use these for parallel linear algebra. |
+
+### The "Hello World" of Numerical PDEs: Eigen
+Most of your work involves filling a **Sparse Matrix**. Never use a dense matrix for a PDE; you will run out of RAM instantly.
+
+```cpp
+#include <Eigen/Sparse>
+#include <vector>
+
+// Define a sparse matrix for a 1D Poisson problem
+void solve() {
+    int N = 1000;
+    Eigen::SparseMatrix<double> A(N, N);
+    Eigen::VectorXd b(N), x(N);
+
+    // Assembly: Use Triplets for efficiency (don't insert directly into A)
+    std::vector<Eigen::Triplet<double>> triplets;
+    for(int i=1; i<N-1; ++i) {
+        triplets.push_back({i, i-1, -1.0});
+        triplets.push_back({i, i,    2.0});
+        triplets.push_back({i, i+1, -1.0});
+    }
+    A.setFromTriplets(triplets.begin(), triplets.end());
+
+    // Solve using a Sparse LU Decomposition
+    Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
+    solver.compute(A);
+    x = solver.solve(b);
+}
+```
+
+---
+
+## Block 3: Finite Elements and Meshing (45 Minutes)
+*Turning the continuous into the discrete.*
+
+We will focus on the **Finite Element Method (FEM)** because it handles complex engineering geometries better than Finite Differences.
+
+* **The Weak Form:** You don't solve the PDE directly; you solve an integral version of it.
+* **Basis Functions:** We approximate the solution as a sum of simple shapes (usually little triangles or quads).
+* **Integration (Gauss Quadrature):** How the computer actually "calculates" the physics inside each element.
+
+
+
+### The Workflow:
+1.  **Mesh Generation:** Use **Gmsh** (Open Source) to turn your CAD file into a `.msh` file.
+2.  **Assembly:** Iterate over every element, calculate its "local" stiffness, and stamp it into the "global" matrix.
+3.  **Boundary Conditions:**
+    * **Dirichlet:** You know the value (e.g., "The wall is exactly 100°C").
+    * **Neumann:** You know the flux (e.g., "Heat is entering at 50 Watts").
+
+---
+
+## Block 4: Production Wisdom & Gotchas (15 Minutes)
+*What they don't teach in the textbook.*
+
+1.  **Preconditioning is Everything:** For large systems, $Ax = b$ takes too long. A **Preconditioner** ($P^{-1}Ax = P^{-1}b$) makes the matrix "easier" to solve. If your solver is stalling, your preconditioner is likely the culprit.
+2.  **Floating Point Safety:** When calculating grid spacing ($dx$), never use `float`. Use `double`. Round-off errors in PDEs accumulate over thousands of time steps and can manifest as "ghost forces."
+3.  **The "L-Shape" Warning:** If your geometry has sharp internal corners, your gradients ($\nabla u$) will go to infinity. You need to refine the mesh specifically at those corners (Adaptive Mesh Refinement).
+4.  **Verification:** Always test your code against an "Analytical Solution" (e.g., a simple sine wave) before running a complex 3D airplane wing.
+
+---
+
+### Your Robust Toolset
+* **Language:** C++17 or later.
+* **Build System:** CMake (Essential for linking libraries like Eigen and MFEM).
+* **Visualization:** **ParaView**. Export your data as `.vtu` or `.vtk` files. Don't try to plot 3D fields in C++.
+
+**Would you like me to generate a complete CMakeLists.txt file and a 1D Heat Equation solver using Eigen to get your first project compiling?**

@@ -1,0 +1,449 @@
+# Numerical PDEs for Engineers: 2-Hour Lecture Curriculum
+
+---
+
+## Philosophy of the Lecture
+
+Three constraints shape everything: 2 hours, engineers (not mathematicians), need working code by the end. That means:
+
+- **Theory as failure diagnosis**, not prerequisite. You learn *why* central differences are second-order when your first-order scheme blows up, not before.
+- **One complete worked example per method**, not surveys.
+- **Library-first after fundamentals** — you should leave knowing what to `apt install` before you write a single line.
+
+---
+
+## The Universal Pipeline (5 min — non-negotiable opener)
+
+Every numerical PDE solver, regardless of method, is this:
+
+```
+PDE (continuous) → Discretization → Linear System Ax = b → Solve → Postprocess
+```
+
+Everything else is details about which step you're in. The two hardest steps in practice are **meshing** (getting a good domain discretization) and **solving** (the linear algebra). The math between them is usually the *easy* part.
+
+Draw this on the board and come back to it every time you introduce a new method.
+
+---
+
+## Block 1 — FDM: Your First Weapon (25 min)
+
+### Why start here
+FDM is the most transparent method. The discretization is naked — you see exactly what approximation you're making. It also exposes the core stability concepts that carry into FEM and FVM.
+
+### Theory (5 min)
+Taylor expand $u(x+h)$ and $u(x-h)$, add them, get the central difference:
+
+$$\frac{u(x+h) - 2u(x) + u(x-h)}{h^2} = u''(x) + O(h^2)$$
+
+This is the *only* derivation you do. Everything else follows from it.
+
+### Worked problem: 1D steady-state heat equation
+$$-u'' = f(x), \quad x \in [0,1], \quad u(0) = u(1) = 0$$
+
+This produces a **tridiagonal** $Ax = b$. Code it from scratch with Eigen:
+
+```cpp
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
+#include <vector>
+#include <iostream>
+
+int main() {
+    const int N = 100;
+    const double h = 1.0 / (N + 1);
+
+    // Sparse tridiagonal assembly
+    Eigen::SparseMatrix<double> A(N, N);
+    Eigen::VectorXd b(N), x(N);
+
+    std::vector<Eigen::Triplet<double>> triplets;
+    for (int i = 0; i < N; ++i) {
+        triplets.emplace_back(i, i, 2.0 / (h * h));
+        if (i > 0)     triplets.emplace_back(i, i-1, -1.0 / (h * h));
+        if (i < N - 1) triplets.emplace_back(i, i+1, -1.0 / (h * h));
+        b(i) = 1.0;  // f(x) = 1
+    }
+    A.setFromTriplets(triplets.begin(), triplets.end());
+
+    Eigen::SparseLU<Eigen::SparseMatrix<double>> solver;
+    solver.compute(A);
+    x = solver.solve(b);
+
+    // Exact solution: u(x) = x(1-x)/2
+    double max_err = 0.0;
+    for (int i = 0; i < N; ++i) {
+        double xi = (i + 1) * h;
+        max_err = std::max(max_err, std::abs(x(i) - xi * (1.0 - xi) / 2.0));
+    }
+    std::cout << "Max error: " << max_err << " (expected ~" << h*h/10 << ")\n";
+}
+```
+
+**Point to make**: Run with N=10, N=100, N=1000. Watch error scale as $h^2$. This is convergence analysis in 30 seconds.
+
+### Time-dependent: 2D heat equation and the CFL condition (10 min)
+
+$$\frac{\partial u}{\partial t} = \alpha \nabla^2 u$$
+
+Explicit (Forward Euler) discretization:
+$$u_{i,j}^{n+1} = u_{i,j}^n + \frac{\alpha \Delta t}{h^2}(u_{i+1,j}^n + u_{i-1,j}^n + u_{i,j+1}^n + u_{i,j-1}^n - 4u_{i,j}^n)$$
+
+**The CFL condition**: stability requires $\frac{\alpha \Delta t}{h^2} \leq \frac{1}{4}$ in 2D.
+
+```cpp
+// DEMONSTRATE THIS BLOWING UP
+double alpha = 1.0, h = 0.05;
+double dt_stable   = 0.25 * h * h / alpha;   // r = 0.25, stable
+double dt_unstable = 0.30 * h * h / alpha;   // r = 0.30, explodes
+
+// Run both. Show the explosion. This is the most important 60 seconds of the lecture.
+```
+
+**Gotcha**: With explicit schemes, refining your mesh requires *quadratically* smaller timesteps. In 3D this becomes brutal. This motivates implicit methods.
+
+**Implicit (Backward Euler)** requires solving a linear system per timestep, but is unconditionally stable. For most engineering problems, this tradeoff is obvious — pay the linear algebra cost, get rid of the timestep constraint.
+
+---
+
+## Block 2 — FEM with deal.II (35 min)
+
+### Why deal.II
+- 100% C++, template-heavy, industrial grade
+- Step-by-step tutorials that are *actually* tutorials (steps 1–60+)
+- Used in production at national labs
+- The community is unusually good
+
+```bash
+# Ubuntu/Debian
+sudo apt install libdeal.ii-dev
+
+# Or via Spack (recommended for HPC)
+spack install dealii +mpi +petsc +trilinos
+```
+
+### Weak formulation in 90 seconds (5 min)
+
+You cannot use FEM without understanding what problem you're actually solving. Multiply $-\nabla^2 u = f$ by a test function $v$, integrate by parts:
+
+$$\int_\Omega \nabla u \cdot \nabla v \, dx = \int_\Omega fv \, dx \quad \forall v \in V$$
+
+This is the **weak form**. FEM discretizes $V$ into a finite basis $\{\phi_i\}$. Substituting $u \approx \sum_j U_j \phi_j$ gives you the matrix equation:
+
+$$\underbrace{\left[\int \nabla\phi_j \cdot \nabla\phi_i\right]}_{A_{ij}} U_j = \underbrace{\int f \phi_i}_{b_i}$$
+
+The **key insight**: the integral of $\nabla\phi_j \cdot \nabla\phi_i$ is zero unless $\phi_i$ and $\phi_j$ overlap (share a mesh element). This is why the stiffness matrix is sparse.
+
+### deal.II architecture (5 min)
+
+The five objects you always instantiate, in this order:
+
+| Object | Role |
+|---|---|
+| `Triangulation<dim>` | The mesh |
+| `DoFHandler<dim>` | Assigns degrees of freedom to mesh entities |
+| `FE_Q<dim>(p)` | Lagrange elements of degree $p$ |
+| `QGauss<dim>(p+1)` | Quadrature rule for integration |
+| `FEValues<dim>` | Evaluates shape functions at quadrature points |
+
+```cpp
+Triangulation<2>  triangulation;
+FE_Q<2>           fe(1);           // bilinear elements
+DoFHandler<2>     dof_handler(triangulation);
+QGauss<2>         quadrature(2);   // 2x2 Gauss points
+FEValues<2>       fe_values(fe, quadrature,
+                    update_values | update_gradients | update_JxW_values);
+```
+
+### The assembly loop (10 min)
+
+This is the core of FEM. Every FEM code ever written has this structure:
+
+```cpp
+// This is deal.II Step-3, simplified
+FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
+Vector<double>     cell_rhs(dofs_per_cell);
+
+for (const auto &cell : dof_handler.active_cell_iterators()) {
+    fe_values.reinit(cell);
+    cell_matrix = 0;
+    cell_rhs    = 0;
+
+    for (unsigned int q = 0; q < n_q_points; ++q) {
+        for (unsigned int i = 0; i < dofs_per_cell; ++i) {
+            for (unsigned int j = 0; j < dofs_per_cell; ++j) {
+                // ∫ ∇φ_i · ∇φ_j dx  ← this IS the stiffness matrix entry
+                cell_matrix(i, j) +=
+                    fe_values.shape_grad(i, q) *
+                    fe_values.shape_grad(j, q) *
+                    fe_values.JxW(q);   // JxW = Jacobian × quadrature weight
+            }
+            // ∫ f φ_i dx  ← this IS the right-hand side entry
+            cell_rhs(i) += fe_values.shape_value(i, q) *
+                           1.0 * fe_values.JxW(q);
+        }
+    }
+    // Scatter cell contributions into global matrix
+    cell->get_dof_indices(local_dof_indices);
+    constraints.distribute_local_to_global(
+        cell_matrix, cell_rhs, local_dof_indices, system_matrix, system_rhs);
+}
+```
+
+**Make them read this loop until they understand it.** The three nested loops are: elements → quadrature points → basis functions. That's the entire method.
+
+### Boundary conditions (5 min — this is a gotcha section)
+
+**Dirichlet BCs** are applied by modifying the linear system after assembly. deal.II's `AffineConstraints` handles this cleanly. The naive approach (zeroing rows and columns) works but is fragile with MPI.
+
+**Neumann BCs** (flux conditions) enter through the weak form naturally — they're the boundary integral you get from integration by parts. If you don't apply a Neumann BC, you implicitly apply a zero-flux condition. **This surprises engineers constantly.**
+
+```cpp
+// Applying Dirichlet BCs in deal.II
+VectorTools::interpolate_boundary_values(dof_handler,
+    0,                    // boundary id
+    Functions::ZeroFunction<2>(),
+    constraints);
+constraints.close();
+// ...then use constraints.distribute_local_to_global in assembly
+```
+
+### Adaptive mesh refinement (5 min)
+
+This is deal.II's killer feature. The Kelly error estimator:
+
+```cpp
+Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
+KellyErrorEstimator<2>::estimate(dof_handler,
+    QGauss<1>(fe.degree + 1),
+    {},    // Neumann BC map
+    solution,
+    estimated_error_per_cell);
+
+GridRefinement::refine_and_coarsen_fixed_number(
+    triangulation, estimated_error_per_cell, 0.3, 0.03);
+triangulation.execute_coarsening_and_refinement();
+```
+
+**Point to make**: adaptive refinement gives you $h^p$ convergence concentrated where you need it. For problems with singularities (corners, crack tips, material interfaces), uniform refinement is wasteful by an order of magnitude.
+
+---
+
+## Block 3 — Linear Solvers: The Part Everyone Skips (20 min)
+
+This block is the most underteached topic in numerical PDE courses and the most important for production performance.
+
+### The decision tree
+
+```
+Problem size?
+├── N < 10,000   → Direct solver (Eigen::SparseLU, UMFPACK)
+│                  Cost: O(N^1.5) in 2D, O(N^2) in 3D
+│                  Verdict: just use it, don't think about it
+│
+└── N > 10,000   → Iterative solver + preconditioner
+    │
+    ├── Symmetric positive definite (Laplacian, elasticity)
+    │   └── CG + AMG preconditioner  (best general choice)
+    │
+    └── Nonsymmetric (convection-diffusion, Stokes, Navier-Stokes)
+        └── GMRES + ILU or AMG
+```
+
+### The preconditioner is everything
+
+An unpreconditioned iterative solver on a typical FEM system will diverge or converge in thousands of iterations. A good preconditioner gets you to solution in 10–50 iterations. **The solver choice matters less than the preconditioner.**
+
+```cpp
+// With Eigen (small-medium problems)
+Eigen::ConjugateGradient<SparseMatrix<double>,
+    Eigen::Lower|Eigen::Upper,
+    Eigen::IncompleteLUT<double>> cg;   // ILU preconditioner
+cg.setMaxIterations(1000);
+cg.setTolerance(1e-8);
+cg.compute(A);
+x = cg.solve(b);
+std::cout << "Iterations: " << cg.iterations() << "\n";
+std::cout << "Residual:   " << cg.error() << "\n";
+```
+
+```cpp
+// With PETSc (large/parallel problems) — this is what you want for anything serious
+// deal.II wraps PETSc cleanly:
+SolverControl solver_control(1000, 1e-8);
+PETScWrappers::SolverCG solver(solver_control);
+PETScWrappers::PreconditionBoomerAMG preconditioner;  // AMG = algebraic multigrid
+PETScWrappers::PreconditionBoomerAMG::AdditionalData data;
+preconditioner.initialize(system_matrix, data);
+solver.solve(system_matrix, solution, system_rhs, preconditioner);
+```
+
+### AMG: why it's the default for elliptic problems
+
+Algebraic multigrid solves $Ax = b$ in $O(N)$ operations for elliptic PDEs. It works by automatically constructing a hierarchy of coarser approximations and cycling between them. You don't need to understand the internals — you need to know:
+
+1. **Use BoomerAMG** (via Hypre, wrapped by PETSc/Trilinos) as your default for Laplace, Poisson, linear elasticity.
+2. AMG **fails on highly convection-dominated problems** (advection >> diffusion). Use ILU(k) there.
+3. AMG setup cost is $O(N \log N)$ and amortizes over multiple solves — if you're solving the same matrix repeatedly (time-stepping), AMG wins decisively.
+
+### Gotchas
+
+| Symptom | Likely cause |
+|---|---|
+| CG diverges | Matrix not actually SPD; check BC application |
+| GMRES stagnates | Bad preconditioner or highly ill-conditioned system |
+| Direct solver runs out of memory | Fill-in from poor reordering; apply AMD/RCM reordering first |
+| Iterative solver converges to wrong answer | Tolerance too loose; tighten to `1e-10` and check |
+
+```cpp
+// Reordering before direct solve — often 10x memory reduction
+Eigen::AMDOrdering<int> ordering;
+Eigen::SparseMatrix<double> A_reordered;
+ordering(A, /* permutation */);
+// Eigen's SparseLU does this internally; UMFPACK via SuiteSparse is better for large problems
+```
+
+---
+
+## Block 4 — Meshing with GMSH (10 min)
+
+The dirty secret: **meshing is 50% of the project time in practice.**
+
+### GMSH: the right tool
+
+```bash
+sudo apt install gmsh libgmsh-dev
+```
+
+GMSH has a scripting language and a C++ API. For engineers, the script language is faster to get started:
+
+```
+// Simple 2D domain with a hole (gmsh .geo file)
+SetFactory("OpenCASCADE");
+
+Rectangle(1) = {0, 0, 0, 2, 1};  // domain
+Disk(2) = {1, 0.5, 0, 0.2};      // circular hole
+BooleanDifference{ Surface{1}; Delete; }{ Surface{2}; Delete; }
+
+// Mesh sizing
+MeshSize{ PointsOf{ Surface{:}; } } = 0.05;
+
+// Tag boundaries for BCs
+Physical Curve("inlet")  = {4};
+Physical Curve("outlet") = {2};
+Physical Curve("walls")  = {1, 3};
+Physical Curve("hole")   = {5};
+Physical Surface("domain") = {1};
+
+Mesh 2;
+Save "domain.msh";
+```
+
+deal.II reads GMSH natively:
+```cpp
+GridIn<2> grid_in;
+grid_in.attach_triangulation(triangulation);
+std::ifstream f("domain.msh");
+grid_in.read_msh(f);
+```
+
+### Mesh quality gotchas
+
+- **Aspect ratio** kills accuracy. Elements stretched 100:1 in one direction produce $O(1)$ errors where you expect $O(h^2)$. GMSH's optimizer (`Mesh.Optimize = 1`) helps.
+- **Boundary layers** for fluid problems: GMSH's BoundaryLayer field gives you prismatic layers near walls. Without it your CFD solution near the boundary is garbage.
+- **Do not** use the mesh GMSH generates as-is for adaptive refinement in deal.II without converting to its native format first — `GridTools::convert_hypercube_to_simplex_mesh` if needed.
+
+---
+
+## Block 5 — Library Decision Tree and What to Reach For (10 min)
+
+### The map
+
+```
+Your problem
+│
+├── Structured grid, simple geometry, you control everything
+│   └── Roll your own FDM with Eigen — 200 lines of C++, full transparency
+│
+├── Complex geometry, elliptic/parabolic PDE, need adaptivity
+│   └── deal.II — the best-documented FEM library in existence
+│       └── Backend: PETSc + BoomerAMG for the linear algebra
+│
+├── Fluid dynamics (incompressible Navier-Stokes, turbulence)
+│   └── OpenFOAM — FVM, massive community, production CFD
+│       └── Gotcha: steep learning curve, C++ internals are idiosyncratic
+│
+├── Need GPU / extreme scale (> 1M DOF, multi-node)
+│   └── MFEM — from LLNL, GPU-native, same FEM concepts as deal.II
+│       └── Palace is built on MFEM (Noah already knows this one)
+│
+└── Maxwell's equations specifically
+    └── deal.II with Nédélec elements (FE_Nedelec) or Palace/Meep
+```
+
+### The four libraries to actually install
+
+```bash
+# 1. Eigen — always, for everything small
+sudo apt install libeigen3-dev
+
+# 2. deal.II — your FEM workhorse
+sudo apt install libdeal.ii-dev
+
+# 3. PETSc — scalable linear algebra, deal.II uses it as backend
+sudo apt install petsc-dev
+
+# 4. GMSH — meshing
+sudo apt install gmsh libgmsh-dev
+```
+
+For anything beyond this, you're in HPC territory and should be using Spack.
+
+---
+
+## The Ten Gotchas (5 min — rapid fire closing)
+
+Print this and put it next to your monitor:
+
+1. **CFL condition**: explicit time-stepping requires $\Delta t \sim h^2$ for parabolic PDEs. You will forget. Your solution will explode. You'll remember.
+
+2. **Zero Neumann is the default**: if you don't apply a BC on a boundary, you have $\partial u / \partial n = 0$ there. This is often wrong and always silent.
+
+3. **Locking in nearly incompressible elasticity**: linear elements ($Q_1$/$P_1$) produce artificially stiff behavior as Poisson's ratio → 0.5. Use mixed elements or reduced integration.
+
+4. **Convection-dominated problems**: if the Péclet number $Pe = \frac{UL}{\kappa} \gg 1$, centered differencing gives oscillatory solutions. Use upwinding or SUPG stabilization.
+
+5. **Quadrature order matters**: integrate polynomials of degree $2p-1$ exactly with $p$-point Gauss quadrature. Under-integration gives wrong answers silently.
+
+6. **Iterative solver tolerance**: `1e-6` feels tight but isn't. Use `1e-10` until you understand your problem's conditioning.
+
+7. **Condition number scales as $h^{-2}$**: refining your mesh makes your linear system harder to solve. This is unavoidable; it's why preconditioners exist.
+
+8. **Direct solvers and 3D**: direct solver fill-in goes as $O(N^{4/3})$ in 3D. A 500k DOF 3D problem will exhaust memory on a direct solver. Switch to iterative earlier than you think.
+
+9. **Parallel assembly is not free**: MPI-parallel FEM requires partitioning the mesh (use METIS, deal.II does this automatically with p4est). Ghost cells and communication patterns are the complexity surface.
+
+10. **Verification vs. validation**: convergence in $h$ proves your discretization is correct (verification). Matching physical data proves your model is correct (validation). You need both. Most people only do validation and miss discretization bugs.
+
+---
+
+## Homework / Reference Stack
+
+| Resource | What it's for |
+|---|---|
+| deal.II tutorials Step-1 through Step-8 | Work through these in order, they're genuinely excellent |
+| Trefethen, *Spectral Methods in MATLAB* | Best intro to thinking about numerical accuracy |
+| Brenner & Scott, *The Mathematical Theory of FEM* | When you need the theory behind why FEM works |
+| PETSc manual §KSP | Linear solver options, preconditioner parameters |
+| GMSH documentation | Geometry scripting, mesh sizing fields |
+| LeVeque, *Finite Difference Methods for ODEs and PDEs* | Best reference for FDM stability analysis |
+
+---
+
+## What I Didn't Cover (and Why)
+
+- **FVM**: same conceptual pipeline as FEM but control-volume based. OpenFOAM is the vehicle. If you need CFD, start there after this foundation.
+- **Spectral methods**: exponential convergence for smooth problems, zero geometric flexibility. Worth knowing exist; not the right first tool.
+- **Time integrators**: Runge-Kutta, BDF, IMEX schemes. This is a separate 2-hour lecture.
+- **Nonlinear problems**: Newton iteration wraps around everything above. deal.II Step-15 covers this.
+- **Uncertainty quantification**: your BCs and material parameters are uncertain. This multiplies everything by a factor of misery.
